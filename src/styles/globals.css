@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * ELVT OS light theme. These seven values plus the radius are the entire
+ * palette. Gold is the only accent colour in the product; if a surface needs
+ * emphasis it uses weight, spacing or a line, never a new colour.
+ */
+:root {
+  --bg: #FAF7F2;
+  --panel: #FFFFFF;
+  --panel2: #F4F0E9;
+  --line: #E4DFD6;
+  --txt: #111111;
+  --mut: #6E6A64;
+  --gold: #8A6F34;
+  --radius: 12px;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--txt);
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading), var(--font-body), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+@layer components {
+  .elvt-panel {
+    @apply rounded-elvt border border-line bg-panel;
+  }
+
+  .elvt-label {
+    @apply text-xs uppercase tracking-wider text-mut;
+  }
+
+  .elvt-input {
+    @apply w-full rounded-elvt border border-line bg-panel px-3 py-2 text-txt outline-none;
+    @apply focus:border-gold;
+  }
+
+  .elvt-button {
+    @apply rounded-elvt bg-txt px-4 py-2 font-medium text-panel;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .elvt-button-secondary {
+    @apply rounded-elvt border border-line bg-panel2 px-4 py-2 font-medium text-txt;
+  }
+}
