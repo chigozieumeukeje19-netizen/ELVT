@@ -42,6 +42,10 @@
    * would pull the portal toward the cream and gold client-app look, which is
    * hard fail 0.
    */
+  /* DESIGN.md Part 2 puts ELVT gold in exactly one place, the sidebar
+     wordmark. It is brand identity, not a UI accent, and the rule that flags
+     this hex everywhere else is what keeps it that way. */
+  /* unslop-ignore */
   --wordmark: #8A6F34;
 
   /* Spacing, 4px base. Seven values. Nothing else, no arbitrary lengths. */

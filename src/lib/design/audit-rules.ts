@@ -120,6 +120,15 @@ export const RULES: Rule[] = [
     fix: "Radius is three role based values: --radius-flat 0, --radius-control 4px, --radius-raised 8px.",
   },
   {
+    id: "single-radius-token",
+    tell: 5,
+    title: "One radius token reused on everything",
+    severity: "medium",
+    pattern: /--radius\s*:/,
+    extensions: [".css", ".ts", ".tsx"],
+    fix: "Radius is three role named tokens: --radius-flat, --radius-control, --radius-raised. A single --radius means one shape for every role.",
+  },
+  {
     id: "uniform-p6",
     tell: 1,
     title: "The uniform p-6 padding rhythm",
@@ -314,6 +323,7 @@ export const RULES: Rule[] = [
     severity: "medium",
     pattern:
       /\b(?:[Tt]ransform your|[Ss]upercharge|[Uu]nleash|[Ee]ffortlessly|[Ss]eamlessly|reimagined|[Ee]levate your|[Uu]nlock the power)\b/,
+    exempt: ["tests/"],
     fix: "Write what the thing does, in the voice the coach would use.",
   },
   {
@@ -323,6 +333,7 @@ export const RULES: Rule[] = [
     severity: "medium",
     pattern:
       /Nothing here yet|No items yet|Nothing to see here|Coming soon|Lorem ipsum/i,
+    exempt: ["tests/"],
     fix: "The empty state is the first thing seen on day one. Say what will appear here, when, and what the coach does next.",
   },
 
@@ -356,7 +367,7 @@ export const RULES: Rule[] = [
     title: "ELVT gold used as a UI accent",
     severity: "high",
     pattern: /#8A6F34/i,
-    extensions: [".ts", ".tsx"],
+    extensions: [".ts", ".tsx", ".css"],
     fix: "Gold appears in exactly one place, the sidebar wordmark, via the --wordmark token. Everything else uses --txt or a signal token.",
   },
 ];
