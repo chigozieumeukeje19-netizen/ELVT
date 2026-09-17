@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { CLIENT_EMAIL, supabaseIsUp } from "./helpers";
+import { CLIENT_EMAIL, SKIP_REASON, supabaseIsUp } from "./helpers";
 
 test.beforeAll(async () => {
   test.skip(
     !(await supabaseIsUp()),
-    "Supabase Auth is not reachable. Run npm run db:start first.",
+    SKIP_REASON,
   );
 });
 

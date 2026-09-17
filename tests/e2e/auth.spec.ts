@@ -3,6 +3,7 @@ import {
   CLIENT_EMAIL,
   COACH_EMAIL,
   COACH_PASSWORD,
+  SKIP_REASON,
   magicLinkFor,
   supabaseIsUp,
 } from "./helpers";
@@ -11,7 +12,7 @@ test.beforeAll(async () => {
   const up = await supabaseIsUp();
   test.skip(
     !up,
-    "Supabase Auth is not reachable. Run npm run db:start first.",
+    SKIP_REASON,
   );
 });
 

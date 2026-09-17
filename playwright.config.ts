@@ -3,6 +3,14 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = Number(process.env.PORT ?? 3000);
 const baseURL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 
+/**
+ * A second production server with ENABLE_DESIGN_PREVIEW deliberately unset, so
+ * the preview gate is proved closed rather than assumed closed. This is the
+ * shape of every deployed environment.
+ */
+const UNFLAGGED_PORT = Number(process.env.UNFLAGGED_PORT ?? 3101);
+export const UNFLAGGED_URL = `http://127.0.0.1:${UNFLAGGED_PORT}`;
+
 export default defineConfig({
   testDir: "./tests/e2e",
   timeout: 60_000,
@@ -22,16 +30,26 @@ export default defineConfig({
   },
   webServer: process.env.E2E_BASE_URL
     ? undefined
-    : {
-        command: "npm run start",
-        url: baseURL,
-        reuseExistingServer: true,
-        timeout: 120_000,
-        env: {
-          // The design preview routes render the real components against the
-          // seed fixtures so the layout can be measured without a signed in
-          // session. Off everywhere else.
-          ENABLE_DESIGN_PREVIEW: "1",
+    : [
+        {
+          command: "npm run start",
+          url: baseURL,
+          reuseExistingServer: true,
+          timeout: 120_000,
+          env: {
+            // The design preview routes render the real components against the
+            // seed fixtures so the layout can be measured without a signed in
+            // session. Off everywhere else.
+            ENABLE_DESIGN_PREVIEW: "1",
+          },
         },
-      },
+        {
+          // Same production build, no flag. Stands in for a deployed
+          // environment so the gate is tested, not trusted.
+          command: `npx next start -p ${UNFLAGGED_PORT}`,
+          url: `${UNFLAGGED_URL}/login`,
+          reuseExistingServer: true,
+          timeout: 120_000,
+        },
+      ],
 });

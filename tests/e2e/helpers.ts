@@ -9,8 +9,11 @@ export const CLIENT_PASSWORD = process.env.SEED_CLIENT_PASSWORD ?? "ElvtClient20
 
 /**
  * These tests need the Supabase stack, not just the database: signing in goes
- * through Auth. If it is not up, the suite should say so plainly rather than
- * fail with a timeout that looks like a broken app.
+ * through Auth.
+ *
+ * UNTIL THIS RUNS GREEN ON A MACHINE WITH THE STACK UP, THE LOGIN FLOW IS
+ * UNVERIFIED. Nothing downstream may assume a coach or a client can actually
+ * sign in. Skipped is not passed.
  */
 export async function supabaseIsUp(): Promise<boolean> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -47,3 +50,10 @@ export async function magicLinkFor(email: string): Promise<string> {
   }
   return data.properties.action_link;
 }
+
+/**
+ * One skip reason, used by every spec that needs Auth, so the report says the
+ * same loud thing everywhere rather than eight slightly different sentences.
+ */
+export const SKIP_REASON =
+  "UNVERIFIED: Supabase Auth is not reachable, so the login flow has not been proved. Run npm run db:start, then npm run test:e2e.";
