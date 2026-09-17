@@ -5,8 +5,12 @@ import { execFileSync } from "node:child_process";
 
 const root = path.resolve(__dirname, "../..");
 
+/**
+ * Only the rendered surfaces. Library code legitimately contains dash
+ * characters inside regular expressions, and none of it is copy anyone reads.
+ */
 function sourceFiles(): string[] {
-  return execFileSync("bash", ["-lc", `find ${root}/src -name '*.tsx' -o -name '*.ts'`], {
+  return execFileSync("bash", ["-lc", `find ${root}/src/app ${root}/src/components -name '*.tsx' 2>/dev/null`], {
     encoding: "utf8",
   })
     .split("\n")

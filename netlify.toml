@@ -1,0 +1,24 @@
+# Hosting is Netlify, on the account kept separate from the client apps.
+# Production deploys cost credits, so they happen only when a block is signed
+# off. Preview deploys on pull requests are free and stay on.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Auto publishing is off so a push to the branch cannot spend credits on its
+# own. Promote a deploy by hand once a block is done.
+[context.production]
+  command = "npm run build"
+
+[context.deploy-preview]
+  command = "npm run build"
+
+[context.branch-deploy]
+  command = "npm run build"

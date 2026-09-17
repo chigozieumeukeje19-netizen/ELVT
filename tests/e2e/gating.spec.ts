@@ -23,6 +23,11 @@ test.describe("signed out", () => {
     await expect(page).toHaveURL(/next=%2Fcoach%2Fqueue/);
   });
 
+  test("keeps the exercise review screen behind the coach gate", async ({ page }) => {
+    await page.goto("/coach/builder/exercises/review");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
   test("leaves the sign in pages reachable", async ({ page }) => {
     await page.goto("/login");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Coach sign in");
