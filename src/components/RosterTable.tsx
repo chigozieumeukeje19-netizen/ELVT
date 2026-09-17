@@ -8,6 +8,13 @@ import { bandFor, bandLabel, bandTextClass } from "@/lib/design/bands";
  */
 const NO_DATA = "\u00B7";
 
+/** Turns a stored enum value into something a person reads. */
+function label(value: string | null): string | null {
+  if (!value) return null;
+  const words = value.replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 /**
  * The roster. A dense sortable table, one row per client, 44px rows.
  *
@@ -66,65 +73,72 @@ export function RosterTable({ rows }: { rows: RosterRow[] }) {
   }
 
   return (
-    <table className="elvt-table" data-testid="roster">
-      <thead>
-        <tr>
-          <th scope="col" className="w-[220px]">Client</th>
-          <th scope="col" className="w-[150px]">Program</th>
-          <th scope="col" className="w-[90px]">Week</th>
-          <th scope="col" className="w-[110px]">Phase</th>
-          <th scope="col" className="w-[80px]">Score</th>
-          <th scope="col" className="w-[110px]">Adherence</th>
-          <th scope="col" className="w-[110px]">Weight</th>
-          <th scope="col" className="w-[100px]">Last seen</th>
-          <th scope="col" className="w-[80px]">Flags</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row) => {
-          const adherenceBand = bandFor(row.adherence);
-          const scoreBand = bandFor(row.score);
+    // The column widths below are what make the table readable. On a narrow
+    // viewport the table scrolls inside this container rather than pushing the
+    // page sideways.
+    <div className="overflow-x-auto">
+      <table className="elvt-table" data-testid="roster">
+        <thead>
+          <tr>
+            <th scope="col" className="w-[220px]">Client</th>
+            <th scope="col" className="w-[150px]">Program</th>
+            <th scope="col" className="w-[90px]">Week</th>
+            <th scope="col" className="w-[110px]">Status</th>
+            <th scope="col" className="w-[80px]">Score</th>
+            <th scope="col" className="w-[110px]">Adherence</th>
+            <th scope="col" className="w-[110px]">Weight</th>
+            <th scope="col" className="w-[100px]">Last seen</th>
+            <th scope="col" className="w-[80px]">Limits</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => {
+            const adherenceBand = bandFor(row.adherence);
 
-          return (
-            <tr key={row.id} data-testid="roster-row">
-              <td>
-                <Link href={`/coach/clients/${row.slug}`} className="text-txt">
-                  {row.name}
-                </Link>
-              </td>
-              <td className="text-txt-mute">{row.program ?? "Not started"}</td>
-              <td className="elvt-num text-txt-mute">
-                {row.week !== null && row.weeks !== null
-                  ? `${row.week} of ${row.weeks}`
-                  : NO_DATA}
-              </td>
-              <td className="text-txt-mute">{row.phase ?? NO_DATA}</td>
-              <td className={`elvt-num ${bandTextClass(scoreBand)}`}>
-                {row.score === null ? NO_DATA : Math.round(row.score)}
-              </td>
-              <td
-                className={`elvt-num ${bandTextClass(adherenceBand)}`}
-                title={bandLabel(adherenceBand)}
-              >
-                {row.adherence === null ? NO_DATA : `${Math.round(row.adherence)}%`}
-              </td>
-              <td>
-                <WeightTrend delta={row.weightDelta} />
-              </td>
-              <td className="elvt-num text-txt-mute">
-                {row.lastActivityDays === null
-                  ? "Never"
-                  : row.lastActivityDays === 0
-                    ? "Today"
-                    : `${row.lastActivityDays}d`}
-              </td>
-              <td className={row.flags > 0 ? "elvt-num text-flag" : "elvt-num text-txt-dim"}>
-                {row.flags > 0 ? row.flags : NO_DATA}
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+            return (
+              <tr key={row.id} data-testid="roster-row">
+                <td>
+                  <Link href={`/coach/clients/${row.slug}`} className="text-txt">
+                    {row.name}
+                  </Link>
+                </td>
+                <td className="text-txt-mute">{label(row.program) ?? "Not started"}</td>
+                <td className="elvt-num text-txt-mute">
+                  {row.week !== null && row.weeks !== null
+                    ? `${row.week} of ${row.weeks}`
+                    : NO_DATA}
+                </td>
+                <td className="text-txt-mute">{label(row.phase) ?? NO_DATA}</td>
+                <td className="elvt-num text-txt">
+                  {row.score === null ? NO_DATA : Math.round(row.score)}
+                </td>
+                <td
+                  className={`elvt-num ${bandTextClass(adherenceBand)}`}
+                  title={bandLabel(adherenceBand)}
+                >
+                  {row.adherence === null ? NO_DATA : `${Math.round(row.adherence)}%`}
+                </td>
+                <td>
+                  <WeightTrend delta={row.weightDelta} />
+                </td>
+                <td className="elvt-num text-txt-mute">
+                  {row.lastActivityDays === null
+                    ? "Never"
+                    : row.lastActivityDays === 0
+                      ? "Today"
+                      : `${row.lastActivityDays}d`}
+                </td>
+                <td
+                  className="elvt-num text-txt-mute"
+                  title="Contraindications on file. These shape the program; they are not an open flag."
+                >
+                  {row.flags > 0 ? row.flags : NO_DATA}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

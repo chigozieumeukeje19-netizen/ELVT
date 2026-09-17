@@ -7,11 +7,16 @@ import {
   QueueIcon,
   RosterIcon,
   SettingsIcon,
+  SignOutIcon,
 } from "@/components/icons";
 
 /**
- * Persistent 240px left sidebar, fixed during scroll. Square corners, no
- * border, separated from the content by a single 1px rule.
+ * Persistent left sidebar, fixed during scroll. Square corners, no border,
+ * separated from the content by a single 1px rule.
+ *
+ * 240px with icon and label on a desktop. Below the lg breakpoint it collapses
+ * to a 44px icon rail, because a dense table needs the width back and the
+ * portal is read on a phone rarely enough that icons alone will do.
  *
  * The wordmark is the only place ELVT gold appears in the entire portal. It is
  * brand identity, not a UI accent; using it on a button would pull the portal
@@ -38,9 +43,9 @@ export function Sidebar({
   return (
     <nav
       aria-label="Portal"
-      className="fixed left-0 top-0 z-10 flex h-screen w-sidebar flex-col border-line bg-panel [border-right-width:1px]"
+      className="fixed left-0 top-0 z-10 flex h-screen w-rail flex-col border-line bg-panel [border-right-width:1px] lg:w-sidebar"
     >
-      <div className="flex h-row items-center px-4">
+      <div className="flex h-row items-center justify-center lg:justify-start lg:px-4">
         <span
           className="text-wordmark"
           style={{
@@ -50,7 +55,8 @@ export function Sidebar({
             letterSpacing: "0.14em",
           }}
         >
-          ELVT
+          <span className="lg:hidden">E</span>
+          <span className="hidden lg:inline">ELVT</span>
         </span>
       </div>
 
@@ -63,14 +69,14 @@ export function Sidebar({
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={[
-                  "flex h-row items-center gap-3 px-4 text-body",
+                  "flex h-row items-center justify-center gap-3 text-body lg:justify-start lg:px-4",
                   active ? "bg-panel-2 text-txt" : "text-txt-mute",
                 ].join(" ")}
               >
                 <Icon />
-                <span className="flex-1">{label}</span>
+                <span className="hidden flex-1 lg:inline">{label}</span>
                 {label === "Queue" && queueCount ? (
-                  <span className="elvt-num text-label text-txt-mute">
+                  <span className="elvt-num hidden text-label text-txt-mute lg:inline">
                     {queueCount}
                   </span>
                 ) : null}
@@ -80,9 +86,14 @@ export function Sidebar({
         })}
       </ul>
 
-      <form action="/auth/signout" method="post" className="mt-auto p-4">
-        <button type="submit" className="elvt-button-secondary w-full">
-          Sign out
+      <form action="/auth/signout" method="post" className="mt-auto lg:p-4">
+        <button
+          type="submit"
+          aria-label="Sign out"
+          className="flex h-row w-full items-center justify-center gap-2 text-txt-mute lg:h-auto lg:rounded-control lg:border lg:border-line lg:py-2 lg:text-txt"
+        >
+          <SignOutIcon />
+          <span className="hidden lg:inline">Sign out</span>
         </button>
       </form>
     </nav>

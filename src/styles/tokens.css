@@ -72,6 +72,9 @@
   /* Density. The roster shows at least 14 rows above the fold at 1440x900. */
   --row-height: 44px;
   --sidebar-width: 240px;
+  /* Below the lg breakpoint the sidebar collapses to an icon rail, so the
+     content keeps the width a dense table needs. */
+  --rail-width: 44px;
 
   /*
    * Motion. Three uses only: a value updating, a row saving, a queue item

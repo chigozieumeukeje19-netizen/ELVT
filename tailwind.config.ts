@@ -43,6 +43,7 @@ const config: Config = {
       7: "var(--space-7)",
       row: "var(--row-height)",
       sidebar: "var(--sidebar-width)",
+      rail: "var(--rail-width)",
     },
 
     // Three values, by role. Nothing is pill shaped, so there is no full.

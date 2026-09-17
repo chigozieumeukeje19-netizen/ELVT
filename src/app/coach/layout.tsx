@@ -16,7 +16,7 @@ export default async function CoachLayout({
   return (
     <div className="min-h-screen bg-ink">
       <Sidebar current={pathname} />
-      <div className="pl-sidebar">{children}</div>
+      <div className="pl-rail lg:pl-sidebar">{children}</div>
     </div>
   );
 }

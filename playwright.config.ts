@@ -27,5 +27,11 @@ export default defineConfig({
         url: baseURL,
         reuseExistingServer: true,
         timeout: 120_000,
+        env: {
+          // The design preview routes render the real components against the
+          // seed fixtures so the layout can be measured without a signed in
+          // session. Off everywhere else.
+          ENABLE_DESIGN_PREVIEW: "1",
+        },
       },
 });

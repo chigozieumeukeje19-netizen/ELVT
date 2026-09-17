@@ -112,3 +112,11 @@ export function TrendFlatIcon(props: IconProps) {
     </Svg>
   );
 }
+
+export function SignOutIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M6 14H3.5v-12H6M10 11l3-3-3-3M13 8H6" />
+    </Svg>
+  );
+}

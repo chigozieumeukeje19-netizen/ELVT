@@ -73,15 +73,15 @@ export default async function QueuePage() {
                       : "bg-line",
                 ].join(" ")}
               />
-              <span className="w-[180px] truncate text-txt">
+              <span className="w-[110px] shrink-0 truncate text-txt lg:w-[180px]">
                 {item.clients
                   ? [item.clients.first_name, item.clients.last_name]
                       .filter(Boolean)
                       .join(" ")
                   : "Unassigned"}
               </span>
-              <span className="flex-1 truncate">{item.title}</span>
-              <span className="elvt-label pr-3">{item.kind.replace(/_/g, " ")}</span>
+              <span className="min-w-0 flex-1 truncate">{item.title}</span>
+              <span className="elvt-label hidden shrink-0 pr-3 lg:inline">{item.kind.replace(/_/g, " ")}</span>
             </li>
           ))}
         </ul>
