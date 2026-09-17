@@ -212,3 +212,20 @@ export const DAY_NAMES = [
 
 /** Short form for a dense day grid header. */
 export const DAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+
+/**
+ * Short forms for the places a stimulus has to fit in a narrow column, such as
+ * a session card in the day grid. The long form is still what a rail or a
+ * detail screen uses.
+ */
+export const STIMULUS_SHORT: Record<Stimulus, string> = {
+  lower_strength: "Legs",
+  upper_strength: "Upper",
+  full_strength: "Full body",
+  hard_run: "Hard run",
+  easy_run: "Easy run",
+  long_run: "Long run",
+  conditioning: "Conditioning",
+  skill: "Skill",
+  mobility: "Mobility",
+};

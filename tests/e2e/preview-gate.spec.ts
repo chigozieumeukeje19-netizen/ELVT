@@ -19,6 +19,9 @@ const PREVIEW_SCREENS = [
   "builder-exercises",
   "builder-exercises-stress",
   "builder-exercises-empty",
+  "program-week",
+  "program-week-flagged",
+  "program-periodization",
 ];
 
 test.describe("a production build with no preview flag", () => {

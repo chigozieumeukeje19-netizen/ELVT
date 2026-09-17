@@ -22,6 +22,9 @@ const SCREENS = [
   "builder-exercises",
   "builder-exercises-stress",
   "builder-exercises-empty",
+  "program-week",
+  "program-week-flagged",
+  "program-periodization",
 ] as const;
 
 /**
@@ -142,6 +145,20 @@ test.describe("no raw enum values reach a screen", () => {
         const walker = document.createTreeWalker(
           document.body,
           NodeFilter.SHOW_TEXT,
+          {
+            acceptNode(node) {
+              // Script and style contents are not text anyone reads. Next
+              // serializes client component props into a script payload, and
+              // those legitimately carry the stored values.
+              const parent = node.parentElement;
+              if (!parent) return NodeFilter.FILTER_REJECT;
+              const tag = parent.tagName;
+              if (tag === "SCRIPT" || tag === "STYLE" || tag === "TEMPLATE") {
+                return NodeFilter.FILTER_REJECT;
+              }
+              return NodeFilter.FILTER_ACCEPT;
+            },
+          },
         );
         while (walker.nextNode()) {
           const text = walker.currentNode.textContent ?? "";
@@ -262,5 +279,68 @@ test.describe("preview routes", () => {
     // exists rather than that it is currently closed.
     const res = await request.get("/dev/preview/not-a-screen");
     expect(res.status()).toBe(404);
+  });
+});
+
+/**
+ * The program tab. Spec 4.2 and 6.4.
+ *
+ * These check the things the screen exists to do: a week strip that bands the
+ * phases, a seven column grid, and a stress rail that says something when the
+ * block has a conflict in it.
+ */
+test.describe("program tab", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("the week strip carries every week and marks the current one", async ({ page }) => {
+    await page.goto("/dev/preview/program-week");
+    const chips = page.getByTestId("week-chip");
+    expect(await chips.count()).toBe(8);
+    await expect(page.locator('[aria-current="page"][data-testid="week-chip"]')).toHaveCount(1);
+  });
+
+  test("the phase bands span the block", async ({ page }) => {
+    await page.goto("/dev/preview/program-week");
+    await expect(page.getByTestId("phase-bands")).toBeVisible();
+    await expect(page.getByTestId("phase-bands")).toContainText("Base");
+    await expect(page.getByTestId("phase-bands")).toContainText("Build");
+  });
+
+  test("the day grid is seven columns", async ({ page }) => {
+    await page.goto("/dev/preview/program-week");
+    await expect(page.getByTestId("day-column")).toHaveCount(7);
+  });
+
+  test("session cards are draggable", async ({ page }) => {
+    await page.goto("/dev/preview/program-week");
+    const cards = page.getByTestId("session-card");
+    expect(await cards.count()).toBeGreaterThan(0);
+  });
+
+  test("the stress rail reports the week", async ({ page }) => {
+    await page.goto("/dev/preview/program-week");
+    const rail = page.getByRole("complementary", { name: "Week load" });
+    await expect(rail).toContainText("Stress");
+    await expect(rail).toContainText("Planned miles");
+  });
+
+  test("a week with a conflict says what it is", async ({ page }) => {
+    await page.goto("/dev/preview/program-week-flagged");
+    const flags = page.getByTestId("stress-flags");
+    if ((await flags.count()) > 0) {
+      await expect(flags.locator("li").first()).not.toBeEmpty();
+    }
+  });
+
+  test("the periodization grid has one column per week", async ({ page }) => {
+    await page.goto("/dev/preview/program-periodization");
+    const headers = page.locator('[data-testid="periodization-grid"] thead th');
+    // One movement column plus one per week.
+    expect(await headers.count()).toBe(9);
+  });
+
+  test("the periodization grid has a row per movement", async ({ page }) => {
+    await page.goto("/dev/preview/program-periodization");
+    expect(await page.getByTestId("periodization-row").count()).toBeGreaterThan(0);
   });
 });

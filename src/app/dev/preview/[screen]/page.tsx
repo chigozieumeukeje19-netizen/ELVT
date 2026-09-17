@@ -1,6 +1,11 @@
 import { notFound } from "next/navigation";
 import { BuilderNav } from "@/components/BuilderNav";
 import { ExerciseTable } from "@/components/ExerciseTable";
+import { DayGrid } from "@/components/program/DayGrid";
+import { PeriodizationGrid } from "@/components/program/PeriodizationGrid";
+import { StressRail } from "@/components/program/StressRail";
+import { WeekActions } from "@/components/program/WeekActions";
+import { WeekStrip } from "@/components/program/WeekStrip";
 import { RosterTable } from "@/components/RosterTable";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { Sidebar } from "@/components/Sidebar";
@@ -12,6 +17,11 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import {
+  PREVIEW_FLAGGED_WEEK,
+  PREVIEW_PROGRAM,
+  PREVIEW_PROGRAM_ROWS,
+} from "@/lib/design/preview-program";
 
 /**
  * Preview routes for the visual and density pass.
@@ -41,6 +51,9 @@ const SCREENS = [
   "builder-exercises",
   "builder-exercises-stress",
   "builder-exercises-empty",
+  "program-week",
+  "program-week-flagged",
+  "program-periodization",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -135,6 +148,58 @@ function ExerciseLibraryScreen({
   );
 }
 
+function ProgramScreen({
+  weekNumber,
+}: {
+  weekNumber: number;
+}) {
+  const view = PREVIEW_PROGRAM;
+  const week = view.weeks.find((w) => w.weekNumber === weekNumber) ?? view.weeks[0];
+
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Program"
+          title="Theo Vance"
+          note={`Marathon build, week ${week.weekNumber} of ${view.weeks.length}`}
+        />
+        <WeekStrip
+          weeks={view.weeks}
+          currentWeek={week.weekNumber}
+          hrefFor={(n) => `/dev/preview/program-week?week=${n}`}
+        />
+        <div className="mt-4 flex gap-5">
+          <div className="min-w-0 flex-1">
+            <DayGrid week={week} peakDayStress={view.peakDayStress} readOnly />
+            <WeekActions
+              weekNumber={week.weekNumber}
+              weekCount={view.weeks.length}
+              isDeload={week.isDeload}
+            />
+          </div>
+          <StressRail week={week} />
+        </div>
+      </main>
+    </Shell>
+  );
+}
+
+function PeriodizationScreen() {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Program" title="Periodization" />
+        <PeriodizationGrid
+          rows={PREVIEW_PROGRAM_ROWS}
+          weekCount={PREVIEW_PROGRAM.weeks.length}
+          currentWeek={2}
+        />
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -164,5 +229,11 @@ export default async function PreviewPage({
       return <ExerciseLibraryScreen rows={STRESS_EXERCISES} />;
     case "builder-exercises-empty":
       return <ExerciseLibraryScreen rows={[]} />;
+    case "program-week":
+      return <ProgramScreen weekNumber={1} />;
+    case "program-week-flagged":
+      return <ProgramScreen weekNumber={PREVIEW_FLAGGED_WEEK} />;
+    case "program-periodization":
+      return <PeriodizationScreen />;
   }
 }
