@@ -1,10 +1,15 @@
 import { notFound } from "next/navigation";
+import { BuilderNav } from "@/components/BuilderNav";
+import { ExerciseTable } from "@/components/ExerciseTable";
 import { RosterTable } from "@/components/RosterTable";
+import { ScreenHeader } from "@/components/ScreenHeader";
 import { Sidebar } from "@/components/Sidebar";
 import {
   DENSE_ROSTER,
+  SEED_EXERCISES,
   SEED_QUEUE,
   SEED_ROSTER,
+  STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
 
@@ -33,6 +38,9 @@ const SCREENS = [
   "roster-empty",
   "queue",
   "queue-empty",
+  "builder-exercises",
+  "builder-exercises-stress",
+  "builder-exercises-empty",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -111,6 +119,22 @@ function QueueScreen({ items }: { items: typeof SEED_QUEUE }) {
   );
 }
 
+function ExerciseLibraryScreen({
+  rows,
+}: {
+  rows: typeof SEED_EXERCISES;
+}) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <BuilderNav current="/coach/builder/exercises" />
+        <ScreenHeader label="Builder" title={`${rows.length} movements`} />
+        <ExerciseTable rows={rows} />
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -134,5 +158,11 @@ export default async function PreviewPage({
       return <QueueScreen items={SEED_QUEUE} />;
     case "queue-empty":
       return <QueueScreen items={[]} />;
+    case "builder-exercises":
+      return <ExerciseLibraryScreen rows={SEED_EXERCISES} />;
+    case "builder-exercises-stress":
+      return <ExerciseLibraryScreen rows={STRESS_EXERCISES} />;
+    case "builder-exercises-empty":
+      return <ExerciseLibraryScreen rows={[]} />;
   }
 }

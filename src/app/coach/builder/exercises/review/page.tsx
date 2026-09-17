@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { BuilderNav } from "@/components/BuilderNav";
 import { currentProfile, isStaff } from "@/lib/auth";
 import { supabaseServer } from "@/lib/supabase/server";
 import { discardExercise, resolveExercise } from "./actions";
@@ -42,6 +43,7 @@ export default async function ExerciseReviewPage({
 
   return (
     <main className="max-w-[760px] px-5 py-4">
+      <BuilderNav current="/coach/builder/exercises/review" />
       <p className="elvt-label">Builder</p>
       <h1 className="mt-1 text-section">Exercise review</h1>
       {error ? (

@@ -19,6 +19,9 @@ const SCREENS = [
   "roster-empty",
   "queue",
   "queue-empty",
+  "builder-exercises",
+  "builder-exercises-stress",
+  "builder-exercises-empty",
 ] as const;
 
 /**
@@ -120,6 +123,41 @@ for (const [label, viewport] of [
     }
   });
 }
+
+/**
+ * Stored values are snake case. None of them belong on a screen: a raw enum is
+ * the tell that a value went straight from the database to the reader. This ran
+ * once as a by-eye finding on the roster, so now it runs every time.
+ */
+test.describe("no raw enum values reach a screen", () => {
+  test.use({ viewport: DESKTOP });
+
+  for (const screen of SCREENS) {
+    test(`${screen}`, async ({ page }) => {
+      await page.goto(`/dev/preview/${screen}`);
+      await page.waitForLoadState("networkidle");
+
+      const raw = await page.evaluate(() => {
+        const found: string[] = [];
+        const walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+        );
+        while (walker.nextNode()) {
+          const text = walker.currentNode.textContent ?? "";
+          // A lowercase word joined to another by an underscore. File names in
+          // an import note are allowed, so anything ending .html is skipped.
+          for (const hit of text.matchAll(/\b[a-z]{2,}_[a-z][a-z_]*\b/g)) {
+            if (!hit[0].endsWith("html")) found.push(hit[0]);
+          }
+        }
+        return [...new Set(found)];
+      });
+
+      expect(raw).toEqual([]);
+    });
+  }
+});
 
 test.describe("roster density", () => {
   test.use({ viewport: DESKTOP });

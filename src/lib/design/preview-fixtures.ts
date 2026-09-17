@@ -1,3 +1,4 @@
+import type { ExerciseRow } from "@/components/ExerciseTable";
 import type { RosterRow } from "@/components/RosterTable";
 
 /**
@@ -119,4 +120,69 @@ export const SEED_QUEUE: PreviewQueueItem[] = [
     id: "q6", client: "Marcus Oyelaran", severity: 2, kind: "approval",
     title: "Blueprint draft ready to approve",
   },
+];
+
+/**
+ * Library fixtures. These are movement names and flag keys, not client data, so
+ * they can be concrete. The contraindications are the real ones: a barbell back
+ * squat loads the spine, walking lunges load the knee.
+ */
+export const SEED_EXERCISES: ExerciseRow[] = [
+  {
+    id: "e1", name: "Barbell Back Squat", aliases: ["BB Back Squat"],
+    pattern: "squat", primary_muscle: "quads", equipment: ["barbell", "rack"],
+    level: "intermediate", needs_review: false,
+    contraindications: ["spine", "knee"], alternatives: 3, youtube_id: "aaaaaaaaaaa",
+  },
+  {
+    id: "e2", name: "Goblet Squat", aliases: [],
+    pattern: "squat", primary_muscle: "quads", equipment: ["dumbbell"],
+    level: "beginner", needs_review: false,
+    contraindications: [], alternatives: 1, youtube_id: "bbbbbbbbbbb",
+  },
+  {
+    id: "e3", name: "Romanian Deadlift", aliases: ["RDL"],
+    pattern: "hinge", primary_muscle: "hamstrings", equipment: ["barbell"],
+    level: "intermediate", needs_review: false,
+    contraindications: ["spine"], alternatives: 2, youtube_id: "ccccccccccc",
+  },
+  {
+    id: "e4", name: "Dumbbell Bench Press", aliases: ["DB Bench Press"],
+    pattern: "push_h", primary_muscle: "chest", equipment: ["dumbbell", "bench"],
+    level: "beginner", needs_review: false,
+    contraindications: ["shoulder"], alternatives: 1, youtube_id: "ddddddddddd",
+  },
+  {
+    id: "e5", name: "Walking Lunge", aliases: [],
+    pattern: "lunge", primary_muscle: "quads", equipment: ["body only"],
+    level: "beginner", needs_review: false,
+    contraindications: ["knee"], alternatives: 2, youtube_id: "eeeeeeeeeee",
+  },
+  {
+    id: "e6", name: "Chest Supported Row", aliases: ["CSR"],
+    pattern: "pull_h", primary_muscle: "back", equipment: ["dumbbell", "bench"],
+    level: "beginner", needs_review: false,
+    contraindications: [], alternatives: 0, youtube_id: "fffffffffff",
+  },
+  {
+    id: "e7", name: "Unnamed video ggggggggggg (client-6.html)", aliases: [],
+    pattern: null, primary_muscle: null, equipment: [],
+    level: null, needs_review: true,
+    contraindications: [], alternatives: 0, youtube_id: "ggggggggggg",
+  },
+];
+
+/** The longest real movement name plus every column at its widest. */
+export const STRESS_EXERCISES: ExerciseRow[] = [
+  {
+    id: "s1",
+    name: "Single Arm Half Kneeling Landmine Press With Pause",
+    aliases: ["SA HK Landmine Press", "Half Kneeling Landmine Press"],
+    pattern: "push_v", primary_muscle: "shoulders",
+    equipment: ["barbell", "landmine", "bench", "band"],
+    level: "advanced", needs_review: true,
+    contraindications: ["shoulder", "elbow", "wrist", "spine"],
+    alternatives: 12, youtube_id: "hhhhhhhhhhh",
+  },
+  ...SEED_EXERCISES,
 ];

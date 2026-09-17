@@ -16,6 +16,9 @@ const PREVIEW_SCREENS = [
   "roster-empty",
   "queue",
   "queue-empty",
+  "builder-exercises",
+  "builder-exercises-stress",
+  "builder-exercises-empty",
 ];
 
 test.describe("a production build with no preview flag", () => {
