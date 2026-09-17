@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "npm run design:audit && vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "db:start": "supabase start",
@@ -15,7 +15,9 @@
     "db:reset": "supabase db reset",
     "db:seed": "tsx scripts/seed.ts",
     "db:setup": "npm run db:reset && npm run db:seed",
-    "exercises:import": "tsx scripts/import-exercises.ts"
+    "exercises:import": "tsx scripts/import-exercises.ts",
+    "design:audit": "tsx scripts/design-audit.ts",
+    "test:unit": "vitest run"
   },
   "repository": {
     "type": "git",

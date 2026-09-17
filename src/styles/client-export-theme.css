@@ -1,0 +1,32 @@
+/*
+ * unslop-ignore
+ *
+ * WHY THIS FILE IS EXEMPT FROM THE AUDIT, AND WHY IT IS NOT IMPORTED ANYWHERE.
+ *
+ * This is the v1 ELVT client app theme: cream page, gold accent. On paper it is
+ * two thirds of hard fail 0 (the cream plus serif plus sage "tasteful default").
+ * It is exempt because it is a real brand decision driven by a supplied
+ * wordmark and shipped to eight live clients, not a model default. DESIGN.md
+ * Part 1 tell 0 records that exemption explicitly.
+ *
+ * The exemption covers the client apps only. The portal must not inherit it,
+ * because inheriting it is exactly how a chosen brand slides into the default
+ * look. So these tokens live here, alone, under their own selector, and no
+ * portal screen imports this file. The only consumer is the generated
+ * single file client app produced by GET /export/pwa/:slug in Block E, which
+ * inlines them into its own document.
+ *
+ * A test asserts no file under src/app imports this. If that test ever fails,
+ * the portal has started sliding and the import is the bug, not the test.
+ */
+
+.elvt-client-export {
+  --bg: #FAF7F2;
+  --panel: #FFFFFF;
+  --panel2: #F4F0E9;
+  --line: #E4DFD6;
+  --txt: #111111;
+  --mut: #6E6A64;
+  --gold: #8A6F34;
+  --radius: 12px;
+}

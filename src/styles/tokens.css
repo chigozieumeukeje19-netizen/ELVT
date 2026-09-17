@@ -1,0 +1,102 @@
+/*
+ * ELVT OS portal tokens. Direction: INSTRUMENT PANEL, locked 17 Sep 2026.
+ * DESIGN.md Part 2 is the source; nothing here is invented alongside it.
+ *
+ * A dense, dark, read-first control surface for one operator monitoring eight
+ * to twenty athletes. Dark base because the coach reads this early and often,
+ * and because it makes a small number of colored data points carry weight.
+ */
+
+:root {
+  /* Surfaces and text. The whole neutral range, no others. */
+  --ink: #0E0F10;
+  --panel: #16181A;
+  --panel-2: #1D2023;
+  --line: #2A2E32;
+  --txt: #F2F1EE;
+  --txt-mute: #8C9196;
+  --txt-dim: #5A5F64;
+
+  /*
+   * Signal colors. The only saturated colors in the portal. Each means exactly
+   * one thing, everywhere, forever. Desaturated on purpose: a screen showing
+   * eight clients often carries all three at once, and saturated versions turn
+   * the roster into a Christmas tree.
+   */
+  --ok: #4E9E6A;    /* on plan, adherence at or above 85, completed */
+  --watch: #C9A227; /* drifting, adherence 60 to 84, due today */
+  --flag: #C04A38;  /* actionable flag, adherence below 60, overdue, missed */
+  --focus: #E8E6E1; /* selection and keyboard focus, deliberately not a color */
+
+  /*
+   * The adherence band thresholds live here so markup and logic read the same
+   * numbers. 85 and 60 are defined once, in this file and in
+   * src/lib/design/bands.ts which parses them from here.
+   */
+  --band-ok-min: 85;
+  --band-watch-min: 60;
+
+  /*
+   * ELVT gold appears in exactly one place: the wordmark in the sidebar. It is
+   * brand identity, not a UI accent. Using it for a button or a highlight
+   * would pull the portal toward the cream and gold client-app look, which is
+   * hard fail 0.
+   */
+  --wordmark: #8A6F34;
+
+  /* Spacing, 4px base. Seven values. Nothing else, no arbitrary lengths. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /*
+   * Radius, three values, applied by role rather than by habit.
+   * Nothing is pill shaped.
+   */
+  --radius-flat: 0px;  /* tables, rows, inputs, the sidebar */
+  --radius-control: 4px; /* buttons, chips, menus */
+  --radius-raised: 8px;  /* modals and the Monday review card */
+
+  /* Type scale. Six sizes. Nothing between them. */
+  --text-label: 11px;    /* Archivo Expanded, uppercase, 0.08em tracking */
+  --text-body: 13px;
+  --text-emphasis: 15px;
+  --text-section: 20px;
+  --text-name: 32px;
+  --text-hero: 56px;     /* the one number a screen is about */
+
+  /* Density. The roster shows at least 14 rows above the fold at 1440x900. */
+  --row-height: 44px;
+  --sidebar-width: 240px;
+
+  /*
+   * Motion. Three uses only: a value updating, a row saving, a queue item
+   * clearing. Each under 150ms. There is no decorative duration token because
+   * there is no decorative motion.
+   */
+  --motion-state: 120ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0.38, 1);
+}
+
+/*
+ * Nobody asked for motion. Anything that does move is reporting a state
+ * change, and a reader who has opted out still gets the state, just instantly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-state: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

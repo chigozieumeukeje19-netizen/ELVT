@@ -24,7 +24,7 @@ function CoachLoginForm() {
     });
 
     if (signInError) {
-      setError("That email and password did not match. Try again.");
+      setError("That email and password did not match.");
       setBusy(false);
       return;
     }
@@ -34,11 +34,11 @@ function CoachLoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="elvt-panel w-full max-w-sm p-6">
+    <form onSubmit={onSubmit} className="w-full max-w-[320px]">
       <p className="elvt-label">ELVT OS</p>
-      <h1 className="mt-2 text-2xl font-semibold">Coach sign in</h1>
+      <h1 className="mt-1 text-section">Coach sign in</h1>
 
-      <label className="mt-6 block">
+      <label className="mt-5 block">
         <span className="elvt-label">Email</span>
         <input
           className="elvt-input mt-1"
@@ -65,12 +65,12 @@ function CoachLoginForm() {
       </label>
 
       {error ? (
-        <p role="alert" className="mt-4 text-sm text-gold">
+        <p role="alert" className="mt-4 text-flag">
           {error}
         </p>
       ) : null}
 
-      <button className="elvt-button mt-6 w-full" type="submit" disabled={busy}>
+      <button className="elvt-button mt-5 w-full" type="submit" disabled={busy}>
         {busy ? "Signing in" : "Sign in"}
       </button>
     </form>
@@ -79,7 +79,7 @@ function CoachLoginForm() {
 
 export default function CoachLoginPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
+    <main className="flex min-h-screen items-center justify-center px-5">
       <Suspense fallback={null}>
         <CoachLoginForm />
       </Suspense>

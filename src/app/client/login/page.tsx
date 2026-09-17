@@ -38,11 +38,11 @@ export default function ClientLoginPage() {
 
   if (sent) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-6">
-        <div className="elvt-panel w-full max-w-sm p-6">
+      <main className="flex min-h-screen items-center justify-center px-5">
+        <div className="w-full max-w-[320px]">
           <p className="elvt-label">ELVT</p>
-          <h1 className="mt-2 text-2xl font-semibold">Check your email</h1>
-          <p className="mt-3 text-mut">
+          <h1 className="mt-1 text-section">Check your email</h1>
+          <p className="mt-2 text-txt-mute">
             A sign in link is on its way to {email}. It works once and lasts an
             hour.
           </p>
@@ -52,15 +52,15 @@ export default function ClientLoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <form onSubmit={onSubmit} className="elvt-panel w-full max-w-sm p-6">
+    <main className="flex min-h-screen items-center justify-center px-5">
+      <form onSubmit={onSubmit} className="w-full max-w-[320px]">
         <p className="elvt-label">ELVT</p>
-        <h1 className="mt-2 text-2xl font-semibold">Sign in</h1>
-        <p className="mt-2 text-mut">
-          Enter your email and we will send you a link. No password needed.
+        <h1 className="mt-1 text-section">Sign in</h1>
+        <p className="mt-2 text-txt-mute">
+          Enter your email and we will send you a link.
         </p>
 
-        <label className="mt-6 block">
+        <label className="mt-5 block">
           <span className="elvt-label">Email</span>
           <input
             className="elvt-input mt-1"
@@ -74,12 +74,12 @@ export default function ClientLoginPage() {
         </label>
 
         {error ? (
-          <p role="alert" className="mt-4 text-sm text-gold">
+          <p role="alert" className="mt-4 text-flag">
             {error}
           </p>
         ) : null}
 
-        <button className="elvt-button mt-6 w-full" type="submit" disabled={busy}>
+        <button className="elvt-button mt-5 w-full" type="submit" disabled={busy}>
           {busy ? "Sending" : "Send my link"}
         </button>
       </form>

@@ -35,6 +35,10 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # Gates on the high severity count. DESIGN.md Part 3.
+      - name: Design audit
+        run: npm run design:audit
+
       - name: Unit tests, schema and RLS
         run: npm test
         env:

@@ -41,24 +41,24 @@ export default async function ExerciseReviewPage({
   const rows = (data ?? []) as ExerciseRow[];
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <main className="max-w-[760px] px-5 py-4">
       <p className="elvt-label">Builder</p>
-      <h1 className="mt-2 text-3xl font-semibold">Exercise review</h1>
+      <h1 className="mt-1 text-section">Exercise review</h1>
       {error ? (
-        <p role="alert" className="elvt-panel mt-4 border-gold p-3 text-gold">
+        <p role="alert" className="mt-4 text-flag">
           {error}
         </p>
       ) : null}
 
-      <p className="mt-2 text-mut">
+      <p className="mt-2 max-w-[60ch] text-txt-mute">
         {rows.length === 0
-          ? "Nothing to resolve. The library is clean."
+          ? "Every imported movement has a confirmed name and video. Run the import again after adding a client app file and anything new lands here."
           : `${rows.length} imported movements need a decision. Confirm the name and the video, or discard the row.`}
       </p>
 
-      <ul className="mt-8 space-y-4" data-testid="review-list">
+      <ul className="mt-5" data-testid="review-list">
         {rows.map((row) => (
-          <li key={row.id} className="elvt-panel p-5">
+          <li key={row.id} className="border-line py-4 [border-top-width:1px]">
             <div className="flex gap-4">
               {row.media?.thumb_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -67,10 +67,10 @@ export default async function ExerciseReviewPage({
                   alt=""
                   width={160}
                   height={90}
-                  className="h-[90px] w-[160px] rounded object-cover"
+                  className="h-[90px] w-[160px] rounded-none object-cover"
                 />
               ) : (
-                <div className="flex h-[90px] w-[160px] items-center justify-center rounded bg-panel2">
+                <div className="flex h-[90px] w-[160px] items-center justify-center bg-panel-2">
                   <span className="elvt-label">No video</span>
                 </div>
               )}
@@ -78,15 +78,15 @@ export default async function ExerciseReviewPage({
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{row.name}</p>
                 {row.review_note ? (
-                  <p className="mt-1 text-sm text-mut">{row.review_note}</p>
+                  <p className="mt-1 max-w-[60ch] text-txt-mute">{row.review_note}</p>
                 ) : null}
                 {row.import_source ? (
-                  <p className="mt-1 text-xs text-mut">From {row.import_source}</p>
+                  <p className="elvt-label mt-1">From {row.import_source}</p>
                 ) : null}
               </div>
             </div>
 
-            <form action={resolveExercise} className="mt-4 grid gap-3 sm:grid-cols-2">
+            <form action={resolveExercise} className="mt-3 grid gap-3 sm:grid-cols-2">
               <input type="hidden" name="id" value={row.id} />
 
               <label className="block">

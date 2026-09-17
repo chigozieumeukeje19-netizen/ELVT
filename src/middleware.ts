@@ -18,7 +18,12 @@ const COACH_HOME = "/coach/queue";
 const CLIENT_HOME = "/client/today";
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  // The coach shell needs the path to mark the active nav item, and a layout
+  // cannot read it directly.
+  const withPath = new Headers(request.headers);
+  withPath.set("x-pathname", request.nextUrl.pathname);
+
+  let response = NextResponse.next({ request: { headers: withPath } });
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -33,7 +38,7 @@ export async function middleware(request: NextRequest) {
         for (const { name, value } of toSet) {
           request.cookies.set(name, value);
         }
-        response = NextResponse.next({ request });
+        response = NextResponse.next({ request: { headers: withPath } });
         for (const { name, value, options } of toSet) {
           response.cookies.set(name, value, options);
         }

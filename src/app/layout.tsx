@@ -1,24 +1,32 @@
 import type { Metadata } from "next";
-import { Inter, Inter_Tight } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "@/styles/globals.css";
 
-const body = Inter({
+/**
+ * Type pairing, chosen for two different jobs. DESIGN.md Part 2.
+ *
+ * Archivo carries the whole interface. It is a grotesk with a real width axis,
+ * so section labels can be set small, wide and uppercase with tracking, which
+ * is how timing and telemetry screens label things. It is off the autopilot
+ * list in DESIGN.md tell 8, which the scaffold's first choice was on.
+ */
+const ui = Archivo({
   subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--font-ui",
   display: "swap",
+  axes: ["wdth"],
 });
 
 /**
- * Heading face decision: Inter Tight, not a serif. The brand is monochrome
- * with a single gold accent, so a second typeface with its own personality
- * fights the palette. Inter Tight gives headlines their own weight and
- * tracking while staying inside the Inter family.
+ * Every figure that sits in a column or gets compared: weights, calories,
+ * mileage, scores, dates, percentages. Monospaced tabular figures mean digits
+ * line up down a column without extra CSS. Prose never uses it.
  */
-const heading = Inter_Tight({
+const mono = IBM_Plex_Mono({
   subsets: ["latin"],
-  variable: "--font-heading",
+  variable: "--font-mono",
   display: "swap",
-  weight: ["500", "600", "700"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -32,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en-US" className={`${body.variable} ${heading.variable}`}>
+    <html lang="en-US" className={`${ui.variable} ${mono.variable}`}>
       <body>{children}</body>
     </html>
   );

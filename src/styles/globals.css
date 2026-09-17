@@ -1,62 +1,220 @@
+@import "./tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /*
- * ELVT OS light theme. These seven values plus the radius are the entire
- * palette. Gold is the only accent colour in the product; if a surface needs
- * emphasis it uses weight, spacing or a line, never a new colour.
+ * Base. Surfaces are borderless by default: separation comes from a 1px --line
+ * rule and from the panel step, not from a border plus a shadow on every box.
+ * There are no drop shadows anywhere except modals.
  */
-:root {
-  --bg: #FAF7F2;
-  --panel: #FFFFFF;
-  --panel2: #F4F0E9;
-  --line: #E4DFD6;
-  --txt: #111111;
-  --mut: #6E6A64;
-  --gold: #8A6F34;
-  --radius: 12px;
-}
 
 html,
 body {
-  background: var(--bg);
+  background: var(--ink);
   color: var(--txt);
 }
 
 body {
-  font-family: var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: var(--text-body);
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+ * Headings carry size, not a second typeface. Archivo does the whole UI; the
+ * only other face in the portal is the mono used for compared figures.
+ */
 h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-heading), var(--font-body), sans-serif;
-  letter-spacing: -0.02em;
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--focus);
+  color: var(--ink);
+}
+
+/* Focus is a ring in --focus, never a color and never a glow. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
 }
 
 @layer components {
+  /*
+   * A panel is a surface step, not a card. No border, no shadow, no radius
+   * unless it is a modal.
+   */
   .elvt-panel {
-    @apply rounded-elvt border border-line bg-panel;
+    background: var(--panel);
+    border-radius: var(--radius-flat);
   }
 
+  .elvt-panel-raised {
+    background: var(--panel-2);
+    border-radius: var(--radius-flat);
+  }
+
+  /* The only place a shadow is allowed. */
+  .elvt-modal {
+    background: var(--panel);
+    border-radius: var(--radius-raised);
+    box-shadow: 0 16px 48px rgb(0 0 0 / 0.55);
+  }
+
+  /*
+   * Section labels: Archivo at its expanded width, small, uppercase, tracked.
+   * This is how telemetry screens label things and it is the single most
+   * distinctive thing about the type here, so it gets its own class.
+   */
   .elvt-label {
-    @apply text-xs uppercase tracking-wider text-mut;
+    font-family: var(--font-ui), system-ui, sans-serif;
+    font-size: var(--text-label);
+    font-stretch: 125%;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--txt-mute);
+  }
+
+  /*
+   * Every figure that sits in a column or gets compared. Tabular so digits
+   * line up down a column without extra CSS, which is the whole reason dense
+   * tools reach for mono. Prose never uses this.
+   */
+  .elvt-num {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
   }
 
   .elvt-input {
-    @apply w-full rounded-elvt border border-line bg-panel px-3 py-2 text-txt outline-none;
-    @apply focus:border-gold;
+    width: 100%;
+    background: var(--panel-2);
+    color: var(--txt);
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: var(--radius-flat);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-body);
+    outline: none;
+  }
+
+  .elvt-input::placeholder {
+    color: var(--txt-dim);
+  }
+
+  .elvt-input:focus-visible {
+    border-bottom-color: var(--focus);
+    outline: none;
   }
 
   .elvt-button {
-    @apply rounded-elvt bg-txt px-4 py-2 font-medium text-panel;
-    @apply disabled:cursor-not-allowed disabled:opacity-50;
+    background: var(--txt);
+    color: var(--ink);
+    border: 0;
+    border-radius: var(--radius-control);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-body);
+    font-weight: 600;
+  }
+
+  .elvt-button:disabled {
+    background: var(--txt-dim);
+    color: var(--panel);
+    cursor: not-allowed;
   }
 
   .elvt-button-secondary {
-    @apply rounded-elvt border border-line bg-panel2 px-4 py-2 font-medium text-txt;
+    background: transparent;
+    color: var(--txt);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-body);
+    font-weight: 600;
+  }
+
+  .elvt-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-control);
+    padding: 0 var(--space-2);
+    font-size: var(--text-label);
+    font-stretch: 125%;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 20px;
+  }
+
+  /* A table is a table. No card wraps it. Rows separated by a 1px rule. */
+  .elvt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-body);
+  }
+
+  .elvt-table thead th {
+    background: var(--panel-2);
+    color: var(--txt-mute);
+    font-size: var(--text-label);
+    font-stretch: 125%;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+    height: var(--row-height);
+    padding: 0 var(--space-3);
+    white-space: nowrap;
+  }
+
+  .elvt-table tbody tr {
+    border-top: 1px solid var(--line);
+  }
+
+  .elvt-table tbody td {
+    height: var(--row-height);
+    padding: 0 var(--space-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /*
+   * A value that has just changed. This is one of the three motions the design
+   * allows, and it reports a state change rather than decorating one.
+   */
+  .elvt-value-updated {
+    animation: elvt-value-update var(--motion-state) var(--motion-ease) 1;
+  }
+
+  .elvt-row-saving {
+    transition: opacity var(--motion-state) var(--motion-ease);
+    opacity: 0.55;
+  }
+
+  .elvt-queue-clearing {
+    transition:
+      opacity var(--motion-state) var(--motion-ease),
+      height var(--motion-state) var(--motion-ease);
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+  }
+}
+
+@keyframes elvt-value-update {
+  from {
+    background-color: var(--panel-2);
+  }
+  to {
+    background-color: transparent;
   }
 }
