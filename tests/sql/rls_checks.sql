@@ -134,6 +134,10 @@ begin
   select c.id, c.profile_id into nadia_client, nadia_user
     from public.clients c where c.slug = 'nadia-brookes';
 
+  -- Clear any row from an earlier run so the checks can be run repeatedly
+  -- against the same database.
+  delete from public.daily_logs where client_id = nadia_client and date = current_date;
+
   set local role authenticated;
   perform set_config('request.jwt.claims',
     json_build_object('sub', nadia_user, 'role', 'authenticated')::text, true);
@@ -141,7 +145,8 @@ begin
   insert into public.daily_logs (client_id, date, steps, weight)
   values (nadia_client, current_date, 9000, 171.4);
 
-  select count(*) into written from public.daily_logs where client_id = nadia_client;
+  select count(*) into written from public.daily_logs
+   where client_id = nadia_client and date = current_date;
   reset role;
   perform pg_temp.assert(written = 1, 'client can write their own daily log');
 end;
