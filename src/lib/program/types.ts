@@ -202,6 +202,8 @@ export type LibraryExercise = {
   unilateral: boolean;
   /** Flag keys that rule this movement out for a client carrying them. */
   contraindications: FlagKey[];
+  /** Declared swaps, in the order the coach wants them tried. */
+  alternatives: { id: string; reason: "equipment" | "injury" | "level" }[];
 };
 
 export const DAY_NAMES = [
