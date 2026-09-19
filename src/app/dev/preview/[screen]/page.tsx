@@ -17,6 +17,14 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { ComposerPreview } from "@/components/messages/ComposerPreview";
+import { ThreadList } from "@/components/messages/ThreadView";
+import {
+  PREVIEW_COMPOSER_THIN,
+  PREVIEW_COMPOSER_VALUES,
+  PREVIEW_THREADS,
+} from "@/lib/design/preview-messages";
+import { quietestFirst } from "@/lib/messages/touchpoints";
 import { MondayCard } from "@/components/queue/MondayCard";
 import { PREVIEW_CARD, PREVIEW_CARDS, PREVIEW_CARD_QUIET } from "@/lib/design/preview-monday";
 import { QueueLanes } from "@/components/queue/QueueLanes";
@@ -137,6 +145,10 @@ const SCREENS = [
   "monday-card",
   "monday-card-quiet",
   "monday-cards",
+  "messages",
+  "messages-empty",
+  "composer",
+  "composer-thin",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -611,6 +623,34 @@ function MondayScreen({ cards }: { cards: typeof PREVIEW_CARDS }) {
   );
 }
 
+function MessagesScreen({ rows }: { rows: typeof PREVIEW_THREADS }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Messages"
+          title={`${rows.length} clients`}
+          note="Ordered by who has heard from you least, not by who wrote last."
+        />
+        <ThreadList rows={quietestFirst(rows)} />
+      </main>
+    </Shell>
+  );
+}
+
+function ComposerScreen({ values }: { values: Record<string, string | number> }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Messages" title="Ekaterina Vasilyeva-Whitcombe" />
+        <div className="max-w-[560px]">
+          <ComposerPreview values={values} />
+        </div>
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -724,5 +764,13 @@ export default async function PreviewPage({
       return <MondayScreen cards={[PREVIEW_CARD_QUIET]} />;
     case "monday-cards":
       return <MondayScreen cards={PREVIEW_CARDS} />;
+    case "messages":
+      return <MessagesScreen rows={PREVIEW_THREADS} />;
+    case "messages-empty":
+      return <MessagesScreen rows={[]} />;
+    case "composer":
+      return <ComposerScreen values={PREVIEW_COMPOSER_VALUES} />;
+    case "composer-thin":
+      return <ComposerScreen values={PREVIEW_COMPOSER_THIN} />;
   }
 }

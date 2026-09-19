@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TrendDownIcon, TrendFlatIcon, TrendUpIcon } from "@/components/icons";
 import { bandFor, bandLabel, bandTextClass } from "@/lib/design/bands";
+import { STRONG_WEEK } from "@/lib/messages/touchpoints";
 
 /**
  * The marker for a column with nothing in it yet. A middle dot rather than a
@@ -37,7 +38,24 @@ export type RosterRow = {
   weightDelta: number | null;
   lastActivityDays: number | null;
   flags: number;
+  /** Coach interactions that actually reached them this week. */
+  touchpoints: number | null;
+  /** Days since the last one, or null when there has never been one. */
+  daysSinceTouch: number | null;
 };
+
+/**
+ * The touchpoint column's color.
+ *
+ * Its own banding rather than bandFor, because this is a count against a
+ * target, not a percentage. Two a week is the number CoachRx's compliance data
+ * points at, so two is on plan and none is the thing to fix.
+ */
+function touchBand(count: number | null): string {
+  if (count === null || count === 0) return "text-flag";
+  if (count >= STRONG_WEEK) return "text-ok";
+  return "text-watch";
+}
 
 function WeightTrend({ delta }: { delta: number | null }) {
   if (delta === null) {
@@ -88,6 +106,7 @@ export function RosterTable({ rows }: { rows: RosterRow[] }) {
             <th scope="col" className="w-[110px]">Adherence</th>
             <th scope="col" className="w-[110px]">Weight</th>
             <th scope="col" className="w-[100px]">Last seen</th>
+            <th scope="col" className="w-[100px]">Last heard</th>
             <th scope="col" className="w-[80px]">Limits</th>
           </tr>
         </thead>
@@ -127,6 +146,26 @@ export function RosterTable({ rows }: { rows: RosterRow[] }) {
                     : row.lastActivityDays === 0
                       ? "Today"
                       : `${row.lastActivityDays}d`}
+                </td>
+                {/*
+                  Touchpoints. CoachRx's own data: clients getting more than two
+                  coach interactions a week sit around 75 percent compliance, so
+                  this is a retention number rather than an activity number, and
+                  it counts what actually reached the client.
+                */}
+                <td
+                  className={`elvt-num ${touchBand(row.touchpoints)}`}
+                  data-testid="touchpoints"
+                  title="Coach messages and reviews that reached them this week"
+                >
+                  {row.daysSinceTouch === null
+                    ? "Never"
+                    : row.daysSinceTouch === 0
+                      ? "Today"
+                      : `${row.daysSinceTouch}d`}
+                  {row.touchpoints ? (
+                    <span className="ml-2 text-txt-dim">{row.touchpoints}</span>
+                  ) : null}
                 </td>
                 <td
                   className="elvt-num text-txt-mute"

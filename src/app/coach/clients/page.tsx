@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { RosterTable, type RosterRow } from "@/components/RosterTable";
 import { currentProfile, isStaff } from "@/lib/auth";
+import { countTouchpoints } from "@/lib/messages/touchpoints";
 import { supabaseServer } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,12 @@ export default async function ClientsPage() {
   if (!isStaff(profile.role)) redirect("/client/today");
 
   const supabase = await supabaseServer();
+
+  const { data: touchpoints } = await supabase
+    .from("touchpoints")
+    .select("client_id, kind, at")
+    .gte("at", new Date(Date.now() - 21 * 86_400_000).toISOString());
+
   const { data } = await supabase
     .from("clients")
     .select(
@@ -41,6 +48,7 @@ export default async function ClientsPage() {
       week,
       weeks: c.program_length_weeks,
       phase: c.status,
+      ...touchpointsFor(touchpoints ?? [], c.id),
       // Block B computes these at week roll. Until then the column reads as
       // no data rather than showing an invented number.
       score: null,
@@ -67,4 +75,26 @@ export default async function ClientsPage() {
       </div>
     </main>
   );
+}
+
+/**
+ * The touchpoint figures for one client's row.
+ *
+ * Counted Monday to Sunday rather than over a rolling week, so the column means
+ * the same thing every day someone looks at it.
+ */
+function touchpointsFor(
+  all: { client_id: string; kind: string; at: string }[],
+  clientId: string,
+): { touchpoints: number | null; daysSinceTouch: number | null } {
+  const theirs = all.filter((touchpoint) => touchpoint.client_id === clientId);
+  if (theirs.length === 0) return { touchpoints: null, daysSinceTouch: null };
+
+  const today = new Date().toISOString().slice(0, 10);
+  const count = countTouchpoints(
+    theirs.map((touchpoint) => ({ kind: touchpoint.kind as never, at: touchpoint.at })),
+    today,
+  );
+
+  return { touchpoints: count.thisWeek, daysSinceTouch: count.daysSinceLast };
 }

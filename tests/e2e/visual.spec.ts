@@ -75,6 +75,10 @@ const SCREENS = [
   "monday-card",
   "monday-card-quiet",
   "monday-cards",
+  "messages",
+  "messages-empty",
+  "composer",
+  "composer-thin",
 ] as const;
 
 /**
@@ -816,5 +820,73 @@ test.describe("the Monday card", () => {
       expect(text, screen).toMatch(/\d/);
       expect(text, screen).not.toMatch(/\s[-–—]\s/);
     }
+  });
+});
+
+/**
+ * Messaging.
+ *
+ * The thing worth asserting is the ordering. Every messaging app sorts by most
+ * recent, and here that is exactly wrong: the thread at the top of a recency
+ * list is the client you are already talking to, and the one who needs a
+ * message is the one who has sent you nothing.
+ */
+test.describe("messages", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("puts the client nobody has spoken to first", async ({ page }) => {
+    await openScreen(page, "messages");
+    const first = page.getByTestId("thread-row").first();
+    await expect(first).toContainText("Karar");
+    await expect(first.getByTestId("days-since")).toContainText("never");
+  });
+
+  test("orders by how long it has been, not by who wrote last", async ({ page }) => {
+    await openScreen(page, "messages");
+    const days = await page
+      .getByTestId("days-since")
+      .allInnerTexts();
+
+    // never, then descending days, then today.
+    expect(days[0]).toBe("never");
+    expect(days[days.length - 1]).toBe("today");
+  });
+
+  test("colors the quiet clients and not the recent ones", async ({ page }) => {
+    await openScreen(page, "messages");
+    await expect(page.locator('[data-testid="days-since"].text-flag').first()).toBeVisible();
+    await expect(page.locator('[data-testid="days-since"].text-ok').first()).toBeVisible();
+  });
+
+  test("a quick reply fills the real numbers in", async ({ page }) => {
+    await openScreen(page, "composer");
+    await page.getByTestId("quick-reply").filter({ hasText: "Steps down two days" }).click();
+
+    const body = await page.getByTestId("message-body").inputValue();
+    expect(body).toContain("5200");
+    expect(body).toContain("7400");
+    // A hole left in a sent message is worse than no message.
+    expect(body).not.toContain("{");
+  });
+
+  test("says which figure is missing rather than sending a message with a hole", async ({ page }) => {
+    await openScreen(page, "composer-thin");
+    await page.getByTestId("quick-reply").filter({ hasText: "Steps down two days" }).click();
+
+    await expect(page.getByTestId("quick-reply-missing")).toContainText("steps_a");
+    // Nothing was put in the box.
+    expect(await page.getByTestId("message-body").inputValue()).toBe("");
+  });
+
+  test("scheduling asks for the client's time, not the reader's", async ({ page }) => {
+    await openScreen(page, "composer");
+    await expect(page.getByTestId("schedule-fields")).toBeHidden();
+    await page.getByLabel("Send it later").check();
+    await expect(page.getByTestId("schedule-fields")).toContainText("their time");
+  });
+
+  test("the empty inbox says what starts a thread", async ({ page }) => {
+    await openScreen(page, "messages-empty");
+    await expect(page.getByTestId("threads-empty")).toContainText("answer in it");
   });
 });

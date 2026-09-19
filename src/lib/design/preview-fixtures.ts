@@ -17,41 +17,49 @@ export const SEED_ROSTER: RosterRow[] = [
     id: "1", slug: "aisha-nkemdirim", name: "Aisha Nkemdirim",
     program: "race_prep", week: 6, weeks: 14, phase: "active",
     score: 91, adherence: 93, weightDelta: -0.4, lastActivityDays: 0, flags: 1,
+    touchpoints: null, daysSinceTouch: null,
   },
   {
     id: "2", slug: "caleb-whitlock", name: "Caleb Whitlock",
     program: "fat_loss", week: 3, weeks: 26, phase: "active",
     score: 72, adherence: 68, weightDelta: -1.8, lastActivityDays: 1, flags: 3,
+    touchpoints: 0, daysSinceTouch: 9,
   },
   {
     id: "3", slug: "elena-marsh", name: "Elena Marsh",
     program: "maintain", week: 11, weeks: 20, phase: "active",
     score: 88, adherence: 86, weightDelta: 0.0, lastActivityDays: 2, flags: 2,
+    touchpoints: 1, daysSinceTouch: 4,
   },
   {
     id: "4", slug: "jonah-petrakis", name: "Jonah Petrakis",
     program: "fitness_test", week: 8, weeks: 12, phase: "active",
     score: 54, adherence: 47, weightDelta: -0.2, lastActivityDays: 5, flags: 2,
+    touchpoints: 2, daysSinceTouch: 1,
   },
   {
     id: "5", slug: "marcus-oyelaran", name: "Marcus Oyelaran",
     program: "performance", week: 2, weeks: 12, phase: "active",
     score: 84, adherence: 79, weightDelta: -0.9, lastActivityDays: 0, flags: 2,
+    touchpoints: 3, daysSinceTouch: 0,
   },
   {
     id: "6", slug: "nadia-brookes", name: "Nadia Brookes",
     program: "recomp", week: 5, weeks: 16, phase: "active",
     score: 96, adherence: 97, weightDelta: -0.1, lastActivityDays: 0, flags: 1,
+    touchpoints: 0, daysSinceTouch: 12,
   },
   {
     id: "7", slug: "priya-raghavan", name: "Priya Raghavan",
     program: "fat_loss", week: 9, weeks: 16, phase: "active",
     score: 63, adherence: 61, weightDelta: -0.6, lastActivityDays: 3, flags: 1,
+    touchpoints: 2, daysSinceTouch: 2,
   },
   {
     id: "8", slug: "theo-vance", name: "Theo Vance",
     program: "race_prep", week: 14, weeks: 18, phase: "active",
     score: null, adherence: null, weightDelta: null, lastActivityDays: null, flags: 2,
+    touchpoints: 1, daysSinceTouch: 6,
   },
 ];
 
@@ -68,6 +76,7 @@ export const STRESS_ROSTER: RosterRow[] = [
     program: "six month transformation",
     week: 104, weeks: 104, phase: "pending_approval",
     score: 100, adherence: 100, weightDelta: -12.4, lastActivityDays: 365, flags: 9,
+    touchpoints: null, daysSinceTouch: null,
   },
   ...SEED_ROSTER,
 ];
