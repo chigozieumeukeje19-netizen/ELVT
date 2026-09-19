@@ -17,6 +17,21 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { CaloriePathTable } from "@/components/nutrition/CaloriePathTable";
+import { GroceryHub } from "@/components/nutrition/GroceryHub";
+import { MealPlanEditor } from "@/components/nutrition/MealPlanEditor";
+import { SwapList } from "@/components/nutrition/SwapList";
+import {
+  PREVIEW_CURRENT_WEEK,
+  PREVIEW_GROCERY,
+  PREVIEW_PATH,
+  PREVIEW_PATH_MIXED,
+  PREVIEW_REST_MEALS,
+  PREVIEW_REST_TARGET,
+  PREVIEW_SWAPS,
+  PREVIEW_TRAINING_MEALS,
+  PREVIEW_TRAINING_TARGET,
+} from "@/lib/design/preview-nutrition";
 import {
   PREVIEW_FLAGGED_WEEK,
   PREVIEW_PROGRAM,
@@ -54,6 +69,13 @@ const SCREENS = [
   "program-week",
   "program-week-flagged",
   "program-periodization",
+  "nutrition-path",
+  "nutrition-path-empty",
+  "nutrition-meals",
+  "nutrition-meals-rest",
+  "nutrition-grocery",
+  "nutrition-swaps",
+  "nutrition-swaps-empty",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -209,6 +231,70 @@ function PeriodizationScreen() {
   );
 }
 
+function NutritionPathScreen({ path }: { path: typeof PREVIEW_PATH }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Nutrition"
+          title="Ekaterina Vasilyeva-Whitcombe"
+          note="Twelve week recomposition, front loaded"
+        />
+        <CaloriePathTable path={path} currentWeek={PREVIEW_CURRENT_WEEK} />
+      </main>
+    </Shell>
+  );
+}
+
+function NutritionMealsScreen({ rest }: { rest: boolean }) {
+  const target = rest ? PREVIEW_REST_TARGET : PREVIEW_TRAINING_TARGET;
+  const meals = rest ? PREVIEW_REST_MEALS : PREVIEW_TRAINING_MEALS;
+
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Nutrition"
+          title={rest ? "Rest day" : "Training day"}
+          note={`Week ${PREVIEW_CURRENT_WEEK}`}
+        />
+        <MealPlanEditor
+          meals={meals}
+          dayCalories={target.calories}
+          dayProtein={target.protein}
+          basis={target.basis}
+        />
+      </main>
+    </Shell>
+  );
+}
+
+function NutritionGroceryScreen() {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Nutrition" title="Grocery list" />
+        <GroceryHub
+          lines={PREVIEW_GROCERY}
+          weekCalories={PREVIEW_PATH[PREVIEW_CURRENT_WEEK - 1].calories}
+          planCalories={PREVIEW_PATH[0].calories}
+        />
+      </main>
+    </Shell>
+  );
+}
+
+function NutritionSwapScreen({ groups }: { groups: typeof PREVIEW_SWAPS }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Nutrition" title="Swaps" />
+        <SwapList groups={groups} />
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -244,5 +330,19 @@ export default async function PreviewPage({
       return <ProgramScreen weekNumber={PREVIEW_FLAGGED_WEEK} />;
     case "program-periodization":
       return <PeriodizationScreen />;
+    case "nutrition-path":
+      return <NutritionPathScreen path={PREVIEW_PATH_MIXED} />;
+    case "nutrition-path-empty":
+      return <NutritionPathScreen path={[]} />;
+    case "nutrition-meals":
+      return <NutritionMealsScreen rest={false} />;
+    case "nutrition-meals-rest":
+      return <NutritionMealsScreen rest />;
+    case "nutrition-grocery":
+      return <NutritionGroceryScreen />;
+    case "nutrition-swaps":
+      return <NutritionSwapScreen groups={PREVIEW_SWAPS} />;
+    case "nutrition-swaps-empty":
+      return <NutritionSwapScreen groups={[]} />;
   }
 }

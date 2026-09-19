@@ -42,6 +42,13 @@ const SCREENS = [
   "program-week",
   "program-week-flagged",
   "program-periodization",
+  "nutrition-path",
+  "nutrition-path-empty",
+  "nutrition-meals",
+  "nutrition-meals-rest",
+  "nutrition-grocery",
+  "nutrition-swaps",
+  "nutrition-swaps-empty",
 ] as const;
 
 /**
@@ -61,6 +68,14 @@ async function silentlyClipped(page: Page) {
 
       const style = getComputedStyle(el);
       if (style.display === "none" || style.visibility === "hidden") continue;
+
+      // Visually hidden text for screen readers is clipped on purpose, and it
+      // reaches its reader in full. Detected by the idiom itself, a 1px box
+      // clipped to nothing, rather than by a class name, so nothing can be
+      // quietened by renaming it.
+      const rect = el.getBoundingClientRect();
+      const clipped = style.clipPath === "inset(50%)" || style.clip === "rect(0px, 0px, 0px, 0px)";
+      if (clipped && rect.width <= 1 && rect.height <= 1) continue;
 
       const hiddenX = style.overflowX === "hidden" || style.overflowX === "clip";
       const hiddenY = style.overflowY === "hidden" || style.overflowY === "clip";
@@ -357,5 +372,57 @@ test.describe("program tab", () => {
   test("the periodization grid has a row per movement", async ({ page }) => {
     await openScreen(page, "program-periodization");
     expect(await page.getByTestId("periodization-row").count()).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * The nutrition screen is the calorie path table, per DESIGN.md Part 2, and
+ * the first thing the eye is supposed to hit is this week's row. These check
+ * the two things about it that a reader would notice immediately and that a
+ * unit test cannot see: that exactly one row is marked current, and that the
+ * meal column the client adds up really does add up on screen.
+ */
+test.describe("nutrition", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("marks exactly one week as the current one", async ({ page }) => {
+    await openScreen(page, "nutrition-path");
+    await expect(page.locator('[data-testid="path-row"][aria-current="true"]')).toHaveCount(1);
+  });
+
+  test("the meals on screen sum to the day target on screen", async ({ page }) => {
+    for (const screen of ["nutrition-meals", "nutrition-meals-rest"]) {
+      await openScreen(page, screen);
+
+      const mealCalories = await page
+        .locator('[data-testid="meal-row"] td:nth-child(2)')
+        .allInnerTexts();
+      // The footer row opens with a th, so the calories cell is the first td
+      // rather than the first child.
+      const total = await page
+        .locator('[data-testid="meal-total"] td')
+        .first()
+        .innerText();
+
+      const summed = mealCalories.reduce((sum, text) => sum + Number(text), 0);
+      expect(summed, screen).toBe(Number(total));
+      await expect(page.getByTestId("meal-total")).toContainText("Matches the target");
+    }
+  });
+
+  test("says which grocery lines moved with the week and which did not", async ({ page }) => {
+    await openScreen(page, "nutrition-grocery");
+    // Protein is held flat by the calorie path, so at least one line has to say
+    // so. A list where everything scaled would mean the path stopped holding it.
+    await expect(page.getByTestId("grocery-line").filter({ hasText: "Held flat" }).first()).toBeVisible();
+    await expect(page.getByTestId("grocery-line").filter({ hasText: "Scaled" }).first()).toBeVisible();
+  });
+
+  test("the empty states say what to do, not that there is nothing", async ({ page }) => {
+    await openScreen(page, "nutrition-path-empty");
+    await expect(page.getByTestId("path-empty")).toContainText("Generate one");
+
+    await openScreen(page, "nutrition-swaps-empty");
+    await expect(page.getByTestId("swaps-empty")).toContainText("Add one");
   });
 });
