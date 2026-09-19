@@ -86,6 +86,55 @@ MSG
   return 0
 }
 
+
+# One host everywhere. Needs nothing running, so it is checked on every run
+# rather than only when the stack happens to be up.
+check_single_host() {
+  local root="$1"
+  # One host everywhere. A browser treats localhost and 127.0.0.1 as different
+  # origins, so a session cookie set on one is never sent to the other. If
+  # site_url disagrees with the host the tests use, magic links land on the
+  # origin the session is not on and the client is bounced to the login page.
+  local host="${E2E_HOST:-127.0.0.1}"
+  local site_url
+  site_url="$(grep -E '^site_url' "$root/supabase/config.toml" | head -1 | cut -d'"' -f2)"
+
+  if [ -n "$site_url" ] && [[ "$site_url" != *"$host"* ]]; then
+    cat >&2 <<MSG
+
+Host mismatch.
+
+  supabase/config.toml site_url : $site_url
+  tests and E2E_HOST            : $host
+
+These must be the same host. A browser treats localhost and 127.0.0.1 as
+different origins, so a session set on one is invisible to the other and a
+magic link will land the client back on the login page.
+
+Change site_url in supabase/config.toml, then restart:
+
+  supabase stop && supabase start
+
+MSG
+    return 1
+  fi
+
+  if grep -q "localhost" <<<"$(grep -E '^site_url|^additional_redirect_urls' -A3 "$root/supabase/config.toml")"; then
+    cat >&2 <<MSG
+
+supabase/config.toml still allows a localhost redirect alongside 127.0.0.1.
+
+Two allowed origins is the bug, not the safety net: a magic link can land on
+whichever one GoTrue picks, and only one of them has the session.
+
+MSG
+    return 1
+  fi
+
+  echo "One host everywhere: ${E2E_HOST:-127.0.0.1}."
+  return 0
+}
+
 # Proves the keys are accepted rather than merely present. A pasted key from
 # the wrong project is non blank and still wrong, and this is the cheapest
 # place to find that out.

@@ -163,10 +163,12 @@ site_url = "http://127.0.0.1:3000"
 # and GoTrue refuses any redirect_to it does not recognise. The default here was
 # https on a port that only serves http, so every magic link would have been
 # rejected. Wildcards cover the callback path and its query string.
-additional_redirect_urls = [
-  "http://127.0.0.1:3000/**",
-  "http://localhost:3000/**",
-]
+# ONE host. localhost and 127.0.0.1 are different origins to a browser, so a
+# session cookie set on one is not sent to the other. Allowing both meant a
+# magic link could land on the host the session was not on, and the client
+# would be bounced back to the login page holding a valid session nobody could
+# see. site_url above uses 127.0.0.1, so this does too, and nothing else.
+additional_redirect_urls = ["http://127.0.0.1:3000/**"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.

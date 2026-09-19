@@ -80,6 +80,90 @@ Three guards, each shown to fail when the bug is put back:
 - `scripts/seed-auth.ts` lists the accounts back and signs the coach in after
   seeding. A seed that leaves GoTrue unable to read its own rows fails.
 
+## One host, or magic links do not work
+
+A browser treats `localhost` and `127.0.0.1` as different origins. It treats a
+bare domain and its `www` form as different origins too, and http and https as
+different origins. A session cookie set on one is never sent to the other.
+
+That is not a local quirk. It is the failure mode waiting on production: a
+client taps a link on their phone, the callback writes their session on one
+host, the next request goes to the other, no cookie arrives, and they land back
+on the login page. The session is real and correct and nobody can see it.
+
+Four values have to name the same origin for magic links to work at all:
+
+| Value | Where |
+| --- | --- |
+| `site_url` | `supabase/config.toml`, and the Auth settings on the cloud project |
+| `additional_redirect_urls` | same two places. One entry, not a list of hosts |
+| `emailRedirectTo` | `src/app/client/login/page.tsx`, which uses the browser's own origin |
+| The host clients actually reach | whatever Netlify serves |
+
+Two things enforce it rather than trusting it:
+
+- `scripts/e2e-preflight.sh` fails when `site_url` disagrees with the host the
+  tests use, and fails again if `additional_redirect_urls` allows a second
+  host. Both were verified by breaking them.
+- `tests/e2e/helpers.ts` checks the `redirect_to` on the emailed link against
+  the host the tests run on, and names both when they differ.
+
+The app no longer depends on getting this right. `src/app/auth/callback/route.ts`
+returns a **relative** Location, which the browser resolves against the origin
+it is already on, so the callback can never move a client to a different host
+than they arrived on. It used to build an absolute URL from
+`new URL(request.url).origin`, which is the host the server thinks it is
+serving, and that is what sent clients to `localhost` while their session sat
+on `127.0.0.1`.
+
+**Before ELVT OS PROD serves a client:** set `site_url` to the exact origin
+Netlify serves, including the scheme and any `www`, set
+`additional_redirect_urls` to that same origin only, and send yourself a magic
+link from a phone before sending one to a client.
+
+### Proving the host guards bite
+
+The preflight guards were verified by breaking them, and both failed:
+
+```
+$ sed -i 's|127.0.0.1:3000|localhost:3000|' supabase/config.toml   # site_url
+$ npm run e2e:preflight
+Host mismatch.
+  supabase/config.toml site_url : http://localhost:3000
+  tests and E2E_HOST            : 127.0.0.1
+exit 1
+
+$ # additional_redirect_urls given a second host
+$ npm run e2e:preflight
+supabase/config.toml still allows a localhost redirect alongside 127.0.0.1.
+exit 1
+```
+
+The two client magic link tests could not be broken on purpose here, because
+this container has no GoTrue. That control needs the real stack, and it is one
+command. It points the emailed link at a host the tests are not on, which is
+the original bug:
+
+```sh
+cp supabase/config.toml /tmp/config.toml.bak
+
+# site_url moves to localhost AND 127.0.0.1 leaves the allow list, so GoTrue
+# refuses the emailRedirectTo the login form sends and falls back to site_url.
+sed -i '' 's|^site_url = .*|site_url = "http://localhost:3000"|' supabase/config.toml
+sed -i '' 's|^additional_redirect_urls = .*|additional_redirect_urls = ["http://localhost:3000/**"]|' supabase/config.toml
+
+supabase stop && supabase start && npm run db:reset && npm run db:seed:auth
+npm run build && npm run test:e2e:only -- tests/e2e/auth.spec.ts
+
+# Expected: both client magic link tests fail with
+#   "The magic link points at a different host than the tests run on."
+# naming localhost and 127.0.0.1. Note that e2e:preflight is skipped on
+# purpose here, since it refuses to let the run start at all.
+
+cp /tmp/config.toml.bak supabase/config.toml
+supabase stop && supabase start && npm run db:reset && npm run db:seed:auth
+```
+
 ## The privilege question, which was a false lead
 
 The `REVOKE` in `20260917090700_rls.sql` was suspected of breaking GoTrue and

@@ -9,5 +9,6 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 . "$ROOT/scripts/lib/env.sh"
 
 require_env "$ROOT"
+check_single_host "$ROOT"
 verify_supabase_keys
 echo "Environment looks right."

@@ -5,6 +5,7 @@ import {
   CLIENT_NAME,
   COACH_EMAIL,
   clearMailbox,
+  followMagicLink,
   requestMagicLink,
   requireAuthStack,
   signInAsCoach,
@@ -61,21 +62,21 @@ test.describe("coach", () => {
  * actually works.
  */
 test.describe("client", () => {
-  test("signs in with a magic link and sees only their own program", async ({ page }) => {
+  test("signs in with a magic link and sees only their own program", async ({ page }, testInfo) => {
     await clearMailbox();
 
     const link = await requestMagicLink(page, CLIENT_EMAIL);
-    await page.goto(link);
+    await followMagicLink(page, link, testInfo);
 
     await expect(page).toHaveURL(/\/client\/today/);
     await expect(page.getByTestId("client-greeting")).toContainText(CLIENT_NAME);
   });
 
-  test("cannot reach the coach area", async ({ page }) => {
+  test("cannot reach the coach area", async ({ page }, testInfo) => {
     // A different client, so the two magic link requests cannot trip GoTrue's
     // per address frequency limit when these run in parallel.
     const link = await requestMagicLink(page, CLIENT_EMAIL_2);
-    await page.goto(link);
+    await followMagicLink(page, link, testInfo);
     await expect(page).toHaveURL(/\/client\/today/);
 
     await page.goto("/coach/queue");

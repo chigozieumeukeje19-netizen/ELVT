@@ -13,8 +13,18 @@ import { config as loadEnv } from "dotenv";
 loadEnv({ path: ".env.local", quiet: true });
 loadEnv({ path: ".env", quiet: true });
 
+/**
+ * ONE host, written once.
+ *
+ * localhost and 127.0.0.1 are different origins to a browser: a session cookie
+ * set on one is not sent to the other. Every host in the project has to agree
+ * or a magic link lands on the origin the session is not on. This is the value
+ * supabase/config.toml's site_url must also use, and the preflight checks that
+ * they match rather than trusting it.
+ */
+export const E2E_HOST = process.env.E2E_HOST ?? "127.0.0.1";
 const PORT = Number(process.env.PORT ?? 3000);
-const baseURL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${PORT}`;
+const baseURL = process.env.E2E_BASE_URL ?? `http://${E2E_HOST}:${PORT}`;
 
 /**
  * A second production server with ENABLE_DESIGN_PREVIEW deliberately unset, so
@@ -22,7 +32,7 @@ const baseURL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${PORT}`;
  * shape of every deployed environment.
  */
 const UNFLAGGED_PORT = Number(process.env.UNFLAGGED_PORT ?? 3101);
-export const UNFLAGGED_URL = `http://127.0.0.1:${UNFLAGGED_PORT}`;
+export const UNFLAGGED_URL = `http://${E2E_HOST}:${UNFLAGGED_PORT}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",

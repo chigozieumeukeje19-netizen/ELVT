@@ -130,6 +130,60 @@ async function mailpitReachable(): Promise<boolean> {
  * Waits for the newest message to an address and pulls the confirmation link
  * out of it.
  */
+/**
+ * The link GoTrue emails carries a redirect_to. If its host is not the host the
+ * tests run on, the session will be written on one origin and read on another,
+ * and the client ends up back at the login page holding a session nobody can
+ * see. Naming that here beats discovering it as a URL assertion three steps
+ * later.
+ */
+function assertRedirectHost(link: string): void {
+  const redirectTo = new URL(link).searchParams.get("redirect_to");
+
+  // Not a soft pass. The login form always sends emailRedirectTo, so a link
+  // without one means GoTrue rejected it and fell back to site_url, which is
+  // exactly the wrong host this check exists to catch.
+  if (!redirectTo) {
+    throw new Error(
+      [
+        "",
+        "The magic link carries no redirect_to.",
+        "",
+        "The login form always sends emailRedirectTo, so GoTrue refused it and",
+        "fell back to site_url. That is a host the tests are not on.",
+        "",
+        "Check additional_redirect_urls in supabase/config.toml allows the host",
+        "the tests use, then restart: supabase stop && supabase start",
+        "",
+      ].join("\n"),
+    );
+  }
+
+  const linkHost = new URL(redirectTo).hostname;
+  const expected = new URL(
+    process.env.E2E_BASE_URL ?? `http://${process.env.E2E_HOST ?? "127.0.0.1"}:3000`,
+  ).hostname;
+
+  if (linkHost !== expected) {
+    throw new Error(
+      [
+        "",
+        "The magic link points at a different host than the tests run on.",
+        "",
+        `  link redirect_to : ${linkHost}`,
+        `  tests run on     : ${expected}`,
+        "",
+        "A browser treats these as different origins, so the session cookie",
+        "set by the callback will not be sent on the next request.",
+        "",
+        "Check site_url and additional_redirect_urls in supabase/config.toml,",
+        "then restart: supabase stop && supabase start",
+        "",
+      ].join("\n"),
+    );
+  }
+}
+
 export async function magicLinkFromMailbox(
   email: string,
   timeoutMs = 15_000,
@@ -172,7 +226,9 @@ export async function magicLinkFromMailbox(
 
       if (link) {
         // Mailpit stores the HTML entity encoded form.
-        return link.replace(/&amp;/g, "&");
+        const decoded = link.replace(/&amp;/g, "&");
+        assertRedirectHost(decoded);
+        return decoded;
       }
 
       throw new Error(
@@ -243,4 +299,69 @@ export async function requestMagicLink(
   await failOnVisibleError(page, `Magic link for ${email}`);
 
   return magicLinkFromMailbox(email);
+}
+
+/**
+ * Follows a magic link and records what actually happened to the session.
+ *
+ * Attaches the redirect chain and whether the callback set a cookie, so a
+ * failure says where the session went rather than only where the browser ended
+ * up. This is the evidence that separates "the cookie was never written" from
+ * "the cookie was written on the wrong origin".
+ */
+export async function followMagicLink(
+  page: Page,
+  link: string,
+  testInfo?: { attach: (name: string, options: { body: string; contentType: string }) => Promise<void> },
+): Promise<void> {
+  const chain: string[] = [];
+
+  const record = (response: {
+    status: () => number;
+    url: () => string;
+    headers: () => Record<string, string>;
+  }) => {
+    const headers = response.headers();
+    const cookie = headers["set-cookie"];
+    chain.push(
+      [
+        `${response.status()} ${response.url()}`,
+        headers["location"] ? `  -> Location: ${headers["location"]}` : "",
+        cookie ? `  -> Set-Cookie on ${new URL(response.url()).hostname}: ${cookie.split(";")[0].split("=")[0]}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    );
+  };
+
+  page.on("response", record);
+  try {
+    await page.goto(link);
+    await page.waitForLoadState("domcontentloaded");
+  } finally {
+    page.off("response", record);
+  }
+
+  if (testInfo) {
+    await testInfo.attach("magic-link-chain.txt", {
+      body: chain.join("\n"),
+      contentType: "text/plain",
+    });
+  }
+
+  // Kept on the error path so a failing run prints it without needing the
+  // attachment.
+  if (!page.url().includes("/client/today")) {
+    throw new Error(
+      [
+        "",
+        `The magic link did not end on /client/today. It ended on: ${page.url()}`,
+        "",
+        "Redirect chain, with the origin each cookie was set on:",
+        "",
+        ...chain.map((line) => `  ${line.replace(/\n/g, "\n  ")}`),
+        "",
+      ].join("\n"),
+    );
+  }
 }
