@@ -23,7 +23,8 @@
     "e2e:preflight": "bash scripts/e2e-preflight.sh",
     "db:seed:auth": "tsx scripts/seed-auth.ts",
     "auth:smoke": "bash scripts/auth-smoke.sh",
-    "auth:diagnose": "bash scripts/auth-diagnose.sh"
+    "auth:diagnose": "bash scripts/auth-diagnose.sh",
+    "week:roll": "tsx scripts/week-roll.ts"
   },
   "repository": {
     "type": "git",
