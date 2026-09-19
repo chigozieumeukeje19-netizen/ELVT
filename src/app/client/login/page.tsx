@@ -1,20 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { describeLinkFailure } from "@/lib/auth/link-errors";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 
 /**
  * Clients sign in with a magic link. They are usually holding a phone in a gym,
  * so there is no password to remember and nothing to type twice.
+ *
+ * The confirmation screen keeps the form's error slot and a resend button on
+ * purpose. Before it did, a client whose link never arrived had no way back:
+ * the only control was the browser's back button, and a refused resend had
+ * nowhere to be shown. GoTrue rate limits per address, so the request right
+ * after a burst is exactly the one that gets refused, and it was refused
+ * silently.
  */
 export default function ClientLoginPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
   const [busy, setBusy] = useState(false);
 
-  async function onSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  // Counts the refusal down in front of the client rather than leaving them to
+  // guess. Ticking to zero re-enables the button by itself.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  const request = useCallback(async () => {
     setBusy(true);
     setError(null);
 
@@ -29,29 +45,59 @@ export default function ClientLoginPage() {
       },
     });
 
+    setBusy(false);
+
     if (linkError) {
-      // Say what actually went wrong. A rejected redirect, a rate limit and an
-      // unknown address all used to read the same, which made the failure
-      // impossible to act on.
-      setError(linkError.message);
-      setBusy(false);
+      const failure = describeLinkFailure(linkError.message);
+      setError(failure.message);
+      if (failure.retryAfterSeconds) setCooldown(failure.retryAfterSeconds);
       return;
     }
 
     setSent(true);
-    setBusy(false);
+  }, [email]);
+
+  async function onSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    if (cooldown > 0 || busy) return;
+    await request();
   }
+
+  const waiting = cooldown > 0;
+  const blocked = busy || waiting;
+
+  const errorSlot = error ? (
+    <p role="alert" data-testid="login-error" className="mt-4 text-flag">
+      {error}
+    </p>
+  ) : null;
 
   if (sent) {
     return (
       <main className="flex min-h-screen items-center justify-center px-5">
-        <div className="w-full max-w-[320px]">
+        <div className="w-full max-w-[320px]" data-testid="screen-ready">
           <p className="elvt-label">ELVT</p>
           <h1 className="mt-1 text-section">Check your email</h1>
           <p className="mt-2 text-txt-mute">
             A sign in link is on its way to {email}. It works once and lasts an
             hour.
           </p>
+
+          {errorSlot}
+
+          <button
+            className="elvt-button mt-5 w-full"
+            type="button"
+            data-testid="resend-link"
+            disabled={blocked}
+            onClick={() => void request()}
+          >
+            {waiting
+              ? `Send another in ${cooldown}s`
+              : busy
+                ? "Sending"
+                : "Send it again"}
+          </button>
         </div>
       </main>
     );
@@ -59,7 +105,11 @@ export default function ClientLoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-5">
-      <form onSubmit={onSubmit} className="w-full max-w-[320px]">
+      <form
+        onSubmit={onSubmit}
+        className="w-full max-w-[320px]"
+        data-testid="screen-ready"
+      >
         <p className="elvt-label">ELVT</p>
         <h1 className="mt-1 text-section">Sign in</h1>
         <p className="mt-2 text-txt-mute">
@@ -79,14 +129,10 @@ export default function ClientLoginPage() {
           />
         </label>
 
-        {error ? (
-          <p role="alert" className="mt-4 text-flag">
-            {error}
-          </p>
-        ) : null}
+        {errorSlot}
 
-        <button className="elvt-button mt-5 w-full" type="submit" disabled={busy}>
-          {busy ? "Sending" : "Send my link"}
+        <button className="elvt-button mt-5 w-full" type="submit" disabled={blocked}>
+          {waiting ? `Try again in ${cooldown}s` : busy ? "Sending" : "Send my link"}
         </button>
       </form>
     </main>
