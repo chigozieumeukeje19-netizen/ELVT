@@ -1,5 +1,5 @@
 import { humanize } from "@/components/Field";
-import { bandTextClass, bandLabel } from "@/lib/design/bands";
+import { adherence as adherenceFigure, figureClass } from "@/lib/design/semantic";
 import type { ReviewCard } from "@/lib/queue/review-card";
 
 /**
@@ -60,8 +60,14 @@ export function MondayCard({
           <p className="elvt-num text-hero" data-testid="card-score">
             {Math.round(card.score)}
           </p>
+          {/*
+            The weakest category, in words and without color. It used to be
+            amber, which spent a signal on a label and said the same thing
+            twice: the fraction for that category is already banded two inches
+            away. Color marks a figure with a threshold, never prose.
+          */}
           {card.focus ? (
-            <p className="elvt-label text-watch" data-testid="card-focus">
+            <p className="text-small text-txt-secondary" data-testid="card-focus">
               {humanize(card.focus)} is the weak one
             </p>
           ) : null}
@@ -90,8 +96,8 @@ export function MondayCard({
               <li key={line.key} data-testid="adherence-line" className="min-w-[8ch]">
                 <p className="elvt-label truncate">{line.label}</p>
                 <p
-                  className={`elvt-num text-emphasis ${bandTextClass(line.band)}`}
-                  title={bandLabel(line.band)}
+                  className={`elvt-num text-emphasis ${figureClass(adherenceFigure(line.done, line.planned).state)}`}
+                  title={adherenceFigure(line.done, line.planned).label}
                 >
                   {line.planned === 0 ? (
                     <span className="text-txt-dim">none planned</span>
@@ -145,7 +151,9 @@ export function MondayCard({
                 <p className="elvt-label">
                   {answer.question}
                   {answer.isSpine ? (
-                    <span className="ml-2 text-watch">The one that matters</span>
+                    // Weight, not color. This marks which question to read
+                    // first; it is not a state anybody acts on.
+                    <span className="ml-2 font-semibold text-txt">The one that matters</span>
                   ) : null}
                 </p>
                 <p className="mt-1 max-w-[60ch]">{answer.answer}</p>

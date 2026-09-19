@@ -59,7 +59,7 @@ export default async function ClientOverviewPage({
   const { data: client } = await supabase
     .from("clients")
     .select(
-      "id, slug, first_name, last_name, sex, dob, units, goal_statement, one_thing, coach_notes, flag_config, program_start_date, program_length_weeks, timezone",
+      "id, slug, first_name, last_name, sex, dob, units, primary_goal, goal_statement, one_thing, coach_notes, flag_config, program_start_date, program_length_weeks, timezone",
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -185,7 +185,10 @@ export default async function ClientOverviewPage({
           weightTile(
             latestWeight === null ? null : Number(latestWeight),
             latestWeight === null || weekAgo === null ? null : Number(latestWeight) - Number(weekAgo),
-            client.units ?? "imperial",
+            // The goal direction comes off the client's own goal type. Without
+            // one the figure takes no color at all.
+            client.primary_goal,
+            (client.units ?? "imperial") as "imperial" | "metric",
           ),
         )}
       />

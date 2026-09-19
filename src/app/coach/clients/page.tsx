@@ -10,7 +10,12 @@ import {
   type RosterCandidate,
   type Segment,
 } from "@/lib/roster/filters";
-import { countTouchpoints } from "@/lib/messages/touchpoints";
+import * as semantic from "@/lib/design/semantic";
+import {
+  countTouchpoints,
+  STRONG_WEEK,
+  WEEKLY_TARGET,
+} from "@/lib/messages/touchpoints";
 import { supabaseServer } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -46,7 +51,7 @@ export default async function ClientsPage({
   const { data } = await supabase
     .from("clients")
     .select(
-      "id, slug, first_name, last_name, primary_goal, program_length_weeks, program_start_date, status, last_activity_at, flag_config",
+      "id, slug, first_name, last_name, primary_goal, program_length_weeks, program_start_date, status, last_activity_at, flag_config, units",
     )
     .order("first_name");
 
@@ -79,6 +84,18 @@ export default async function ClientsPage({
       ? Math.max(1, Math.ceil((today - started.getTime()) / (7 * 864e5)))
       : null;
 
+    const contact = touchpointsFor(touchpoints ?? [], c.id);
+    const hasProgram = (programs ?? []).some((row) => row.client_id === c.id);
+    const lastActivityDays = c.last_activity_at
+      ? Math.floor((today - new Date(c.last_activity_at).getTime()) / 864e5)
+      : null;
+
+    // Contraindications on file. A count, never a signal: they shape the
+    // program and are not an open item to clear.
+    const limits = Object.values((c.flag_config ?? {}) as Record<string, unknown>).filter(
+      Boolean,
+    ).length;
+
     return {
       id: c.id,
       slug: c.slug,
@@ -87,18 +104,21 @@ export default async function ClientsPage({
       week,
       weeks: c.program_length_weeks,
       phase: c.status,
-      ...touchpointsFor(touchpoints ?? [], c.id),
-      // Block B computes these at week roll. Until then the column reads as
-      // no data rather than showing an invented number.
-      score: null,
-      adherence: null,
-      weightDelta: null,
-      lastActivityDays: c.last_activity_at
-        ? Math.floor((today - new Date(c.last_activity_at).getTime()) / 864e5)
-        : null,
-      flags: Object.values((c.flag_config ?? {}) as Record<string, unknown>).filter(
-        Boolean,
-      ).length,
+
+      // Every figure goes through the adherence semantic. Block B computes the
+      // score and the adherence at week roll, so until the first Sunday they
+      // are absent, which says what is missing and when rather than reading as
+      // a zero the client earned.
+      score: semantic.score(null),
+      adherence: semantic.percentage(null, "Adherence is computed when the week rolls on Sunday"),
+      weight: semantic.weight(null, null, semantic.goalDirectionFor(c.primary_goal), c.units ?? "imperial"),
+      lastSeen: semantic.count(lastActivityDays, "Nothing logged yet", "d"),
+      lastHeard: semantic.touchpoints(contact.touchpoints ?? 0, contact.daysSinceTouch, {
+        target: WEEKLY_TARGET,
+        strong: STRONG_WEEK,
+        hasProgram,
+      }),
+      limits: semantic.count(limits, "No contraindications on file"),
     };
   });
 

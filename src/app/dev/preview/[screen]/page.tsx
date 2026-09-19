@@ -859,7 +859,7 @@ function ClientOverviewScreen({ empty }: { empty?: boolean }) {
           focus={empty ? null : "steps"}
           tiles={tilesFrom(
             empty ? PREVIEW_TILES_EMPTY : PREVIEW_TILES_ADHERENCE,
-            weightTile(empty ? null : 174.6, empty ? null : -0.8, PREVIEW_CLIENT.units),
+            weightTile(empty ? null : 174.6, empty ? null : -0.8, "recomp", "imperial"),
           )}
         />
 

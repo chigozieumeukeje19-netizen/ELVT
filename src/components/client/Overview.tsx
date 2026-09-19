@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { humanize } from "@/components/Field";
-import { bandLabel, bandTextClass, bandFor } from "@/lib/design/bands";
+import * as semantic from "@/lib/design/semantic";
+import { figureClass, type Figure } from "@/lib/design/semantic";
 import {
   UPCOMING_LABELS,
   type ActiveFlag,
@@ -30,43 +31,39 @@ const NO_DATA = "·";
 export type OverviewTile = {
   key: string;
   label: string;
-  value: string;
-  /** Read beside the value, never instead of it. */
-  note: string | null;
-  band: "ok" | "watch" | "flag" | null;
+  figure: Figure;
 };
 
-/** The weight row, which is not an adherence fraction and bands differently. */
+/**
+ * The weight row.
+ *
+ * Neutral unless the client's blueprint states a goal direction. It used to be
+ * amber whenever the number stood still, for every client, including the ones
+ * whose goal is to hold it. Standing still is that client hitting the target.
+ */
 export function weightTile(
   latest: number | null,
   vsLastWeek: number | null,
-  units: string,
+  goalType: string | null,
+  units: "imperial" | "metric",
 ): OverviewTile {
   return {
     key: "weight",
     label: "Weight",
-    value: latest === null ? NO_DATA : `${latest.toFixed(1)}`,
-    note:
-      latest === null
-        ? "Nothing logged"
-        : vsLastWeek === null
-          ? units === "metric" ? "kg" : "lb"
-          : `${vsLastWeek > 0 ? "up" : vsLastWeek < 0 ? "down" : "level"} ${Math.abs(vsLastWeek).toFixed(1)} on last week`,
-    // Direction is not good or bad without knowing the goal, so this row is
-    // neutral. The Progress tab is where the trend is read.
-    band: null,
+    figure: semantic.weight(latest, vsLastWeek, semantic.goalDirectionFor(goalType), units),
   };
 }
 
-export function tilesFrom(adherence: AdherenceLine[], weight: OverviewTile): OverviewTile[] {
+export function tilesFrom(
+  adherence: { key: string; label: string; done: number; planned: number }[],
+  weight: OverviewTile,
+): OverviewTile[] {
   return [
     weight,
     ...adherence.map((line) => ({
       key: line.key,
       label: line.label,
-      value: line.planned === 0 ? NO_DATA : `${line.done} of ${line.planned}`,
-      note: line.planned === 0 ? "Nothing planned" : line.percent === null ? null : `${Math.round(line.percent)}%`,
-      band: line.band,
+      figure: semantic.adherence(line.done, line.planned),
     })),
   ];
 }
@@ -80,46 +77,48 @@ export function ScoreAndTiles({
   focus: string | null;
   tiles: OverviewTile[];
 }) {
-  const band = bandFor(score);
+  const figure = semantic.score(score);
 
   return (
-    <section className="mb-5" data-testid="overview-numbers">
+    <section className="mb-6" data-testid="overview-numbers">
       <div className="flex items-baseline gap-3">
         <p
-          className={`elvt-num text-hero ${bandTextClass(band)}`}
+          className={`elvt-num text-display ${figureClass(figure.state)}`}
           data-testid="elvt-score"
-          data-band={band ?? "none"}
-          title={bandLabel(band)}
+          data-state={figure.state}
+          title={figure.waitingFor ?? figure.label}
         >
-          {score === null ? NO_DATA : Math.round(score)}
+          {figure.display}
         </p>
         <div>
-          <p className="elvt-label">ELVT score</p>
-          <p className="text-txt-mute">
-            {score === null
-              ? "No week closed yet"
-              : focus
-                ? `${bandLabel(band)}. ${humanize(focus)} is the weakest part.`
-                : bandLabel(band)}
+          <p className="text-caption text-txt-secondary">ELVT score</p>
+          <p className="text-small text-txt-secondary">
+            {figure.waitingFor ??
+              (focus ? `${figure.label}. ${humanize(focus)} is the weakest part.` : figure.label)}
           </p>
         </div>
       </div>
 
-      <div className="mt-3">
+      <div className="mt-4">
         {tiles.map((tile) => (
           <div
             key={tile.key}
             data-testid="overview-tile"
             data-tile={tile.key}
-            data-band={tile.band ?? "none"}
+            data-state={tile.figure.state}
             className="flex min-h-[44px] items-baseline justify-between gap-4 py-2"
           >
-            <span className="elvt-label shrink-0">{tile.label}</span>
+            <span className="text-caption shrink-0 text-txt-secondary">{tile.label}</span>
             <span className="min-w-0 text-right">
-              <span className={`elvt-num ${tile.band ? bandTextClass(tile.band) : "text-txt"}`}>
-                {tile.value}
+              <span
+                className={`elvt-num ${figureClass(tile.figure.state)}`}
+                title={tile.figure.waitingFor ?? tile.figure.label}
+              >
+                {tile.figure.display}
               </span>
-              {tile.note ? <span className="ml-2 text-txt-mute">{tile.note}</span> : null}
+              <span className="ml-2 text-small text-txt-tertiary">
+                {tile.figure.waitingFor ?? tile.figure.label}
+              </span>
             </span>
           </div>
         ))}
