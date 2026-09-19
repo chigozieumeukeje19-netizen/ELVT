@@ -14,6 +14,10 @@ PORT="${1:-3000}"
 # every assertion in the suite into an error page. Refuse to start instead.
 require_env "$ROOT"
 
+# Checked here as well as in the preflight, because this is the process that
+# actually binds and something can take the port in between.
+require_free_ports "$PORT"
+
 if [ ! -f "$ROOT/.next/BUILD_ID" ]; then
   cat >&2 <<'MSG'
 

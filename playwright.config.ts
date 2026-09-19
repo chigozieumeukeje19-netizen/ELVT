@@ -109,7 +109,10 @@ export default defineConfig({
           // raw Next error inside a webServer timeout.
           command: `bash scripts/e2e-server.sh ${PORT}`,
           url: baseURL,
-          reuseExistingServer: true,
+          // Never reuse. The preflight refuses to start when anything is on
+          // these ports, because the thing that was on 3000 was a dev server
+          // serving different code and the run silently used it.
+          reuseExistingServer: false,
           timeout: 120_000,
           env: {
             // The design preview routes render the real components against the
@@ -123,7 +126,7 @@ export default defineConfig({
           // environment so the gate is tested, not trusted.
           command: `bash scripts/e2e-server.sh ${UNFLAGGED_PORT}`,
           url: `${UNFLAGGED_URL}/login`,
-          reuseExistingServer: true,
+          reuseExistingServer: false,
           timeout: 120_000,
         },
       ],

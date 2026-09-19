@@ -217,3 +217,63 @@ MSG
   echo "Supabase reachable, both keys accepted, Mailpit answering."
   return 0
 }
+
+# ---------------------------------------------------------------------------
+# Ports.
+#
+# A dev server left running on 3000 defeated a whole end to end run: Playwright
+# surfaced it as EADDRINUSE inside a webServer stack trace, and the only line
+# anyone read was "no auth tests were collected at all", which says nothing
+# about what to do.
+#
+# A run that cannot start should say why in one line.
+# ---------------------------------------------------------------------------
+
+# Who is listening, or nothing. Tries the tools in the order a machine is
+# likely to have them, so this works on a Mac and in a container.
+port_holder() {
+  local port="$1"
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -ti:"$port" -sTCP:LISTEN 2>/dev/null | head -1
+    return 0
+  fi
+  if command -v ss >/dev/null 2>&1; then
+    ss -ltnp "sport = :$port" 2>/dev/null | grep -o 'pid=[0-9]*' | head -1 | cut -d= -f2
+    return 0
+  fi
+  # No tool to name the process, so answer the question that actually matters:
+  # is anything accepting a connection there.
+  if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
+    exec 3>&- 2>/dev/null || true
+    echo "unknown"
+  fi
+  return 0
+}
+
+# Refuses to start when a port the run needs is taken. Named ports, one line
+# each, and the command that clears it.
+require_free_ports() {
+  local port taken=()
+  for port in "$@"; do
+    if [ -n "$(port_holder "$port")" ]; then
+      taken+=("$port")
+    fi
+  done
+
+  if [ ${#taken[@]} -eq 0 ]; then
+    echo "Ports free: $*."
+    return 0
+  fi
+
+  {
+    echo
+    for port in "${taken[@]}"; do
+      echo "Something is already on $port. Kill it with: lsof -ti:$port | xargs kill -9"
+    done
+    echo
+    echo "The end to end run starts its own servers and will not reuse one it"
+    echo "did not build. A dev server on 3000 serves different code."
+    echo
+  } >&2
+  return 1
+}
