@@ -90,6 +90,9 @@ const SCREENS = [
   "photos-empty",
   "photos-compare",
   "photos-compare-unavailable",
+  "roster-filters",
+  "roster-filters-active",
+  "roster-bulk",
 ] as const;
 
 /**
@@ -1115,5 +1118,72 @@ test.describe("photos", () => {
   test("the empty state says when the first set arrives", async ({ page }) => {
     await openScreen(page, "photos-empty");
     await expect(page.getByTestId("photos-empty")).toContainText("Monday");
+  });
+});
+
+/**
+ * Roster filters and bulk actions.
+ *
+ * The two things worth asserting are the ones that make a coach stop trusting
+ * a control: a count that promises more than the click delivers, and a button
+ * that says it will change six things when it will change four.
+ */
+test.describe("roster filters", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("shows all five with their counts", async ({ page }) => {
+    await openScreen(page, "roster-filters");
+    await expect(page.getByTestId("filter")).toHaveCount(5);
+    for (const text of await page.getByTestId("filter").allInnerTexts()) {
+      expect(text).toMatch(/\d/);
+    }
+  });
+
+  test("keeps a filter that matches nobody on screen, saying zero", async ({ page }) => {
+    // A coach looking for "race within 6 weeks" needs to see that nobody has
+    // one, not to wonder where the button went.
+    await openScreen(page, "roster-filters-active");
+    await expect(page.getByTestId("filter")).toHaveCount(5);
+    await expect(page.locator('[data-testid="filter"][aria-disabled="true"]').first()).toBeVisible();
+  });
+
+  test("says what is being filtered out", async ({ page }) => {
+    await openScreen(page, "roster-filters");
+    await expect(page.getByTestId("filter-summary")).toContainText("8 clients");
+
+    await openScreen(page, "roster-filters-active");
+    await expect(page.getByTestId("filter-summary")).toContainText("filtered");
+  });
+
+  test("marks the active filter", async ({ page }) => {
+    await openScreen(page, "roster-filters-active");
+    await expect(page.locator('[data-testid="filter"][data-active="true"]')).toHaveCount(1);
+  });
+
+  test("offers the saved segments", async ({ page }) => {
+    await openScreen(page, "roster-filters");
+    await expect(page.getByTestId("segments")).toContainText("Slipping");
+  });
+
+  test("the bulk bar appears only once something is selected", async ({ page }) => {
+    await openScreen(page, "roster-filters");
+    expect(await page.getByTestId("bulk-bar").count()).toBe(0);
+
+    await openScreen(page, "roster-bulk");
+    await expect(page.getByTestId("bulk-bar")).toBeVisible();
+    await expect(page.getByTestId("bulk-selected")).toContainText("3 selected");
+  });
+
+  test("every bulk button says how many it would actually change", async ({ page }) => {
+    // "Pause 6" when two are already paused is a button that lies about what it
+    // is about to do.
+    await openScreen(page, "roster-bulk");
+    const buttons = page.getByTestId("bulk-action");
+    expect(await buttons.count()).toBeGreaterThan(1);
+    for (const affects of await buttons.evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("data-affects")),
+    )) {
+      expect(Number(affects)).toBeGreaterThan(0);
+    }
   });
 });

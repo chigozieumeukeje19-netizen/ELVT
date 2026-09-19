@@ -18,6 +18,18 @@ import {
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
 import { ComposerPreview } from "@/components/messages/ComposerPreview";
+import { FilterBar } from "@/components/roster/FilterBar";
+import { BulkBarPreview } from "@/components/roster/BulkBarPreview";
+import {
+  PREVIEW_BULK_ACTIONS,
+  PREVIEW_BULK_AFFECTS,
+  PREVIEW_BULK_SELECTED,
+  PREVIEW_CANDIDATES,
+  PREVIEW_COUNTS,
+  PREVIEW_COUNTS_FILTERED,
+  PREVIEW_FILTERED,
+  PREVIEW_SEGMENTS,
+} from "@/lib/design/preview-roster-filters";
 import { PhotoCompare } from "@/components/photos/PhotoCompare";
 import { PhotoGrid } from "@/components/photos/PhotoGrid";
 import {
@@ -180,6 +192,9 @@ const SCREENS = [
   "photos-empty",
   "photos-compare",
   "photos-compare-unavailable",
+  "roster-filters",
+  "roster-filters-active",
+  "roster-bulk",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -768,6 +783,49 @@ function PhotoCompareScreen({ weeks }: { weeks: typeof PREVIEW_PHOTO_WEEKS }) {
   );
 }
 
+function RosterFilterScreen({
+  active,
+  counts,
+  showing,
+  bulk,
+}: {
+  active: ("low_adherence" | "needs_attention")[];
+  counts: typeof PREVIEW_COUNTS;
+  showing: number;
+  bulk?: boolean;
+}) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <p className="elvt-label">Roster</p>
+        <h1 className="mt-1 text-section">Who is drifting</h1>
+
+        <div className="mt-4">
+          <FilterBar
+            active={active}
+            counts={counts}
+            segments={PREVIEW_SEGMENTS}
+            hrefFor={(key) => `/dev/preview/roster-filters?f=${key}`}
+            segmentHrefFor={(segment) => `/dev/preview/roster-filters?s=${segment.id}`}
+            total={PREVIEW_CANDIDATES.length}
+            showing={showing}
+          />
+
+          {bulk ? (
+            <BulkBarPreview
+              selected={PREVIEW_BULK_SELECTED}
+              actions={PREVIEW_BULK_ACTIONS}
+              affects={PREVIEW_BULK_AFFECTS}
+            />
+          ) : null}
+
+          <RosterTable rows={SEED_ROSTER.slice(0, showing)} />
+        </div>
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -911,5 +969,30 @@ export default async function PreviewPage({
       return <PhotoCompareScreen weeks={PREVIEW_PHOTO_WEEKS} />;
     case "photos-compare-unavailable":
       return <PhotoCompareScreen weeks={PREVIEW_PHOTO_ONE_WEEK} />;
+    case "roster-filters":
+      return (
+        <RosterFilterScreen
+          active={[]}
+          counts={PREVIEW_COUNTS}
+          showing={PREVIEW_CANDIDATES.length}
+        />
+      );
+    case "roster-filters-active":
+      return (
+        <RosterFilterScreen
+          active={["low_adherence"]}
+          counts={PREVIEW_COUNTS_FILTERED}
+          showing={PREVIEW_FILTERED.length}
+        />
+      );
+    case "roster-bulk":
+      return (
+        <RosterFilterScreen
+          active={[]}
+          counts={PREVIEW_COUNTS}
+          showing={PREVIEW_CANDIDATES.length}
+          bulk
+        />
+      );
   }
 }

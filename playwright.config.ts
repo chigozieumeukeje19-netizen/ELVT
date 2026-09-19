@@ -1,3 +1,5 @@
+import { existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 import { config as loadEnv } from "dotenv";
 
@@ -34,6 +36,36 @@ const baseURL = process.env.E2E_BASE_URL ?? `http://${E2E_HOST}:${PORT}`;
 const UNFLAGGED_PORT = Number(process.env.UNFLAGGED_PORT ?? 3101);
 export const UNFLAGGED_URL = `http://${E2E_HOST}:${UNFLAGGED_PORT}`;
 
+/**
+ * The Chromium to launch.
+ *
+ * The browsers directory holds one revision; this Playwright looks for another
+ * and fails with "Executable doesn't exist" naming a revision nobody can
+ * fetch here. So: an explicit path wins, otherwise the newest chromium-<rev>
+ * under PLAYWRIGHT_BROWSERS_PATH.
+ *
+ * Deliberately not a silent fallback. When nothing is installed this returns
+ * undefined and Playwright fails with its own message, which is the right
+ * outcome: a suite that cannot open a browser is a failure, never a skip.
+ */
+function installedChromium(): string | undefined {
+  if (process.env.PLAYWRIGHT_CHROMIUM_PATH) return process.env.PLAYWRIGHT_CHROMIUM_PATH;
+
+  const root = process.env.PLAYWRIGHT_BROWSERS_PATH;
+  if (!root || !existsSync(root)) return undefined;
+
+  const revisions = readdirSync(root)
+    .filter((name) => /^chromium-\d+$/.test(name))
+    .sort((a, b) => Number(b.split("-")[1]) - Number(a.split("-")[1]));
+
+  for (const revision of revisions) {
+    const binary = join(root, revision, "chrome-linux", "chrome");
+    if (existsSync(binary)) return binary;
+  }
+
+  return undefined;
+}
+
 export default defineConfig({
   testDir: "./tests/e2e",
 
@@ -61,11 +93,13 @@ export default defineConfig({
     trace: "retain-on-failure",
     navigationTimeout: 10_000,
     actionTimeout: 10_000,
-    // Some CI images ship a Chromium that does not match the version this
-    // Playwright would download. Point at it rather than fetching another.
-    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH
-      ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
-      : {},
+    // Some images ship a Chromium revision that does not match the one this
+    // Playwright expects, and the download it would otherwise reach for is not
+    // available. Point at what is actually installed.
+    launchOptions: (() => {
+      const path = installedChromium();
+      return path ? { executablePath: path } : {};
+    })(),
   },
   webServer: process.env.E2E_BASE_URL
     ? undefined
