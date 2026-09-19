@@ -95,9 +95,15 @@ verify_supabase_keys() {
   if ! curl -fsS --max-time 3 "$url/auth/v1/health" >/dev/null 2>&1; then
     cat >&2 <<MSG
 
-Note: Supabase is not reachable at $url.
-The eight auth tests will skip. Everything else runs.
-Start it with: supabase start
+Supabase is not reachable at $url.
+
+The eight auth tests are the only ones that sign anyone in. Without the stack
+they FAIL rather than skip, because a skip there reads like a pass. Start it:
+
+  supabase start
+  supabase db reset
+
+They skip only in CI, which has no stack.
 
 MSG
     return 0
@@ -145,6 +151,20 @@ MSG
     return 1
   fi
 
-  echo "Supabase reachable, both keys accepted."
+  local mailbox="${MAILBOX_URL:-http://127.0.0.1:54324}"
+  if ! curl -fsS --max-time 3 "$mailbox/api/v1/messages?limit=1" >/dev/null 2>&1; then
+    cat >&2 <<MSG
+
+Mailpit is not answering at $mailbox.
+
+The client magic link test reads the link from there, because there is no SMTP
+configured locally. Check the inbucket port with `supabase status`, or set
+MAILBOX_URL.
+
+MSG
+    return 1
+  fi
+
+  echo "Supabase reachable, both keys accepted, Mailpit answering."
   return 0
 }

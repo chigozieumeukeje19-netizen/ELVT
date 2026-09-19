@@ -1,22 +1,30 @@
+import { test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 
 export const COACH_EMAIL = process.env.SEED_COACH_EMAIL ?? "coach@elvt.test";
 export const COACH_PASSWORD = process.env.SEED_COACH_PASSWORD ?? "ElvtCoach2026";
 
-/** The first of the eight synthetic clients from the seed. */
-export const CLIENT_EMAIL = process.env.SEED_CLIENT_EMAIL ?? "nadia.brookes@elvt.test";
-export const CLIENT_PASSWORD = process.env.SEED_CLIENT_PASSWORD ?? "ElvtClient2026";
+/** Two of the eight synthetic clients from the seed. */
+export const CLIENT_EMAIL =
+  process.env.SEED_CLIENT_EMAIL ?? "nadia.brookes@elvt.test";
+export const CLIENT_NAME = "Nadia";
 
 /**
- * These tests need the Supabase stack, not just the database: signing in goes
- * through Auth.
- *
- * UNTIL THIS RUNS GREEN ON A MACHINE WITH THE STACK UP, THE LOGIN FLOW IS
- * UNVERIFIED. Nothing downstream may assume a coach or a client can actually
- * sign in. Skipped is not passed.
+ * A second client, so two tests can each request a magic link without tripping
+ * GoTrue's per address frequency limit when they run in parallel.
  */
-export async function supabaseIsUp(): Promise<boolean> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+export const CLIENT_EMAIL_2 = "theo.vance@elvt.test";
+
+/** Supabase CLI serves Mailpit here. No mail leaves the machine. */
+export const MAILBOX_URL = process.env.MAILBOX_URL ?? "http://127.0.0.1:54324";
+
+function supabaseUrl(): string {
+  return (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").replace(/\/$/, "");
+}
+
+/** Is GoTrue answering? */
+export async function authStackIsUp(): Promise<boolean> {
+  const url = supabaseUrl();
   if (!url) return false;
   try {
     const res = await fetch(`${url}/auth/v1/health`, {
@@ -28,13 +36,6 @@ export async function supabaseIsUp(): Promise<boolean> {
   }
 }
 
-/**
- * Supabase running but the keys not filled in is its own failure, and it looks
- * nothing like the cause. Without this the suite reports "Invalid API key" or
- * an unexplained redirect, and the real answer is a blank line in .env.local.
- *
- * Returns the missing variable names, empty when everything is present.
- */
 export function missingAuthEnv(): string[] {
   return [
     "NEXT_PUBLIC_SUPABASE_URL",
@@ -45,49 +46,144 @@ export function missingAuthEnv(): string[] {
   ].filter((name) => !process.env[name]?.trim());
 }
 
-export const ENV_HELP = (missing: string[]) =>
-  [
+/**
+ * The gate on every auth test.
+ *
+ * Skipping is allowed in exactly one situation: CI, which has no Supabase. On a
+ * developer machine a missing stack is a failure, because these are the only
+ * tests that prove anyone can sign in, and a skip there reads like a pass.
+ */
+export async function requireAuthStack(): Promise<void> {
+  const missing = missingAuthEnv();
+  if (missing.length > 0) {
+    throw new Error(
+      [
+        "",
+        "The auth tests cannot run. These are not set in the test process:",
+        "",
+        ...missing.map((name) => `  ${name}`),
+        "",
+        "playwright.config.ts loads .env.local. If that file has them and this",
+        "still fails, the names do not match. Compare against .env.example.",
+        "",
+      ].join("\n"),
+    );
+  }
+
+  if (await authStackIsUp()) return;
+
+  const reason = [
     "",
-    "Supabase is running, but these are not set:",
+    `Supabase Auth did not answer at ${supabaseUrl()}/auth/v1/health.`,
     "",
-    ...missing.map((name) => `  ${name}`),
+    "These eight tests are the only ones that sign anyone in, so the login",
+    "flow is unproved without them. Start the stack:",
     "",
-    "The auth tests sign in for real, so they need the project keys. Print",
-    "them with:",
-    "",
-    "  supabase status",
-    "",
-    "and put them in .env.local. Start from .env.example, which lists every",
-    "one and says how to generate the two secrets of your own.",
+    "  supabase start",
+    "  supabase db reset",
     "",
   ].join("\n");
 
+  // CI has no stack and is not expected to. Everywhere else this is a failure.
+  test.skip(Boolean(process.env.CI), reason);
+  throw new Error(reason);
+}
+
 export function adminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  return createClient(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } },
+  );
 }
 
-/**
- * Generates a real magic link the way Supabase would email it, so the client
- * path is tested end to end without waiting on SMTP.
- */
-export async function magicLinkFor(email: string): Promise<string> {
-  const { data, error } = await adminClient().auth.admin.generateLink({
-    type: "magiclink",
-    email,
-  });
-  if (error || !data?.properties?.action_link) {
-    throw new Error(`Could not generate a magic link for ${email}: ${error?.message}`);
+// ---------------------------------------------------------------------------
+// Mailpit
+//
+// There is no SMTP locally: config.toml leaves [auth.email.smtp] commented out,
+// so GoTrue hands every message to Mailpit instead. Reading the link from there
+// is the only way to test what a client actually does, because the link that
+// arrives by email is the one carrying the PKCE code the callback route needs.
+// ---------------------------------------------------------------------------
+
+type MailpitMessage = { ID: string; To: { Address: string }[]; Created: string };
+
+export async function clearMailbox(): Promise<void> {
+  await fetch(`${MAILBOX_URL}/api/v1/messages`, {
+    method: "DELETE",
+    signal: AbortSignal.timeout(5000),
+  }).catch(() => undefined);
+}
+
+async function mailpitReachable(): Promise<boolean> {
+  try {
+    const res = await fetch(`${MAILBOX_URL}/api/v1/messages?limit=1`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    return res.ok;
+  } catch {
+    return false;
   }
-  return data.properties.action_link;
 }
 
 /**
- * One skip reason, used by every spec that needs Auth, so the report says the
- * same loud thing everywhere rather than eight slightly different sentences.
+ * Waits for the newest message to an address and pulls the confirmation link
+ * out of it.
  */
-export const SKIP_REASON =
-  "UNVERIFIED: Supabase Auth is not reachable, so the login flow has not been proved. Run npm run db:start, then npm run test:e2e.";
+export async function magicLinkFromMailbox(
+  email: string,
+  timeoutMs = 15_000,
+): Promise<string> {
+  if (!(await mailpitReachable())) {
+    throw new Error(
+      [
+        "",
+        `Mailpit did not answer at ${MAILBOX_URL}.`,
+        "",
+        "Local magic links go there because there is no SMTP configured.",
+        "Check the inbucket port in supabase/config.toml against",
+        "`supabase status`, or set MAILBOX_URL.",
+        "",
+      ].join("\n"),
+    );
+  }
+
+  const deadline = Date.now() + timeoutMs;
+  const wanted = email.toLowerCase();
+
+  while (Date.now() < deadline) {
+    const res = await fetch(`${MAILBOX_URL}/api/v1/messages?limit=50`);
+    const body = (await res.json()) as { messages?: MailpitMessage[] };
+
+    const match = (body.messages ?? [])
+      .filter((m) =>
+        (m.To ?? []).some((to) => to.Address?.toLowerCase() === wanted),
+      )
+      .sort((a, b) => b.Created.localeCompare(a.Created))[0];
+
+    if (match) {
+      const detail = await fetch(`${MAILBOX_URL}/api/v1/message/${match.ID}`);
+      const message = (await detail.json()) as { Text?: string; HTML?: string };
+      const content = `${message.Text ?? ""}\n${message.HTML ?? ""}`;
+
+      const link = content.match(
+        /https?:\/\/[^\s"'<>]*\/auth\/v1\/verify[^\s"'<>]*/,
+      )?.[0];
+
+      if (link) {
+        // Mailpit stores the HTML entity encoded form.
+        return link.replace(/&amp;/g, "&");
+      }
+
+      throw new Error(
+        `Found a message for ${email} but no verify link in it:\n${content.slice(0, 500)}`,
+      );
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 400));
+  }
+
+  throw new Error(
+    `No email arrived for ${email} at ${MAILBOX_URL} within ${timeoutMs}ms.`,
+  );
+}

@@ -1,17 +1,8 @@
 import { expect, test } from "@playwright/test";
-import {
-  CLIENT_EMAIL,
-  ENV_HELP,
-  SKIP_REASON,
-  missingAuthEnv,
-  supabaseIsUp,
-} from "./helpers";
+import { CLIENT_EMAIL, requireAuthStack } from "./helpers";
 
 test.beforeAll(async () => {
-  test.skip(!(await supabaseIsUp()), SKIP_REASON);
-
-  const missing = missingAuthEnv();
-  if (missing.length > 0) throw new Error(ENV_HELP(missing));
+  await requireAuthStack();
 });
 
 const KEY = process.env.PORTAL_API_KEY ?? "";

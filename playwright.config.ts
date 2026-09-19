@@ -1,4 +1,17 @@
 import { defineConfig, devices } from "@playwright/test";
+import { config as loadEnv } from "dotenv";
+
+/**
+ * Playwright does not read .env.local. Next does, for the server it starts, and
+ * the preflight script sources it itself, so both of those worked while the
+ * test process saw none of it.
+ *
+ * That is why the auth tests skipped: supabaseIsUp() reads
+ * NEXT_PUBLIC_SUPABASE_URL from process.env, found undefined, and returned
+ * false before it ever probed GoTrue.
+ */
+loadEnv({ path: ".env.local", quiet: true });
+loadEnv({ path: ".env", quiet: true });
 
 const PORT = Number(process.env.PORT ?? 3000);
 const baseURL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${PORT}`;
@@ -29,7 +42,9 @@ export default defineConfig({
   // something systemic is wrong, such as a server that will not serve.
   maxFailures: process.env.CI ? 0 : 10,
 
-  reporter: [["list"]],
+  // The list reporter, plus one that says out loud how many auth tests ran.
+  // A skipped suite buried in a count reads like a pass.
+  reporter: [["list"], ["./tests/e2e/auth-coverage-reporter.ts"]],
   use: {
     ...devices["Desktop Chrome"],
     baseURL,
