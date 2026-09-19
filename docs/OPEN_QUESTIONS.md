@@ -68,3 +68,27 @@ Part 8 lists ExerciseDB, MuscleWiki and ExerciseAnimatic. All are paid, and
 standing rule 12 is no paid APIs, so nothing has been signed up for. The schema
 keeps `media.gif_url` and `media.video_url` empty and renders from
 `media.youtube_id`, so the choice can be made later without a migration.
+
+---
+
+## 4. The intake wording came from the spec, not from the blueprint document
+
+**Item:** 10
+**Status:** built, but from a derived source
+**Needs:** Darren to read it, or to send the original
+
+Item 10 asks for "the intake form from sections 1 to 10 of the blueprint
+document". That document was not supplied to this build, so the ten sections in
+`src/lib/questionnaire/intake.ts` are derived from Part 4.6 and Part 5 of the
+portal spec, which between them enumerate every field the Blueprint has to
+carry.
+
+Every question was written to be read by something: the template applier reads
+the injury flags, the calorie path reads the nutrition structure, the question
+bank filters on the goal type, the trigger presets read the step goal and the
+failure mode. A test asserts every question names at least one variable it can
+change, so a question nothing reads cannot be added quietly.
+
+If the original document words things differently, `intake.ts` is the one file
+to change. The keys are what everything downstream reads, so changing a key is
+the change to be careful with; changing the words in front of it is free.

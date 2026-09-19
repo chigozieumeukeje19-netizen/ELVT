@@ -49,6 +49,12 @@ const SCREENS = [
   "nutrition-grocery",
   "nutrition-swaps",
   "nutrition-swaps-empty",
+  "intake-goals",
+  "intake-medical",
+  "intake-medical-errors",
+  "intake-running-hidden",
+  "builder-questionnaire",
+  "builder-questionnaire-empty",
 ] as const;
 
 /**
@@ -424,5 +430,85 @@ test.describe("nutrition", () => {
 
     await openScreen(page, "nutrition-swaps-empty");
     await expect(page.getByTestId("swaps-empty")).toContainText("Add one");
+  });
+});
+
+/**
+ * The intake is the only screen in this product a client fills in on a phone
+ * while deciding whether to work with Darren, so the 390px run matters more
+ * here than anywhere else. These check the things a unit test cannot see: that
+ * every tap target is big enough to hit, that the running section really does
+ * collapse, and that a section full of errors still reads.
+ */
+test.describe("intake on a phone", () => {
+  test.use({ viewport: PHONE });
+
+  test("every tap target is at least 44px tall", async ({ page }) => {
+    for (const screen of ["intake-goals", "intake-medical"]) {
+      await openScreen(page, screen);
+
+      const small = await page.evaluate(() => {
+        const bad: string[] = [];
+        for (const el of Array.from(
+          document.querySelectorAll<HTMLElement>("button, [role='group'] button, input[type='checkbox']"),
+        )) {
+          // A checkbox inside a label is not the target; the label row is, and
+          // that is what a thumb actually lands on.
+          const target = el.closest("label") ?? el;
+          const rect = target.getBoundingClientRect();
+          if (rect.height > 0 && rect.height < 44) {
+            bad.push(`${el.tagName} ${Math.round(rect.height)}px "${(el.textContent ?? "").slice(0, 20)}"`);
+          }
+        }
+        return bad;
+      });
+
+      expect(small, screen).toEqual([]);
+    }
+  });
+
+  test("the running section collapses to one question for someone who does not run", async ({ page }) => {
+    await openScreen(page, "intake-running-hidden");
+    await expect(page.getByTestId("question")).toHaveCount(1);
+  });
+
+  test("a scale is buttons, not a slider", async ({ page }) => {
+    // A slider on a phone is how a client means 7 and sends 6.
+    await openScreen(page, "intake-medical");
+    await expect(page.locator("input[type='range']")).toHaveCount(0);
+  });
+
+  test("shows every error in a section at once, each next to its question", async ({ page }) => {
+    await openScreen(page, "intake-medical-errors");
+    const errors = page.getByTestId("question-error");
+    await expect(errors).toHaveCount(5);
+    for (const text of await errors.allInnerTexts()) {
+      expect(text.trim().length).toBeGreaterThan(0);
+    }
+  });
+});
+
+test.describe("questionnaire builder", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("says what each answer can change", async ({ page }) => {
+    await openScreen(page, "builder-questionnaire");
+    // The produces column is the point of the screen: a question that changes
+    // nothing wastes a client's attention.
+    const rows = page.getByTestId("outline-question");
+    expect(await rows.count()).toBeGreaterThan(30);
+    for (const text of await rows.locator("td:last-child").allInnerTexts()) {
+      expect(text.trim()).not.toBe("Nothing");
+    }
+  });
+
+  test("has ten sections", async ({ page }) => {
+    await openScreen(page, "builder-questionnaire");
+    await expect(page.getByTestId("outline-section")).toHaveCount(10);
+  });
+
+  test("the empty state says what to add", async ({ page }) => {
+    await openScreen(page, "builder-questionnaire-empty");
+    await expect(page.getByTestId("outline-empty")).toContainText("Add a section");
   });
 });

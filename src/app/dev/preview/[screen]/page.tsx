@@ -17,6 +17,14 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { IntakeSectionPreview } from "@/components/intake/IntakeSectionPreview";
+import { QuestionnaireOutline } from "@/components/questionnaire/QuestionnaireOutline";
+import { INTAKE } from "@/lib/questionnaire/intake";
+import { visible } from "@/lib/questionnaire/answers";
+import {
+  PREVIEW_INTAKE_ANSWERS,
+  PREVIEW_INTAKE_ERRORS,
+} from "@/lib/design/preview-intake";
 import { CaloriePathTable } from "@/components/nutrition/CaloriePathTable";
 import { GroceryHub } from "@/components/nutrition/GroceryHub";
 import { MealPlanEditor } from "@/components/nutrition/MealPlanEditor";
@@ -76,6 +84,12 @@ const SCREENS = [
   "nutrition-grocery",
   "nutrition-swaps",
   "nutrition-swaps-empty",
+  "intake-goals",
+  "intake-medical",
+  "intake-medical-errors",
+  "intake-running-hidden",
+  "builder-questionnaire",
+  "builder-questionnaire-empty",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -295,6 +309,54 @@ function NutritionSwapScreen({ groups }: { groups: typeof PREVIEW_SWAPS }) {
   );
 }
 
+/**
+ * The intake sections, rendered with the real question components.
+ *
+ * Not inside the Shell: a client filling this in has no sidebar and is holding
+ * a phone. The 390px run is the one that matters here.
+ */
+function IntakeScreen({
+  sectionKey,
+  answers,
+  errors,
+}: {
+  sectionKey: string;
+  answers: typeof PREVIEW_INTAKE_ANSWERS;
+  errors?: Record<string, string>;
+}) {
+  const shown = visible(INTAKE, answers);
+  const section = shown.sections.find((candidate) => candidate.key === sectionKey)!;
+
+  return (
+    <div className="min-h-screen bg-ink">
+      <div
+        className="mx-auto w-full max-w-[560px] px-4 py-5"
+        data-testid="screen-ready"
+      >
+        <p className="elvt-label">ELVT intake</p>
+        <h1 className="mt-1 text-section">{section.title}</h1>
+        <p className="mt-2 text-txt-mute">{section.intent}</p>
+
+        <IntakeSectionPreview section={section} answers={answers} errors={errors} />
+      </div>
+    </div>
+  );
+}
+
+function QuestionnaireBuilderScreen({ empty }: { empty: boolean }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <BuilderNav current="/coach/builder/questionnaires" />
+        <ScreenHeader label="Builder" title={empty ? "New questionnaire" : INTAKE.name} />
+        <QuestionnaireOutline
+          questionnaire={empty ? { ...INTAKE, sections: [] } : INTAKE}
+        />
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -344,5 +406,23 @@ export default async function PreviewPage({
       return <NutritionSwapScreen groups={PREVIEW_SWAPS} />;
     case "nutrition-swaps-empty":
       return <NutritionSwapScreen groups={[]} />;
+    case "intake-goals":
+      return <IntakeScreen sectionKey="goals" answers={PREVIEW_INTAKE_ANSWERS} />;
+    case "intake-medical":
+      return <IntakeScreen sectionKey="medical" answers={PREVIEW_INTAKE_ANSWERS} />;
+    case "intake-medical-errors":
+      return (
+        <IntakeScreen
+          sectionKey="medical"
+          answers={PREVIEW_INTAKE_ANSWERS}
+          errors={PREVIEW_INTAKE_ERRORS}
+        />
+      );
+    case "intake-running-hidden":
+      return <IntakeScreen sectionKey="running" answers={{ runs_at_all: false }} />;
+    case "builder-questionnaire":
+      return <QuestionnaireBuilderScreen empty={false} />;
+    case "builder-questionnaire-empty":
+      return <QuestionnaireBuilderScreen empty />;
   }
 }
