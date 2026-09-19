@@ -56,6 +56,18 @@ import {
   PREVIEW_COMPOSER_VALUES,
   PREVIEW_THREADS,
 } from "@/lib/design/preview-messages";
+import { RacePanel } from "@/components/race/RacePanel";
+import {
+  PREVIEW_MILEAGE,
+  PREVIEW_RACE,
+  PREVIEW_RACE_NO_GOAL,
+  PREVIEW_RECENT_PACE_SECONDS,
+  PREVIEW_VIEWED_BUILD,
+  PREVIEW_VIEWED_RACE_WEEK,
+  PREVIEW_VIEWED_TAPER,
+  previewLongest,
+  previewWeekly,
+} from "@/lib/design/preview-race";
 import { quietestFirst } from "@/lib/messages/touchpoints";
 import { MondayCard } from "@/components/queue/MondayCard";
 import { PREVIEW_CARD, PREVIEW_CARDS, PREVIEW_CARD_QUIET } from "@/lib/design/preview-monday";
@@ -195,6 +207,11 @@ const SCREENS = [
   "roster-filters",
   "roster-filters-active",
   "roster-bulk",
+  "race-build",
+  "race-taper",
+  "race-week",
+  "race-no-goal",
+  "race-empty",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -783,6 +800,51 @@ function PhotoCompareScreen({ weeks }: { weeks: typeof PREVIEW_PHOTO_WEEKS }) {
   );
 }
 
+/**
+ * Race mode at a fixed date, so the countdown is the same number every run.
+ * The date is what moves between these screens; nothing else does.
+ */
+function RaceScreen({
+  viewedDate,
+  race = PREVIEW_RACE,
+  noPace,
+}: {
+  viewedDate: string;
+  race?: typeof PREVIEW_RACE;
+  noPace?: boolean;
+}) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Race" title="Theo Vance" />
+        <RacePanel
+          race={race}
+          viewedDate={viewedDate}
+          weeklyMiles={previewWeekly(viewedDate)}
+          longest={previewLongest(viewedDate)}
+          recentSecondsPerMile={noPace ? null : PREVIEW_RECENT_PACE_SECONDS}
+          mileage={PREVIEW_MILEAGE}
+        />
+      </main>
+    </Shell>
+  );
+}
+
+function RaceEmptyScreen() {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Race" title="Theo Vance" note="Nothing in the diary." />
+        <p className="max-w-[60ch] text-txt-mute" data-testid="race-empty">
+          Race mode turns on when there is a race to count down to. Add one with
+          a date and a distance, and the countdown, the taper, the fueling plan
+          and the race week checklist all come from those two facts.
+        </p>
+      </main>
+    </Shell>
+  );
+}
+
 function RosterFilterScreen({
   active,
   counts,
@@ -994,5 +1056,15 @@ export default async function PreviewPage({
           bulk
         />
       );
+    case "race-build":
+      return <RaceScreen viewedDate={PREVIEW_VIEWED_BUILD} />;
+    case "race-taper":
+      return <RaceScreen viewedDate={PREVIEW_VIEWED_TAPER} />;
+    case "race-week":
+      return <RaceScreen viewedDate={PREVIEW_VIEWED_RACE_WEEK} />;
+    case "race-no-goal":
+      return <RaceScreen viewedDate={PREVIEW_VIEWED_TAPER} race={PREVIEW_RACE_NO_GOAL} noPace />;
+    case "race-empty":
+      return <RaceEmptyScreen />;
   }
 }

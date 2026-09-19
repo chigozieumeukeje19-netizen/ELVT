@@ -325,6 +325,37 @@ where tp.key in ('steps_under', 'no_activity_72h', 'two_missed_sessions', 'no_ch
 
 -- Two forms per client. Daily under a minute, weekly on Sunday with fasted
 -- weight as question one for everyone.
+-- ---------------------------------------------------------------------------
+-- Races.
+--
+-- Three, across the two race prep clients, chosen so the seed exercises every
+-- phase of race mode rather than only the far-off one:
+--
+--   Theo's tune-up half is twelve days out, which is inside a half marathon's
+--   two week taper, so the taper path has a client in it.
+--   Theo's marathon is on the last day of his eighteen week block, which is
+--   the build path, and it is the second race in his diary, so whatever picks
+--   the race has to pick the near one.
+--   Aisha's half closes her fourteen week block.
+--
+-- Dated off each client's own program start, not off a fixed calendar, so the
+-- seed still means the same thing next month.
+-- ---------------------------------------------------------------------------
+
+insert into public.races (client_id, name, race_date, distance_metres, goal_time_seconds, notes)
+select c.id, 'Shamrock Half', c.program_start_date + 12, 21097, null,
+       'Tune-up. Not a goal race, and the week around it does not change.'
+from public.clients c where c.slug = 'theo-vance'
+union all
+select c.id, 'Portland Marathon', c.program_start_date + (c.program_length_weeks * 7 - 1),
+       42195, 3 * 3600 + 30 * 60,
+       'The one the whole block is for. Sub three thirty is the stated goal.'
+from public.clients c where c.slug = 'theo-vance'
+union all
+select c.id, 'Peachtree Half', c.program_start_date + (c.program_length_weeks * 7 - 1),
+       21097, 1 * 3600 + 52 * 60, null
+from public.clients c where c.slug = 'aisha-nkemdirim';
+
 insert into public.checkin_forms (client_id, kind, questions, schedule, auto_send)
 select
   c.id,

@@ -9,6 +9,7 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { raceBriefing } from "../src/lib/race/mode";
 import { generateApp } from "../src/lib/export/generate";
 import type { ExportData } from "../src/lib/export/types";
 
@@ -69,8 +70,20 @@ const DATA: ExportData = {
     startDate: "2026-09-21",
     weeks: 16,
     goalStatement: "Down to 175 and still able to run a half",
-    raceDate: "2027-03-14",
   },
+  races: [
+    raceBriefing(
+      {
+        id: "race1",
+        name: "Brighton Half",
+        date: "2027-03-14",
+        metres: 21097,
+        goalTimeSeconds: 7080,
+        notes: null,
+      },
+      null,
+    ),
+  ],
   weeks: [1, 2, 3].map((weekNumber) => {
     const start = ["2026-09-21", "2026-09-28", "2026-10-05"][weekNumber - 1];
     const dates = Array.from({ length: 7 }, (_, offset) => {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { auditExport, passesAudits } from "@/lib/export/audit";
+import { raceBriefing } from "@/lib/race/mode";
 import { assertExportable, ExportError, generateApp, titleFor } from "@/lib/export/generate";
 import type { ExportData } from "@/lib/export/types";
 
@@ -33,8 +34,20 @@ function data(overrides: Partial<ExportData> = {}): ExportData {
       startDate: "2026-09-21",
       weeks: 16,
       goalStatement: "Down to 175 and still able to run a half",
-      raceDate: "2027-03-14",
     },
+    races: [
+      raceBriefing(
+        {
+          id: "race1",
+          name: "Brighton Half",
+          date: "2027-03-14",
+          metres: 21097,
+          goalTimeSeconds: 7080,
+          notes: null,
+        },
+        null,
+      ),
+    ],
     weeks: [
       {
         weekNumber: 1,

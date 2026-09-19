@@ -93,6 +93,11 @@ const SCREENS = [
   "roster-filters",
   "roster-filters-active",
   "roster-bulk",
+  "race-build",
+  "race-taper",
+  "race-week",
+  "race-no-goal",
+  "race-empty",
 ] as const;
 
 /**
@@ -1184,6 +1189,106 @@ test.describe("roster filters", () => {
       nodes.map((node) => node.getAttribute("data-affects")),
     )) {
       expect(Number(affects)).toBeGreaterThan(0);
+    }
+  });
+});
+
+/**
+ * Race mode.
+ *
+ * The thing worth asserting is that the date drives everything. These three
+ * screens differ only in which day they are read on, so if the countdown, the
+ * phase or the checklist ever stopped following the viewed date, two of them
+ * would say the same thing.
+ */
+test.describe("race mode", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("counts down from the day being viewed", async ({ page }) => {
+    await openScreen(page, "race-build");
+    await expect(page.getByTestId("race-days-out")).toHaveAttribute("data-days-out", "55");
+
+    await openScreen(page, "race-taper");
+    await expect(page.getByTestId("race-days-out")).toHaveAttribute("data-days-out", "17");
+
+    await openScreen(page, "race-week");
+    await expect(page.getByTestId("race-days-out")).toHaveAttribute("data-days-out", "3");
+  });
+
+  test("names the phase in words", async ({ page }) => {
+    // No raw enum reaches a screen, here or anywhere.
+    for (const [screen, phase, words] of [
+      ["race-build", "build", "Building"],
+      ["race-taper", "taper", "Taper"],
+      ["race-week", "race_week", "Race week"],
+    ] as const) {
+      await openScreen(page, screen);
+      await expect(page.getByTestId("race-phase")).toHaveAttribute("data-phase", phase);
+      await expect(page.getByTestId("race-phase")).toContainText(words);
+    }
+  });
+
+  test("brings the checklist out only in race week", async ({ page }) => {
+    // Nine lines about pinning a number are noise in week ten of eighteen, and
+    // a panel that is always there is a panel nobody reads when it matters.
+    await openScreen(page, "race-build");
+    expect(await page.getByTestId("race-checklist").count()).toBe(0);
+
+    await openScreen(page, "race-taper");
+    expect(await page.getByTestId("race-checklist").count()).toBe(0);
+
+    await openScreen(page, "race-week");
+    await expect(page.getByTestId("race-checklist")).toBeVisible();
+  });
+
+  test("calls out the one line that is today", async ({ page }) => {
+    await openScreen(page, "race-week");
+    await expect(page.locator('[data-testid="checklist-line"][data-today="true"]')).toHaveCount(1);
+  });
+
+  test("leaves the taper weeks uncoloured and bands the rest", async ({ page }) => {
+    // Under plan is what the bands catch, and under plan in a taper week is
+    // what a taper is for.
+    await openScreen(page, "race-week");
+
+    const bands = await page
+      .locator('[data-testid="mileage-row"]')
+      .evaluateAll((rows) =>
+        rows.map((row) => ({
+          week: row.getAttribute("data-week"),
+          band: row.querySelector("[data-band]")?.getAttribute("data-band") ?? null,
+        })),
+      );
+
+    expect(bands.find((row) => row.week === "17")!.band).toBe("none");
+    expect(bands.find((row) => row.week === "14")!.band).not.toBe("none");
+  });
+
+  test("says what the fueling plan needs rather than inventing one", async ({ page }) => {
+    await openScreen(page, "race-no-goal");
+    await expect(page.getByTestId("fueling")).toContainText("goal time");
+
+    await openScreen(page, "race-week");
+    await expect(page.getByTestId("fueling")).toContainText("grams an hour");
+  });
+
+  test("says what will appear here when there is no race", async ({ page }) => {
+    await openScreen(page, "race-empty");
+    await expect(page.getByTestId("race-empty")).toContainText("date and a distance");
+  });
+});
+
+test.describe("race mode on a phone", () => {
+  test.use({ viewport: PHONE });
+
+  test("keeps the checklist readable at 390", async ({ page }) => {
+    await openScreen(page, "race-week");
+    await expect(page.getByTestId("race-checklist")).toBeVisible();
+
+    // Nine lines of real copy on a narrow screen is where wrapping fails.
+    for (const line of await page.getByTestId("checklist-line").all()) {
+      const box = await line.boundingBox();
+      expect(box!.width).toBeLessThanOrEqual(PHONE.width);
     }
   });
 });

@@ -1,3 +1,5 @@
+import type { RaceBriefing } from "@/lib/race/mode";
+
 /**
  * The shape the generated client app is built from.
  *
@@ -83,8 +85,14 @@ export type ExportData = {
     startDate: string;
     weeks: number;
     goalStatement: string;
-    raceDate: string | null;
   };
+  /**
+   * Every race in the diary, earliest first, each one already resolved into
+   * the phrases and dates the app shows. The app picks which one it is
+   * counting down to by comparing the viewed date against those dates, and
+   * computes nothing about tapers or fueling itself.
+   */
+  races: RaceBriefing[];
   weeks: ExportWeek[];
   meals: ExportMeal[];
   habits: { id: string; name: string; unit: string; target: number }[];

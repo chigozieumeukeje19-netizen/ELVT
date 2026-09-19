@@ -90,9 +90,38 @@ export function auditExport(html: string): Finding[] {
     }
   }
 
+  // --- 3b. Race mode has one source of truth ------------------------------
+  //
+  // The taper length, the checklist dates and the fueling numbers are worked
+  // out by src/lib/race/mode.ts and inlined into the file. If the app starts
+  // computing any of them itself there are two implementations of the same
+  // rule, and the one in the file a client is holding is the one nobody looks
+  // at.
+  //
+  // Checked by forbidding the numbers rather than the arithmetic. The first
+  // version looked for operators and reported `race.fueling.gels + " gels"`,
+  // which is string concatenation. A taper is 7, 14 or 21 days, a gel is 25
+  // grams, the carbohydrate bands are 30, 60 and 90: none of them can be
+  // written here without the number being written here. Loop counters and
+  // comparisons against zero are all this card legitimately needs.
+  const raceCard = code.match(/function cardRace\(\)\s*\{[\s\S]*?\n\}/);
+  if (raceCard) {
+    const numbers = [...raceCard[0].matchAll(/(?<![\w."'])(\d+)(?![\w"'])/g)]
+      .map((match) => match[1])
+      .filter((value) => value !== "0" && value !== "1");
+
+    if (numbers.length > 0) {
+      add(
+        "completeness",
+        "the race card decides nothing about the race",
+        `cardRace contains the number ${numbers[0]}. Tapers, checklists and fueling are decided in race mode and inlined.`,
+      );
+    }
+  }
+
   // --- 4. Completeness ----------------------------------------------------
   const ORDER = [
-    "goal", "weeks", "days", "profile", "training",
+    "goal", "race", "weeks", "days", "profile", "training",
     "nutrition", "trackers", "monday", "past", "reference",
   ];
 

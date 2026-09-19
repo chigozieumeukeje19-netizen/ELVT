@@ -8,6 +8,23 @@
 # Sourced by the verification scripts. Not executable on its own.
 # ---------------------------------------------------------------------------
 
+# Read from .env.local when the shell has not already exported it, the same
+# way the Next server, the Playwright config and the Vitest config read it.
+# Without this the setting was real for whichever shell had run `export` and
+# invisible to every other one, so `npm run db:verify` reported that Postgres
+# was unreachable on a machine where it was running and configured.
+if [ -z "${ELVT_DB_URL:-}" ]; then
+  _db_env_file="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/${ENV_FILE:-.env.local}"
+  if [ -f "$_db_env_file" ]; then
+    _db_from_file="$(sed -n 's/^[[:space:]]*ELVT_DB_URL[[:space:]]*=[[:space:]]*//p' "$_db_env_file" | tail -1)"
+    # Strip one layer of surrounding quotes, which dotenv files often carry.
+    _db_from_file="${_db_from_file%\"}"; _db_from_file="${_db_from_file#\"}"
+    _db_from_file="${_db_from_file%\'}"; _db_from_file="${_db_from_file#\'}"
+    [ -n "$_db_from_file" ] && ELVT_DB_URL="$_db_from_file"
+  fi
+  unset _db_env_file _db_from_file
+fi
+
 ELVT_DB_URL="${ELVT_DB_URL:-postgresql://postgres:postgres@127.0.0.1:54322/postgres}"
 
 # Swaps the database name on the connection URL, keeping host, credentials and

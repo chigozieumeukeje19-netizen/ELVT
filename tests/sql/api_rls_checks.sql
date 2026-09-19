@@ -75,6 +75,7 @@ declare
   a_habit_definition uuid;
   an_exercise uuid;
   their_log uuid;
+  their_race uuid;
 begin
   select c.id, c.profile_id into mine, my_user
     from public.clients c order by c.slug limit 1;
@@ -94,6 +95,10 @@ begin
   -- is built against, so every row these need is created, and a missing one is
   -- a failure rather than a skip.
   -- ------------------------------------------------------------------------
+
+  insert into public.races (client_id, name, race_date, distance_metres, goal_time_seconds)
+  values (theirs, 'Theirs to run', '2026-12-13', 42195, 12600)
+  returning id into their_race;
 
   insert into public.programs (client_id, name, duration_weeks, status)
   values (theirs, 'Theirs', 12, 'active')
@@ -416,6 +421,41 @@ begin
   get diagnostics touched = row_count;
   reset role;
   perform pg_temp.assert(touched = 0, 'POST /day-swap cannot move another client''s session');
+
+  -- ------------------------------------------------------------------------
+  -- Races. Not an endpoint: the client app is handed its race at export time.
+  -- The policy still has to hold, because a race carries a person's goal time
+  -- and the date they will be at a named place.
+  -- ------------------------------------------------------------------------
+
+  perform pg_temp.become(mine, my_user);
+  select count(*) into visible from public.races where client_id = theirs;
+  reset role;
+  perform pg_temp.assert(visible = 0, 'a client cannot read another client''s race');
+
+  perform pg_temp.become(theirs, their_user);
+  select count(*) into visible from public.races where id = their_race;
+  reset role;
+  perform pg_temp.assert(visible = 1, 'a client can read their own race');
+
+  -- A race date is not the client's to move. The taper, the checklist and the
+  -- countdown are all computed from it.
+  perform pg_temp.become(theirs, their_user);
+  update public.races set race_date = '2030-01-01' where id = their_race;
+  get diagnostics touched = row_count;
+  reset role;
+  perform pg_temp.assert(touched = 0, 'a client cannot move their own race date');
+
+  perform pg_temp.become(theirs, their_user);
+  blocked := false;
+  begin
+    insert into public.races (client_id, name, race_date, distance_metres)
+    values (theirs, 'One I entered myself', '2030-01-01', 42195);
+  exception when insufficient_privilege then
+    blocked := true;
+  end;
+  reset role;
+  perform pg_temp.assert(blocked, 'a client cannot add a race to their own diary');
 
   -- =========================================================================
   -- The photo bucket. Separate from the tables, because the bound here is on a

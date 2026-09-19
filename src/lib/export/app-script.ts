@@ -192,6 +192,22 @@ function switchWeek(number) {
   render();
 }
 
+/**
+ * The race being counted down to on a given day.
+ *
+ * The next one on or after it, falling back to the last one so the morning
+ * after a race still says something. The list is already sorted by date.
+ */
+function raceFor(date) {
+  var races = DATA.races || [];
+  if (!races.length) return null;
+
+  for (var i = 0; i < races.length; i += 1) {
+    if (races[i].date >= date) return races[i];
+  }
+  return races[races.length - 1];
+}
+
 function viewDate(date) {
   state.viewedDate = date;
   save();
@@ -219,6 +235,7 @@ function render() {
   // nutrition.
   var cards = [
     ["goal", cardGoal],
+    ["race", cardRace],
     ["weeks", cardWeekStrip],
     ["days", cardDayStrip],
     ["profile", cardProfile],
@@ -258,16 +275,81 @@ function cardGoal() {
   out += '<p class="label">' + esc(DATA.program.name) + '</p>';
   out += '<h1>' + esc(DATA.program.goalStatement) + '</h1>';
 
-  if (DATA.program.raceDate) {
+  var race = raceFor(viewed);
+  if (race) {
     // Counted from the day being viewed. Looking back at last Tuesday shows the
     // countdown as it was on that Tuesday.
-    var out_days = daysBetween(viewed, DATA.program.raceDate);
+    var out_days = daysBetween(viewed, race.date);
     out += '<p class="big num">' + Math.max(0, out_days) + '</p>';
-    out += '<p class="mut">days out on ' + esc(viewed) + '</p>';
+    out += '<p class="mut">' + (out_days === 0 ? 'It is today. ' : out_days < 0 ? 'days since ' : 'days out. ') +
+      esc(race.name) + '</p>';
   } else {
     var day = daysBetween(DATA.program.startDate, viewed) + 1;
     out += '<p class="big num">' + day + '</p>';
     out += '<p class="mut">of ' + (DATA.program.weeks * 7) + ' days</p>';
+  }
+
+  return out + '</section>';
+}
+
+/**
+ * Race mode.
+ *
+ * Appears once the taper starts and goes away the day after the race. Nothing
+ * here is computed: the taper start, race week's first day, the checklist with
+ * its dates and the fueling plan were all worked out when the file was made,
+ * by the same module the portal uses. This compares three dates.
+ *
+ * Race week is the visible change. Before it, the card is a line about the
+ * taper and the fueling to rehearse. In race week it is the checklist, with
+ * that day's line called out.
+ */
+function cardRace() {
+  var viewed = state.viewedDate;
+  var race = raceFor(viewed);
+  if (!race) return "";
+
+  var out_days = daysBetween(viewed, race.date);
+  if (out_days < 0 || viewed < race.taperStartsOn) return "";
+
+  var week = viewed >= race.raceWeekStartsOn;
+  var out = '<section class="card" data-card="race" data-race-phase="' +
+    (out_days === 0 ? 'race_day' : week ? 'race_week' : 'taper') + '">';
+
+  out += '<p class="label">' + (out_days === 0 ? 'Race day' : week ? 'Race week' : 'Taper') + '</p>';
+  out += '<h2>' + esc(race.name) + ', ' + esc(race.distance) + '</h2>';
+
+  if (race.pacePerMile) {
+    out += '<p class="mut">Goal ' + esc(race.goalTime) + ', which is ' + esc(race.pacePerMile) +
+      ' a mile.</p>';
+  } else {
+    out += '<p class="mut">The goal is to finish it.</p>';
+  }
+
+  if (!week) {
+    out += '<p class="mut">The taper started ' + esc(race.taperStartsOn) +
+      '. The work is done. Keep the easy runs easy.</p>';
+  }
+
+  if (race.fueling) {
+    out += '<div class="ex"><p class="label">Fueling</p>';
+    out += '<p class="mut">' + esc(race.fueling.carbs) + ', ' + esc(race.fueling.fluid) + '.</p>';
+    if (race.fueling.gels > 0) {
+      out += '<p class="mut">' + race.fueling.gels + ' gels. ' + esc(race.fueling.timing) + '.</p>';
+    }
+    out += '<p class="mut">' + esc(race.fueling.note) + '</p></div>';
+  }
+
+  if (week) {
+    out += '<div class="ex"><p class="label">This week</p>';
+    for (var i = 0; i < race.checklist.length; i += 1) {
+      var line = race.checklist[i];
+      var today = line.date === viewed;
+      out += '<p class="' + (today ? '' : 'mut') + '" data-check="' + esc(line.key) + '"' +
+        (today ? ' data-today="true"' : '') + '>' +
+        '<span class="num">' + esc(line.date) + '</span> ' + esc(line.text) + '</p>';
+    }
+    out += '</div>';
   }
 
   return out + '</section>';

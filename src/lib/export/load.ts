@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { raceBriefing, type Race } from "@/lib/race/mode";
 import type { ExportData, ExportExercise, ExportSession, ExportWeek } from "./types";
 
 /**
@@ -45,6 +46,23 @@ export async function loadExportData(
     .select("id, program_day_id, kind, name, order")
     .eq("client_id", client.id)
     .order("order");
+
+  const { data: raceRows } = await supabase
+    .from("races")
+    .select("id, name, race_date, distance_metres, goal_time_seconds, notes")
+    .eq("client_id", client.id)
+    .order("race_date");
+
+  // The most recent logged pace, so a race with no goal time still gets a
+  // fueling plan rather than an empty card. Null when nothing usable is there,
+  // and the plan is then absent rather than invented.
+  const { data: paceRows } = await supabase
+    .from("run_logs")
+    .select("avg_pace")
+    .eq("client_id", client.id)
+    .not("avg_pace", "is", null)
+    .order("logged_for_date", { ascending: false })
+    .limit(1);
 
   const { data: sectionRows } = await supabase
     .from("session_sections")
@@ -150,6 +168,8 @@ export async function loadExportData(
       })),
   }));
 
+  const recentPaceSeconds = parsePace(paceRows?.[0]?.avg_pace ?? null);
+
   return {
     client: {
       id: client.id,
@@ -164,8 +184,19 @@ export async function loadExportData(
       startDate: client.program_start_date ?? weeks[0]?.startsOn ?? "",
       weeks: program?.duration_weeks ?? client.program_length_weeks ?? weeks.length,
       goalStatement: client.goal_statement ?? "",
-      raceDate: null,
     },
+    races: (raceRows ?? [])
+      .map(
+        (row): Race => ({
+          id: row.id,
+          name: row.name,
+          date: row.race_date,
+          metres: row.distance_metres,
+          goalTimeSeconds: row.goal_time_seconds,
+          notes: row.notes,
+        }),
+      )
+      .map((race) => raceBriefing(race, recentPaceSeconds)),
     weeks,
     meals: (meals ?? []).map((meal) => ({
       id: meal.id,
@@ -186,4 +217,17 @@ export async function loadExportData(
     apiBase,
     generatedAt: new Date().toISOString(),
   };
+}
+
+/**
+ * "8:42" per mile as seconds. Null for anything else, rather than a guess.
+ *
+ * A pace that cannot be parsed has to end up as no fueling plan, not as a
+ * plausible one. The client carries whatever this produces to a start line.
+ */
+function parsePace(value: string | null): number | null {
+  if (!value) return null;
+  const match = /^(\d+):([0-5]\d)$/.exec(value.trim());
+  if (!match) return null;
+  return Number(match[1]) * 60 + Number(match[2]);
 }

@@ -133,3 +133,41 @@ chart delta says "up" or "down" in text beside the color. A test holds that line
 
 If it is worth moving, the nearest passing step is a slightly deeper amber, and
 the two places to change it are `src/styles/tokens.css` and DESIGN.md Part 2.
+
+---
+
+## 6. There is no client detail screen, so six tabs are reachable only by URL
+
+**Item:** 23, but it applies to 7, 8, 20 and 21 equally
+**Status:** needs a decision about scope, not a blocker
+
+Spec Part 4 describes a client detail screen with a top strip (name, age, sex,
+goal statement, program name, Day X of N, phase chip, race countdown if any,
+start date, end date) and a set of tabs under it. That screen is not in the
+numbered item list 0 to 23, and nothing built so far creates it.
+
+The consequence is concrete. The roster links each row to
+`/coach/clients/<slug>`, and that route does not exist. The seven screens that
+do exist live under it:
+
+```
+/coach/clients/<slug>/blueprint
+/coach/clients/<slug>/checkins
+/coach/clients/<slug>/nutrition
+/coach/clients/<slug>/photos
+/coach/clients/<slug>/program
+/coach/clients/<slug>/progress
+/coach/clients/<slug>/race
+```
+
+Every one of them renders correctly and every one is covered by tests. None of
+them can be reached by clicking. Race mode is the seventh, and it is where this
+stopped being ignorable, because the race countdown is one of the things the
+spec puts in the top strip.
+
+**Not built, because it is a screen the item list does not ask for** and
+standing rule 10 says to note it rather than add it. It is a small screen: the
+top strip is facts already being read on other tabs, and the tab bar is a list
+of seven links.
+
+What it needs from Darren is only the decision to spend an item on it.
