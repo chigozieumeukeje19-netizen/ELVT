@@ -18,6 +18,7 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { SettingsView } from "@/components/settings/SettingsView";
 import { SCREENS, type Screen } from "@/lib/design/preview-screens";
 import { THEME_COOKIE, readTheme } from "@/lib/design/theme";
 import { ComposerPreview } from "@/components/messages/ComposerPreview";
@@ -894,6 +895,22 @@ function RosterFilterScreen({
   );
 }
 
+async function SettingsScreen() {
+  const theme = readTheme((await cookies()).get(THEME_COOKIE)?.value);
+  return (
+    <Shell>
+      <SettingsView
+        name="Dara Okonkwo-Fairweather"
+        email="dara@example.com"
+        role="coach"
+        timezone="America/Los_Angeles"
+        theme={theme}
+        ai={false}
+      />
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -1076,5 +1093,7 @@ export default async function PreviewPage({
       return <ClientOverviewScreen />;
     case "client-overview-new":
       return <ClientOverviewScreen empty />;
+    case "settings":
+      return <SettingsScreen />;
   }
 }

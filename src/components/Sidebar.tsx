@@ -6,14 +6,21 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Theme } from "@/lib/design/theme";
 import {
   BuilderIcon,
-  CalendarIcon,
-  LibraryIcon,
   MessagesIcon,
   QueueIcon,
   RosterIcon,
   SettingsIcon,
   SignOutIcon,
 } from "@/components/icons";
+import { NAV, type NavIcon } from "@/lib/nav";
+
+const ICONS: Record<NavIcon, (props: { size?: number }) => React.ReactElement> = {
+  queue: QueueIcon,
+  roster: RosterIcon,
+  builder: BuilderIcon,
+  messages: MessagesIcon,
+  settings: SettingsIcon,
+};
 
 /**
  * Persistent left sidebar, fixed during scroll. DESIGN_V2.md 3.1.
@@ -28,33 +35,13 @@ import {
  * brand identity, not a UI accent; using it on a button would pull the portal
  * toward the cream and gold client-app look, which is hard fail 0. The 3px
  * marker on the active item is the one exception the spec grants it.
+ *
+ * Every destination here has a page behind it. Calendar and Library were in
+ * this list with nothing on the other end, which is the same defect as the
+ * Settings 404 and is recorded in docs/OPEN_QUESTIONS.md. They come back when
+ * they exist; tests/unit/nav.test.ts fails the build if one goes dead again.
  */
 
-const GROUPS: {
-  label: string;
-  items: { href: string; label: string; Icon: (props: { size?: number }) => React.ReactElement }[];
-}[] = [
-  {
-    label: "Coaching",
-    items: [
-      { href: "/coach/queue", label: "Queue", Icon: QueueIcon },
-      { href: "/coach/clients", label: "Clients", Icon: RosterIcon },
-      { href: "/coach/messages", label: "Messages", Icon: MessagesIcon },
-      { href: "/coach/calendar", label: "Calendar", Icon: CalendarIcon },
-    ],
-  },
-  {
-    label: "Building",
-    items: [
-      { href: "/coach/builder/exercises/review", label: "Builder", Icon: BuilderIcon },
-      { href: "/coach/library", label: "Library", Icon: LibraryIcon },
-    ],
-  },
-  {
-    label: "Account",
-    items: [{ href: "/coach/settings", label: "Settings", Icon: SettingsIcon }],
-  },
-];
 
 export function Sidebar({
   current,
@@ -91,13 +78,14 @@ export function Sidebar({
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {GROUPS.map((group) => (
+        {NAV.map((group) => (
           <div key={group.label} className="mt-4 lg:px-3">
             <p className="hidden px-2 pb-1 text-caption text-txt-tertiary lg:block">
               {group.label}
             </p>
             <ul>
-              {group.items.map(({ href, label, Icon }) => {
+              {group.items.map(({ href, label, icon }) => {
+                const Icon = ICONS[icon];
                 const isActive = active === href || active.startsWith(`${href}/`);
                 return (
                   <li key={href}>

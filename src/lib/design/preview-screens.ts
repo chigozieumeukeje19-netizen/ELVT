@@ -76,6 +76,7 @@ export const SCREENS = [
   "race-empty",
   "client-overview",
   "client-overview-new",
+  "settings",
 ] as const;
 
 export type Screen = (typeof SCREENS)[number];

@@ -263,3 +263,30 @@ The question is whether the top bar is wanted at all. Search and the avatar have
 nowhere else to go, which argues for it; the roster and the queue are the two
 screens that run full width precisely because density buys columns, which argues
 against. If it is built, the toggle moves to it.
+
+---
+
+## 11. Calendar and Library are in the spec and not in the build
+
+**Item:** the /coach/settings 404
+**Status:** removed from the nav, waiting on a decision about whether to build
+
+The sidebar carried three links to pages that did not exist: Calendar, Library
+and Settings. All three returned a 404 from the persistent chrome on every coach
+screen.
+
+Settings is built, because there was something real to put on it: who you are
+signed in as, the theme preference, and a straight answer about where the
+settings that are not there live.
+
+Calendar and Library had nothing to put on them that is not already somewhere
+else, so they are out of the nav rather than stubbed. A stub page that says
+"coming soon" is a 404 with better manners.
+
+`tests/unit/nav.test.ts` now fails on any dead internal link in `src/`, not just
+these, so this cannot happen quietly again.
+
+The question is whether either is wanted. The Builder already holds the exercise
+library and the question bank, which is most of what a Library screen would be.
+A Calendar has no equivalent: the week strip and the day grid are per client,
+and nothing in the portal shows a coach their whole week at once.
