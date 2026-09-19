@@ -18,6 +18,14 @@ import {
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
 import { ComposerPreview } from "@/components/messages/ComposerPreview";
+import { ProgressTable } from "@/components/progress/ProgressTable";
+import { TrendChart } from "@/components/progress/TrendChart";
+import {
+  PREVIEW_PROGRESS,
+  PREVIEW_PROGRESS_ALL,
+  PREVIEW_PROGRESS_EMPTY,
+  PREVIEW_PROGRESS_THIN,
+} from "@/lib/design/preview-progress";
 import { ReminderSettings } from "@/components/reminders/ReminderSettings";
 import {
   PREVIEW_REMINDERS,
@@ -156,6 +164,11 @@ const SCREENS = [
   "composer-thin",
   "reminders",
   "reminders-sparse",
+  "progress",
+  "progress-all",
+  "progress-thin",
+  "progress-empty",
+  "progress-table",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -673,6 +686,37 @@ function RemindersScreen({ settings }: { settings: typeof PREVIEW_REMINDERS }) {
   );
 }
 
+function ProgressScreen({
+  series,
+  asTable,
+  label,
+}: {
+  series: typeof PREVIEW_PROGRESS;
+  asTable?: boolean;
+  label: string;
+}) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Progress"
+          title="Ekaterina Vasilyeva-Whitcombe"
+          note={label}
+        />
+        {asTable ? (
+          <ProgressTable series={series} />
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="trend-grid">
+            {series.map((one) => (
+              <TrendChart key={one.metric} series={one} />
+            ))}
+          </div>
+        )}
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -798,5 +842,15 @@ export default async function PreviewPage({
       return <RemindersScreen settings={PREVIEW_REMINDERS} />;
     case "reminders-sparse":
       return <RemindersScreen settings={PREVIEW_REMINDERS_SPARSE} />;
+    case "progress":
+      return <ProgressScreen series={PREVIEW_PROGRESS} label="The four their phase is about" />;
+    case "progress-all":
+      return <ProgressScreen series={PREVIEW_PROGRESS_ALL} label="Everything, 12 metrics" />;
+    case "progress-thin":
+      return <ProgressScreen series={PREVIEW_PROGRESS_THIN} label="One reading each" />;
+    case "progress-empty":
+      return <ProgressScreen series={PREVIEW_PROGRESS_EMPTY} label="Nothing logged yet" />;
+    case "progress-table":
+      return <ProgressScreen series={PREVIEW_PROGRESS} asTable label="Every reading" />;
   }
 }

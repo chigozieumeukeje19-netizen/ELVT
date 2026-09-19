@@ -81,6 +81,11 @@ const SCREENS = [
   "composer-thin",
   "reminders",
   "reminders-sparse",
+  "progress",
+  "progress-all",
+  "progress-thin",
+  "progress-empty",
+  "progress-table",
 ] as const;
 
 /**
@@ -931,5 +936,106 @@ test.describe("reminders", () => {
     const rows = page.getByTestId("reminder-row");
     await expect(rows).toHaveCount(10);
     await expect(rows.filter({ hasText: "Run" }).first()).toContainText("No");
+  });
+});
+
+/**
+ * The progress charts.
+ *
+ * One series per chart, always, and that falls out of two rules meeting rather
+ * than from taste: DESIGN.md gives color only where it carries a meaning, so
+ * there is no categorical palette for a second series, and weight against steps
+ * is two scales, which would be a dual axis chart.
+ *
+ * So what is worth asserting is that nothing in a chart is colored except where
+ * the color already means something, and that the delta says which way it went
+ * in words as well as in color.
+ */
+test.describe("progress charts", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("draws one line per chart and no legend", async ({ page }) => {
+    await openScreen(page, "progress");
+    const charts = page.getByTestId("trend-chart");
+    expect(await charts.count()).toBe(4);
+
+    for (let i = 0; i < 4; i += 1) {
+      // One line path, one area path. A second series would be a third path.
+      const paths = await charts.nth(i).locator("svg path").count();
+      expect(paths).toBe(2);
+    }
+
+    // A single series needs no legend: the caption names what is plotted.
+    expect(await page.locator(".legend, [data-testid='legend']").count()).toBe(0);
+  });
+
+  test("uses no color on the marks themselves", async ({ page }) => {
+    await openScreen(page, "progress");
+    const strokes = await page
+      .locator('[data-testid="trend-chart"] svg path, [data-testid="trend-chart"] svg circle')
+      .evaluateAll((nodes) =>
+        nodes.map((node) => `${node.getAttribute("stroke") ?? ""}|${node.getAttribute("fill") ?? ""}`),
+      );
+
+    for (const value of strokes) {
+      // Only the neutral tokens. No --ok, --watch or --flag on a line or a dot:
+      // a weight going down is not a signal, it is a number.
+      expect(value).not.toContain("--ok");
+      expect(value).not.toContain("--watch");
+      expect(value).not.toContain("--flag");
+    }
+  });
+
+  test("says which way it went in words, not only in color", async ({ page }) => {
+    await openScreen(page, "progress");
+    // A status color never carries the meaning on its own.
+    for (const text of await page.getByTestId("chart-delta").allInnerTexts()) {
+      expect(text.toLowerCase()).toMatch(/\b(up|down)\b/);
+    }
+  });
+
+  test("labels the end of the line and nothing else", async ({ page }) => {
+    await openScreen(page, "progress");
+    // A number on every point is chaos and goes unread.
+    for (let i = 0; i < 4; i += 1) {
+      expect(
+        await page.getByTestId("trend-chart").nth(i).locator("svg text").count(),
+      ).toBe(1);
+    }
+  });
+
+  test("gives every chart a text description", async ({ page }) => {
+    await openScreen(page, "progress");
+    for (const label of await page
+      .locator('[data-testid="trend-chart"] svg')
+      .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("aria-label")))) {
+      expect(label).toBeTruthy();
+      expect(label!.length).toBeGreaterThan(20);
+    }
+  });
+
+  test("opens on four and says how many more there are", async ({ page }) => {
+    await openScreen(page, "progress");
+    await expect(page.getByTestId("trend-grid").locator("figure")).toHaveCount(4);
+
+    await openScreen(page, "progress-all");
+    await expect(page.getByTestId("trend-grid").locator("figure")).toHaveCount(12);
+  });
+
+  test("says a line needs two readings rather than drawing nothing", async ({ page }) => {
+    await openScreen(page, "progress-thin");
+    await expect(page.getByTestId("chart-empty").first()).toContainText("Two readings");
+  });
+
+  test("the table carries the same numbers, with gaps marked as gaps", async ({ page }) => {
+    await openScreen(page, "progress-table");
+    await expect(page.getByTestId("progress-table")).toBeVisible();
+    // A day nobody logged is not a day they scored zero.
+    await expect(page.locator("text=not logged").first()).toBeVisible();
+  });
+
+  test("the empty state says what to check", async ({ page }) => {
+    await openScreen(page, "progress-empty");
+    await expect(page.getByTestId("chart-empty").first()).toBeVisible();
   });
 });

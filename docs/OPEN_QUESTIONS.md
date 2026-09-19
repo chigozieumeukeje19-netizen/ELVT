@@ -92,3 +92,44 @@ change, so a question nothing reads cannot be added quietly.
 If the original document words things differently, `intake.ts` is the one file
 to change. The keys are what everything downstream reads, so changing a key is
 the change to be careful with; changing the words in front of it is free.
+
+---
+
+## 5. The watch amber sits outside the lightness band for a dark surface
+
+**Item:** 20
+**Status:** a decision, not a blocker
+**Needs:** Darren to say whether to move it
+
+The progress charts were built with the dataviz method, which says to compute
+the color checks rather than eyeball them. Running its validator over the three
+signal colors against the panel surface:
+
+```
+$ node validate_palette.js "#4E9E6A,#C9A227,#C04A38" --mode dark --surface "#16181A"
+  [FAIL] Lightness band      outside band: #C9A227 at 0.728
+  [PASS] Chroma floor        all 3 above the floor
+  [PASS] CVD separation      worst pair ΔE 9.3 protan, 19.7 tritan
+  [PASS] Normal-vision floor worst pair ΔE 16.3
+  [PASS] Contrast vs surface all 3 at or above 3:1
+```
+
+Everything that decides whether the colors can be told apart passes, including
+under color vision deficiency, and by a comfortable margin: the target is 8 and
+the worst pair is 9.3. What fails is the lightness band, which is about keeping
+marks at a consistent weight so no one series shouts. `--watch` at 0.728 is
+brighter than the other two.
+
+**Not changed, because `--watch` is a locked value in DESIGN.md Part 2,** and
+the standing rules say no new color meanings without amending that first.
+Changing a value is close enough to the same thing that it is Darren's call
+rather than mine. The desaturation was also deliberate: "a screen showing eight
+clients will often carry all three at once, and saturated versions turn the
+roster into a Christmas tree."
+
+Nothing in the build depends on the answer. Status color never carries a meaning
+on its own anywhere in the portal: `bandLabel()` gives every band a word, and the
+chart delta says "up" or "down" in text beside the color. A test holds that line.
+
+If it is worth moving, the nearest passing step is a slightly deeper amber, and
+the two places to change it are `src/styles/tokens.css` and DESIGN.md Part 2.
