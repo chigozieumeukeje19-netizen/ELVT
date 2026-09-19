@@ -208,3 +208,31 @@ forms whose questions resolved to nothing on every screen.
 The table is harmless where it is, but it is a second source of truth sitting
 next to the first. Either the Builder's question bank screen should read it, or
 it should go.
+
+---
+
+## 9. Four status lines take a signal color on prose
+
+**Item:** v2 step 5 found them
+**Status:** a judgment call about scope, not a bug
+
+DESIGN_V2.md 2.3 says color appears only as a signal state on a figure that has
+a defined threshold. Four places put a signal color on a sentence instead:
+
+```
+src/components/photos/PhotoGrid.tsx      a week with fewer than three angles
+src/components/messages/Composer.tsx     a quick reply with no matching template
+src/components/nutrition/RegeneratePath.tsx  regenerating will overwrite edits
+src/components/checkin/SubmissionList.tsx    a submission waiting for review
+```
+
+Each is a real warning a coach should read, and none is a figure. They are not
+changed here because the honest fix is not obvious: dropping the color makes
+four genuine warnings quieter, and keeping it spends signal on prose in four
+more places than the spec allows.
+
+The options are to give warnings their own treatment that is not one of the
+three signals, which is a small addition to Section 3, or to accept these four
+as a stated exception the way the contraindication amendment already is.
+
+Nothing depends on the answer. All four say what they mean in words.
