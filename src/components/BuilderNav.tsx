@@ -9,6 +9,7 @@ const TABS = [
   { href: "/coach/builder/exercises", label: "Movements" },
   { href: "/coach/builder/templates", label: "Templates" },
   { href: "/coach/builder/questionnaires", label: "Questionnaires" },
+  { href: "/coach/builder/questions", label: "Question bank" },
   { href: "/coach/builder/exercises/review", label: "Review" },
 ];
 

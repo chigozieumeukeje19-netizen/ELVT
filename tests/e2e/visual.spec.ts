@@ -59,6 +59,16 @@ const SCREENS = [
   "blueprint-empty",
   "program-draft",
   "program-draft-empty",
+  "checkins",
+  "checkins-empty",
+  "checkin-compare",
+  "checkin-thread",
+  "checkin-thread-empty",
+  "builder-question-bank",
+  "checkin-daily-form",
+  "checkin-weekly-form",
+  "checkin-week1-form",
+  "checkin-no-spine-form",
 ] as const;
 
 /**
@@ -562,5 +572,97 @@ test.describe("blueprint and program draft", () => {
   test("says the rationale is missing rather than showing blank rows", async ({ page }) => {
     await openScreen(page, "program-draft-empty");
     await expect(page.getByTestId("rationale-empty")).toContainText("Copy the prompt");
+  });
+});
+
+/**
+ * The check-in engine's three screens, and the forms themselves.
+ *
+ * The thing worth asserting on screen is that the spine is visible. A weekly
+ * form built around last Monday's change only works if the coach can see which
+ * questions are there because of it, and the client should never have to wonder
+ * why they are being asked about calories again.
+ */
+test.describe("check-ins", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("marks the spine questions and puts them straight after the shared block", async ({ page }) => {
+    await openScreen(page, "checkin-weekly-form");
+    const spine = page.locator('[data-testid="form-question"][data-spine="true"]');
+    expect(await spine.count()).toBeGreaterThan(0);
+
+    // Read from the attribute, not the rendered text: elvt-label uppercases,
+    // so innerText says SPINE and a match on "Spine" quietly finds nothing.
+    const marks = await page.getByTestId("form-question").evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("data-spine") === "true"),
+    );
+    // Five shared questions come first, fasted weight among them.
+    expect(marks.indexOf(true)).toBe(5);
+  });
+
+  test("asks fasted weight first on every weekly form", async ({ page }) => {
+    for (const screen of ["checkin-weekly-form", "checkin-week1-form", "checkin-no-spine-form"]) {
+      await openScreen(page, screen);
+      await expect(page.getByTestId("form-question").first(), screen).toContainText("Fasted weight");
+    }
+  });
+
+  test("closes every weekly form with the one thing", async ({ page }) => {
+    for (const screen of ["checkin-weekly-form", "checkin-week1-form", "checkin-no-spine-form"]) {
+      await openScreen(page, screen);
+      await expect(page.getByTestId("form-question").last(), screen).toContainText(
+        "should be doing and are not",
+      );
+    }
+  });
+
+  test("marks no question as spine when nothing changed", async ({ page }) => {
+    await openScreen(page, "checkin-no-spine-form");
+    await expect(page.locator('[data-testid="form-question"][data-spine="true"]')).toHaveCount(0);
+  });
+
+  test("keeps the daily to seven questions", async ({ page }) => {
+    await openScreen(page, "checkin-daily-form");
+    const count = await page.getByTestId("form-question").count();
+    expect(count).toBeGreaterThanOrEqual(6);
+    expect(count).toBeLessThanOrEqual(7);
+  });
+
+  test("shows a week a question was not asked as a gap, not a zero", async ({ page }) => {
+    await openScreen(page, "checkin-compare");
+    // A question added at week 3 must not read as two weeks of nothing.
+    const notAsked = page.getByTestId("compare-cell").filter({ hasText: "not asked" });
+    expect(await notAsked.count()).toBe(2);
+  });
+
+  test("says which submissions are waiting on the coach", async ({ page }) => {
+    await openScreen(page, "checkins");
+    await expect(
+      page.getByTestId("submission-row").filter({ hasText: "Waiting on you" }).first(),
+    ).toBeVisible();
+  });
+
+  test("the review thread shows both sides", async ({ page }) => {
+    await openScreen(page, "checkin-thread");
+    const messages = page.getByTestId("thread-message");
+    expect(await messages.count()).toBe(3);
+    // A client who cannot answer a review either follows it without
+    // understanding it or ignores it.
+    await expect(messages.filter({ hasText: "Them" })).toHaveCount(1);
+  });
+
+  test("the empty states say what will appear and when", async ({ page }) => {
+    await openScreen(page, "checkins-empty");
+    await expect(page.getByTestId("submissions-empty")).toContainText("Sunday");
+
+    await openScreen(page, "checkin-thread-empty");
+    await expect(page.getByTestId("thread-empty")).toContainText("answer it");
+  });
+
+  test("every question in the bank can change something", async ({ page }) => {
+    await openScreen(page, "builder-question-bank");
+    for (const text of await page.getByTestId("bank-row").locator("td:last-child").allInnerTexts()) {
+      expect(text.trim()).not.toBe("");
+    }
   });
 });

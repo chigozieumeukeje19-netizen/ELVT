@@ -17,6 +17,21 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { CompareView } from "@/components/checkin/CompareView";
+import { ReviewThread } from "@/components/checkin/ReviewThread";
+import { SubmissionList } from "@/components/checkin/SubmissionList";
+import {
+  PREVIEW_BANK,
+  PREVIEW_COMPARE,
+  PREVIEW_COMPARE_WEEKS,
+  PREVIEW_DAILY_FORM,
+  PREVIEW_NO_SPINE_FORM,
+  PREVIEW_SUBMISSIONS,
+  PREVIEW_THREAD,
+  PREVIEW_WEEK1_FORM,
+  PREVIEW_WEEKLY_FORM,
+} from "@/lib/design/preview-checkin";
+import { humanize } from "@/components/Field";
 import { BlueprintView } from "@/components/blueprint/BlueprintView";
 import { DecisionList } from "@/components/blueprint/DecisionList";
 import { WeekRationale } from "@/components/blueprint/WeekRationale";
@@ -102,6 +117,16 @@ const SCREENS = [
   "blueprint-empty",
   "program-draft",
   "program-draft-empty",
+  "checkins",
+  "checkins-empty",
+  "checkin-compare",
+  "checkin-thread",
+  "checkin-thread-empty",
+  "builder-question-bank",
+  "checkin-daily-form",
+  "checkin-weekly-form",
+  "checkin-week1-form",
+  "checkin-no-spine-form",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -418,6 +443,119 @@ function ProgramDraftScreen({ withRationale }: { withRationale: boolean }) {
   );
 }
 
+function CheckinsScreen({ rows }: { rows: typeof PREVIEW_SUBMISSIONS }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Check-ins"
+          title="Ekaterina Vasilyeva-Whitcombe"
+          note="This week's form is built around calories, which is what changed last Monday"
+        />
+        <SubmissionList rows={rows} />
+      </main>
+    </Shell>
+  );
+}
+
+function CompareScreen() {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Check-ins" title="The same question, week by week" />
+        <p className="mb-3 text-txt-dim">
+          One bad week is noise. Two is a signal. This is where that shows.
+        </p>
+        <CompareView rows={PREVIEW_COMPARE} weeks={PREVIEW_COMPARE_WEEKS} />
+      </main>
+    </Shell>
+  );
+}
+
+function ThreadScreen({ messages }: { messages: typeof PREVIEW_THREAD }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Check-ins" title="Review, 2026-09-13" />
+        <div className="max-w-[70ch]">
+          <ReviewThread messages={messages} readOnly />
+        </div>
+      </main>
+    </Shell>
+  );
+}
+
+function QuestionBankScreen() {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <BuilderNav current="/coach/builder/questions" />
+        <ScreenHeader label="Builder" title={`${PREVIEW_BANK.length} questions`} />
+        <div className="overflow-x-auto">
+          <table className="elvt-table min-w-[820px]" data-testid="question-bank">
+            <caption className="sr-only">The question bank</caption>
+            <thead>
+              <tr>
+                <th scope="col">Question</th>
+                <th scope="col">Category</th>
+                <th scope="col">Can change</th>
+              </tr>
+            </thead>
+            <tbody>
+              {PREVIEW_BANK.map((question) => (
+                <tr key={question.key} data-testid="bank-row">
+                  <th scope="row" className="max-w-[40ch] truncate font-normal">
+                    {question.text}
+                  </th>
+                  <td className="text-txt-mute">{humanize(question.category)}</td>
+                  <td className="max-w-[28ch] truncate text-txt-mute">
+                    {question.produces.map(humanize).join(", ")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </Shell>
+  );
+}
+
+function FormScreen({
+  title,
+  form,
+  spineKeys,
+}: {
+  title: string;
+  form: { key: string; text: string }[];
+  spineKeys?: string[];
+}) {
+  return (
+    <div className="min-h-screen bg-ink">
+      <div className="mx-auto w-full max-w-[560px] px-4 py-5" data-testid="screen-ready">
+        <p className="elvt-label">ELVT check-in</p>
+        <h1 className="mt-1 text-section">{title}</h1>
+        <ol className="mt-4" data-testid="form-questions">
+          {form.map((question, index) => (
+            <li
+              key={question.key}
+              data-testid="form-question"
+              data-spine={spineKeys?.includes(question.key) ? "true" : undefined}
+              className="flex h-row items-center gap-3 border-line [border-bottom-width:1px]"
+            >
+              <span className="elvt-num w-[3ch] shrink-0 text-txt-dim">{index + 1}</span>
+              <span className="min-w-0 flex-1 truncate">{question.text}</span>
+              {spineKeys?.includes(question.key) ? (
+                <span className="elvt-label shrink-0 text-watch">Spine</span>
+              ) : null}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -493,5 +631,31 @@ export default async function PreviewPage({
       return <ProgramDraftScreen withRationale />;
     case "program-draft-empty":
       return <ProgramDraftScreen withRationale={false} />;
+    case "checkins":
+      return <CheckinsScreen rows={PREVIEW_SUBMISSIONS} />;
+    case "checkins-empty":
+      return <CheckinsScreen rows={[]} />;
+    case "checkin-compare":
+      return <CompareScreen />;
+    case "checkin-thread":
+      return <ThreadScreen messages={PREVIEW_THREAD} />;
+    case "checkin-thread-empty":
+      return <ThreadScreen messages={[]} />;
+    case "builder-question-bank":
+      return <QuestionBankScreen />;
+    case "checkin-daily-form":
+      return <FormScreen title="Today" form={PREVIEW_DAILY_FORM} />;
+    case "checkin-weekly-form":
+      return (
+        <FormScreen
+          title="This week"
+          form={PREVIEW_WEEKLY_FORM.questions}
+          spineKeys={PREVIEW_WEEKLY_FORM.spineKeys}
+        />
+      );
+    case "checkin-week1-form":
+      return <FormScreen title="Week one" form={PREVIEW_WEEK1_FORM.questions} />;
+    case "checkin-no-spine-form":
+      return <FormScreen title="This week" form={PREVIEW_NO_SPINE_FORM.questions} />;
   }
 }
