@@ -7,6 +7,8 @@
  * instead of the coach having to remember who cannot squat.
  */
 
+import type { PathShape } from "@/lib/nutrition/calorie-path";
+
 export const PATTERNS = [
   "squat", "hinge", "push_h", "push_v", "pull_h", "pull_v",
   "carry", "core", "lunge", "rotation",
@@ -127,10 +129,21 @@ export type RunTemplateBody = {
   progression?: ProgressionRule;
 };
 
-export const CALORIE_SHAPES = [
-  "linear", "front_loaded", "mileage_linked", "muscle_gain",
-] as const;
-export type CalorieShape = (typeof CALORIE_SHAPES)[number];
+/**
+ * The calorie path shapes a template can carry.
+ *
+ * Re-exported from the generator rather than listed again. The two lists used
+ * to be written out separately and had drifted: the Builder offered
+ * "muscle_gain" and the generator only knew "linear", "front_loaded",
+ * "mileage_linked" and "rising", so a coach who picked it built a template
+ * whose path could never be generated. The loop walk is what found it.
+ *
+ * "rising" is the name that survived, because the other three describe the
+ * shape of the line and "muscle_gain" describes a goal. muscle_gain is also
+ * already a GoalType, which is how the two came to be confused.
+ */
+export { PATH_SHAPES as CALORIE_SHAPES } from "@/lib/nutrition/calorie-path";
+export type CalorieShape = PathShape;
 
 export type PhaseBand = {
   name: string;

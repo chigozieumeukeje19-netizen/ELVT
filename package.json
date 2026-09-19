@@ -29,7 +29,8 @@
     "messages:dispatch": "tsx scripts/dispatch-messages.ts",
     "reminders:dispatch": "tsx scripts/dispatch-reminders.ts",
     "db:api-rls": "bash scripts/api-rls-check.sh",
-    "export:fixture": "tsx scripts/build-export-fixture.ts"
+    "export:fixture": "tsx scripts/build-export-fixture.ts",
+    "loop:walk": "VERIFY_DB=elvt_loop bash scripts/verify-migrations.sh > /dev/null && LOOP_DB=elvt_loop tsx scripts/loop-walk.ts"
   },
   "repository": {
     "type": "git",

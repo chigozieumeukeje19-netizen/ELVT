@@ -8,6 +8,8 @@ import {
   sameStimulus,
   type MaterializedProgram,
 } from "@/lib/program/apply-template";
+import { PATH_SHAPES } from "@/lib/nutrition/calorie-path";
+import { CALORIE_SHAPES } from "@/lib/program/types";
 import { LIBRARY, PLACEMENTS, START_DATE, TEMPLATE } from "../fixtures/program";
 
 function build(slug: keyof typeof PLACEMENTS, weeks = 12): MaterializedProgram {
@@ -403,5 +405,15 @@ describe("controls: the safety tests are actually testing something", () => {
     expect(() =>
       assertProgramIsSafe(program.weeks, everyDayIsRest, allIds),
     ).toThrow(/rest day/);
+  });
+});
+
+describe("the calorie path shapes", () => {
+  it("are one list, not two that drift", () => {
+    // They were two. The Builder's template form offered "muscle_gain" and the
+    // generator only knew "rising", so a coach who picked it saved a template
+    // whose calorie path could never be generated. The loop walk found it,
+    // because it was the first thing to hand a template body to the generator.
+    expect([...CALORIE_SHAPES]).toEqual([...PATH_SHAPES]);
   });
 });

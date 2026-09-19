@@ -136,7 +136,7 @@ the two places to change it are `src/styles/tokens.css` and DESIGN.md Part 2.
 
 ---
 
-## 6. There is no client detail screen, so six tabs are reachable only by URL
+## 6. There is no client detail screen, so seven tabs are reachable only by URL
 
 **Item:** 23, but it applies to 7, 8, 20 and 21 equally
 **Status:** needs a decision about scope, not a blocker
