@@ -129,6 +129,23 @@ Signal colors. These are the only saturated colors in the portal and each one me
 
 Desaturated on purpose. A screen showing eight clients will often carry all three at once, and saturated versions turn the roster into a Christmas tree. The bands are stated here so the code reads them from tokens, never from a literal.
 
+**`--watch` stays at #C9A227. Settled, not open.** The dataviz method's palette validator fails it on one check of six when the three signal colors are run as a chart palette against the dark panel:
+
+```
+$ node validate_palette.js "#4E9E6A,#C9A227,#C04A38" --mode dark --surface "#16181A"
+  [FAIL] Lightness band      outside band: #C9A227 at 0.728
+  [PASS] Chroma floor        all 3 above the floor
+  [PASS] CVD separation      worst pair ΔE 9.3 protan, 19.7 tritan
+  [PASS] Normal-vision floor worst pair ΔE 16.3
+  [PASS] Contrast vs surface all 3 at or above 3:1
+```
+
+Every check that decides whether the colors can be told apart passes, including under color vision deficiency, and by a comfortable margin: the target is 8 and the worst pair is 9.3. The one that fails is the lightness band, which exists so that no series in a chart shouts louder than the others.
+
+These are not chart series. They are state signals on rows and figures, read one at a time against text, and a state that is drifting is *supposed* to catch the eye before a state that is on plan. Equal optical weight is the wrong goal for this job. Charts in this product are single series and take their marks from `--txt-mute`, so the signal colors never appear as a palette anyway; the one place a signal color touches a chart is the delta figure, which also says "up" or "down" in words.
+
+Color is never the only carrier of meaning anywhere in the portal: `bandLabel()` gives every band a word, and a test holds that line. Nothing in the build depends on this decision, and it is recorded here so nobody spends another round on it.
+
 ELVT gold `#8A6F34` appears in exactly one place: the wordmark in the sidebar. It is brand identity, not a UI accent. Using it for buttons or highlights would pull the portal toward the cream and gold client-app look, which is hard fail 0.
 
 Nothing else gets color. No tinted cards, no colored section headers, no category colors.

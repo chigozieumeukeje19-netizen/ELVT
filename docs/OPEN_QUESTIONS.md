@@ -41,9 +41,24 @@ both client magic link tests red and nothing else.
 
 ## 2. Exercise library import has no source files
 
-**Item:** 4
-**Status:** blocked on files only Darren has
-**Needs:** the eight v1 client `index.html` files
+**Item:** 4, and item 26 which is waiting on it
+**Status:** still blocked on files only Darren has
+**Needs:** the eight v1 client `index.html` files, in `v1-archive/`
+
+Checked again on 2026-09-19 for item 26: `v1-archive/` does not exist in the
+repository or on the branch, and there is no `index.html` anywhere in the tree.
+Item 26 is skipped rather than worked around, per standing rule 13.
+
+When the files land, item 26 is three commands and a screen:
+
+```sh
+npm run exercises:import -- v1-archive
+```
+
+then the unmatched review screen in the Builder, then re-running the spine
+assertion against the real library instead of `tests/fixtures/program.ts`. The
+last part is the one that matters: that assertion is only as good as the library
+it filters, and today it filters a fixture with one barbell back squat in it.
 
 `scripts/import-exercises.ts` and its parser are built and unit tested against
 fixtures. Nothing is seeded, on instruction: no placeholder exercises. Every
@@ -97,42 +112,18 @@ the change to be careful with; changing the words in front of it is free.
 
 ## 5. The watch amber sits outside the lightness band for a dark surface
 
-**Item:** 20
-**Status:** a decision, not a blocker
-**Needs:** Darren to say whether to move it
+**Item:** 20, answered in 27
+**Status:** SETTLED. Darren's call, 2026-09-19: it stays as committed.
 
-The progress charts were built with the dataviz method, which says to compute
-the color checks rather than eyeball them. Running its validator over the three
-signal colors against the panel surface:
+`--watch` at #C9A227 fails the dataviz validator's lightness band and passes
+every check that decides whether the colors can be told apart. It is a state
+signal rather than a chart color, and a drifting row is supposed to catch the
+eye before an on-plan one, so equal optical weight is the wrong goal for the
+job it does.
 
-```
-$ node validate_palette.js "#4E9E6A,#C9A227,#C04A38" --mode dark --surface "#16181A"
-  [FAIL] Lightness band      outside band: #C9A227 at 0.728
-  [PASS] Chroma floor        all 3 above the floor
-  [PASS] CVD separation      worst pair ΔE 9.3 protan, 19.7 tritan
-  [PASS] Normal-vision floor worst pair ΔE 16.3
-  [PASS] Contrast vs surface all 3 at or above 3:1
-```
-
-Everything that decides whether the colors can be told apart passes, including
-under color vision deficiency, and by a comfortable margin: the target is 8 and
-the worst pair is 9.3. What fails is the lightness band, which is about keeping
-marks at a consistent weight so no one series shouts. `--watch` at 0.728 is
-brighter than the other two.
-
-**Not changed, because `--watch` is a locked value in DESIGN.md Part 2,** and
-the standing rules say no new color meanings without amending that first.
-Changing a value is close enough to the same thing that it is Darren's call
-rather than mine. The desaturation was also deliberate: "a screen showing eight
-clients will often carry all three at once, and saturated versions turn the
-roster into a Christmas tree."
-
-Nothing in the build depends on the answer. Status color never carries a meaning
-on its own anywhere in the portal: `bandLabel()` gives every band a word, and the
-chart delta says "up" or "down" in text beside the color. A test holds that line.
-
-If it is worth moving, the nearest passing step is a slightly deeper amber, and
-the two places to change it are `src/styles/tokens.css` and DESIGN.md Part 2.
+The reasoning is now written into DESIGN.md Part 2, beside the value, so the
+next person to run a palette validator over these three finds the answer there
+rather than reopening it.
 
 ---
 
