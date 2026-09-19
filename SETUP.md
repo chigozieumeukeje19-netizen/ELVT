@@ -211,3 +211,14 @@ npm run exercises:import -- <dir>   # the v1 HTML files, once they exist
 `docs/OPEN_QUESTIONS.md` is what the build is waiting on and what needs a
 decision rather than a default. `docs/LOCAL_VS_PRODUCTION.md` is what differs
 between a local stack and the cloud project.
+
+## Before deploying
+
+```
+npm run deploy:dry-run
+```
+
+Builds the way the host builds, serves what comes out with a production-shaped
+environment, and asks the running server the questions a first visitor asks. It
+spends nothing. What it reports and what a deploy still needs from a person is
+in docs/DEPLOY.md.

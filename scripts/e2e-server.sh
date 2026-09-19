@@ -36,4 +36,8 @@ MSG
   exit 1
 fi
 
-exec npx next start -p "$PORT"
+# next's own binary, not npx. npx forks a child and Playwright signals the
+# parent, so an npx layer here leaves a next-server holding the port after the
+# run ends. The next run then either fails to bind or, worse, is answered by
+# the stale server and reports on a build nobody made.
+exec "$ROOT/node_modules/.bin/next" start -p "$PORT"

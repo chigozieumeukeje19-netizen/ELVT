@@ -290,3 +290,25 @@ The question is whether either is wanted. The Builder already holds the exercise
 library and the question bank, which is most of what a Library screen would be.
 A Calendar has no equivalent: the week strip and the day grid are per client,
 and nothing in the portal shows a coach their whole week at once.
+
+---
+
+## 12. Nothing runs the four scheduled jobs
+
+**Item:** 30, the deploy dry run
+**Status:** the one thing standing between this build and a deploy
+
+`npm run deploy:dry-run` reports it every time. The week roll, the nightly
+triggers, the reminder dispatcher and the message dispatcher are npm scripts
+that tick every few minutes, and no scheduler runs any of them. Without one:
+adherence is never computed, no trigger ever fires, no client is reminded of
+anything, and scheduled messages are written and never sent.
+
+The options and their costs are in docs/DEPLOY.md. Choosing between GitHub
+Actions cron, Netlify scheduled functions and Supabase `pg_cron` is a cost
+decision rather than a technical one, which is why nothing here picks it.
+
+All four are idempotent by construction and tolerate a late tick, so the
+scheduler does not have to be precise. It does have to fail loudly when its
+credentials are missing: a job that exits zero because it had no key is a day
+where no client was reminded and nothing said so.

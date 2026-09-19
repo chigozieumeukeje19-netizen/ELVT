@@ -232,23 +232,31 @@ MSG
 # Who is listening, or nothing. Tries the tools in the order a machine is
 # likely to have them, so this works on a Mac and in a container.
 port_holder() {
-  local port="$1"
+  local port="$1" pid=""
+
+  # Name the holder if anything can. Neither of these is authoritative: in a
+  # container lsof can be installed and blind, which is how a leaked server
+  # went on answering a suite that had just been told the port was free.
   if command -v lsof >/dev/null 2>&1; then
-    lsof -ti:"$port" -sTCP:LISTEN 2>/dev/null | head -1
+    pid="$(lsof -ti:"$port" -sTCP:LISTEN 2>/dev/null | head -1)"
+  fi
+  if [ -z "$pid" ] && command -v ss >/dev/null 2>&1; then
+    pid="$(ss -ltnp "sport = :$port" 2>/dev/null | grep -o 'pid=[0-9]*' | head -1 | cut -d= -f2)"
+  fi
+  if [ -n "$pid" ]; then
+    echo "$pid"
     return 0
   fi
-  if command -v ss >/dev/null 2>&1; then
-    ss -ltnp "sport = :$port" 2>/dev/null | grep -o 'pid=[0-9]*' | head -1 | cut -d= -f2
-    return 0
-  fi
-  # No tool to name the process, so answer the question that actually matters:
-  # is anything accepting a connection there.
+
+  # Nothing named a holder, which is not the same as the port being free. Ask
+  # the question that actually matters: will something accept a connection.
   if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
     exec 3>&- 2>/dev/null || true
     echo "unknown"
   fi
   return 0
 }
+
 
 # Refuses to start when a port the run needs is taken. Named ports, one line
 # each, and the command that clears it.

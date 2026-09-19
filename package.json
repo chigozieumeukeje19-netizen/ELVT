@@ -33,7 +33,8 @@
     "loop:walk": "VERIFY_DB=elvt_loop bash scripts/verify-migrations.sh > /dev/null && LOOP_DB=elvt_loop tsx scripts/loop-walk.ts",
     "test:integration": "bash scripts/integration.sh",
     "ai:pack": "tsx scripts/ai-prompt-pack.ts",
-    "review:shots": "npm run build && playwright test -c playwright.review.config.ts"
+    "review:shots": "npm run build && playwright test -c playwright.review.config.ts",
+    "deploy:dry-run": "bash scripts/deploy-dry-run.sh"
   },
   "repository": {
     "type": "git",
