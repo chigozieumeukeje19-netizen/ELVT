@@ -69,6 +69,9 @@ const SCREENS = [
   "checkin-weekly-form",
   "checkin-week1-form",
   "checkin-no-spine-form",
+  "queue-lanes",
+  "queue-lanes-one",
+  "queue-lanes-empty",
 ] as const;
 
 /**
@@ -664,5 +667,53 @@ test.describe("check-ins", () => {
     for (const text of await page.getByTestId("bank-row").locator("td:last-child").allInnerTexts()) {
       expect(text.trim()).not.toBe("");
     }
+  });
+});
+
+/**
+ * The queue's three lanes.
+ *
+ * A flat list sorted by severity looks tidier and is worse: it hides which of
+ * the three decision rules an item falls under, and those rules are what tell
+ * the coach whether to act today, act Monday, or reply.
+ */
+test.describe("queue lanes", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("shows all three lanes in order, whatever is in them", async ({ page }) => {
+    for (const screen of ["queue-lanes", "queue-lanes-one", "queue-lanes-empty"]) {
+      await openScreen(page, screen);
+      const lanes = await page
+        .getByTestId("queue-lane")
+        .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-lane")));
+      expect(lanes, screen).toEqual(["same_day", "trend", "request"]);
+    }
+  });
+
+  test("an empty lane says nothing trended rather than disappearing", async ({ page }) => {
+    // An absent heading reads as a screen that failed to load. A heading
+    // saying nothing trended reads as the answer, which is what it is.
+    await openScreen(page, "queue-lanes-one");
+    const empties = page.getByTestId("lane-empty");
+    await expect(empties).toHaveCount(2);
+    await expect(empties.first()).toContainText("No flag");
+  });
+
+  test("carries the suggested message next to the item that raised it", async ({ page }) => {
+    await openScreen(page, "queue-lanes");
+    const messages = page.getByTestId("suggested-message");
+    expect(await messages.count()).toBeGreaterThan(0);
+    for (const text of await messages.allInnerTexts()) {
+      // The voice rules: real numbers, one question, no dashes.
+      expect(text).not.toMatch(/\s[-–—]\s/);
+    }
+  });
+
+  test("puts the most urgent item at the top of its lane", async ({ page }) => {
+    await openScreen(page, "queue-lanes");
+    const first = page
+      .locator('[data-lane="same_day"] [data-testid="lane-item"]')
+      .first();
+    await expect(first).toContainText("Back discomfort");
   });
 });

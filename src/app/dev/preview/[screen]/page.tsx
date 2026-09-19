@@ -17,6 +17,8 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { QueueLanes } from "@/components/queue/QueueLanes";
+import { PREVIEW_QUEUE_ONE_LANE, PREVIEW_QUEUE_ROWS } from "@/lib/design/preview-queue";
 import { CompareView } from "@/components/checkin/CompareView";
 import { ReviewThread } from "@/components/checkin/ReviewThread";
 import { SubmissionList } from "@/components/checkin/SubmissionList";
@@ -127,6 +129,9 @@ const SCREENS = [
   "checkin-weekly-form",
   "checkin-week1-form",
   "checkin-no-spine-form",
+  "queue-lanes",
+  "queue-lanes-one",
+  "queue-lanes-empty",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -556,6 +561,21 @@ function FormScreen({
   );
 }
 
+function QueueLaneScreen({ rows }: { rows: typeof PREVIEW_QUEUE_ROWS }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <p className="elvt-label">Queue</p>
+        <h1 className="elvt-num mt-1 text-hero" data-testid="queue-count">
+          {rows.length}
+        </h1>
+        <p className="text-txt-mute">{rows.length === 1 ? "item open" : "items open"}</p>
+        <QueueLanes rows={rows} />
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -657,5 +677,11 @@ export default async function PreviewPage({
       return <FormScreen title="Week one" form={PREVIEW_WEEK1_FORM.questions} />;
     case "checkin-no-spine-form":
       return <FormScreen title="This week" form={PREVIEW_NO_SPINE_FORM.questions} />;
+    case "queue-lanes":
+      return <QueueLaneScreen rows={PREVIEW_QUEUE_ROWS} />;
+    case "queue-lanes-one":
+      return <QueueLaneScreen rows={PREVIEW_QUEUE_ONE_LANE} />;
+    case "queue-lanes-empty":
+      return <QueueLaneScreen rows={[]} />;
   }
 }

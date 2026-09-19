@@ -24,7 +24,8 @@
     "db:seed:auth": "tsx scripts/seed-auth.ts",
     "auth:smoke": "bash scripts/auth-smoke.sh",
     "auth:diagnose": "bash scripts/auth-diagnose.sh",
-    "week:roll": "tsx scripts/week-roll.ts"
+    "week:roll": "tsx scripts/week-roll.ts",
+    "nightly": "tsx scripts/nightly.ts"
   },
   "repository": {
     "type": "git",

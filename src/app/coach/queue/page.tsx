@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { QueueLanes, laneFor, type QueueRow } from "@/components/queue/QueueLanes";
 import { currentProfile, isStaff } from "@/lib/auth";
 import { supabaseServer } from "@/lib/supabase/server";
 
@@ -9,6 +10,8 @@ type QueueItem = {
   kind: string;
   severity: number;
   title: string;
+  detail: Record<string, unknown> | null;
+  suggested_action: Record<string, unknown> | null;
   created_at: string;
   clients: { first_name: string; last_name: string | null; slug: string } | null;
 };
@@ -30,12 +33,29 @@ export default async function QueuePage() {
   const supabase = await supabaseServer();
   const { data } = await supabase
     .from("queue_items")
-    .select("id, kind, severity, title, created_at, clients(first_name, last_name, slug)")
+    .select(
+      "id, kind, severity, title, detail, suggested_action, created_at, clients(first_name, last_name, slug)",
+    )
     .eq("status", "open")
     .order("severity", { ascending: false })
     .order("created_at", { ascending: false });
 
   const items = (data ?? []) as unknown as QueueItem[];
+
+  const rows: QueueRow[] = items.map((item) => ({
+    id: item.id,
+    lane: laneFor(item.kind, item.severity),
+    client: item.clients
+      ? [item.clients.first_name, item.clients.last_name].filter(Boolean).join(" ")
+      : "Unassigned",
+    slug: item.clients?.slug ?? "",
+    title: item.title,
+    detail: readDetail(item.detail),
+    kind: item.kind,
+    severity: item.severity,
+    suggestedMessage:
+      typeof item.suggested_action?.message === "string" ? item.suggested_action.message : null,
+  }));
 
   return (
     <main className="px-5 py-4">
@@ -55,37 +75,20 @@ export default async function QueuePage() {
           Monday morning.
         </p>
       ) : (
-        <ul className="mt-5" data-testid="queue-list">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className="flex h-row items-center gap-4 border-line [border-top-width:1px]"
-              data-testid="queue-item"
-            >
-              <span
-                aria-hidden="true"
-                className={[
-                  "h-row w-1",
-                  item.severity >= 4
-                    ? "bg-flag"
-                    : item.severity >= 3
-                      ? "bg-watch"
-                      : "bg-line",
-                ].join(" ")}
-              />
-              <span className="w-[110px] shrink-0 truncate text-txt lg:w-[180px]">
-                {item.clients
-                  ? [item.clients.first_name, item.clients.last_name]
-                      .filter(Boolean)
-                      .join(" ")
-                  : "Unassigned"}
-              </span>
-              <span className="min-w-0 flex-1 truncate">{item.title}</span>
-              <span className="elvt-label hidden shrink-0 pr-3 lg:inline">{item.kind.replace(/_/g, " ")}</span>
-            </li>
-          ))}
-        </ul>
+        <QueueLanes rows={rows} />
       )}
     </main>
   );
+}
+
+/** One line out of a detail blob, without printing the blob. */
+function readDetail(detail: Record<string, unknown> | null): string {
+  if (!detail) return "";
+  if (typeof detail.lastActive === "string") return `Last logged ${detail.lastActive}`;
+  if (Array.isArray(detail.dates)) return `Missed ${detail.dates.join(", ")}`;
+  if (typeof detail.since === "string") return `Since ${detail.since}`;
+  if (typeof detail.threeWeekAverage === "number") {
+    return `Against ${detail.threeWeekAverage} over the previous three weeks`;
+  }
+  return "";
 }
