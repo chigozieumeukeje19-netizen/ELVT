@@ -71,10 +71,22 @@ export type MaterializedWeek = {
 /** Why the applier did something a coach might otherwise query. */
 export type Decision =
   | { kind: "lift_cap"; from: number; to: number; reason: string }
-  | { kind: "substitution"; slot: string; from: string; to: string; reason: string }
+  // `cause` is structured rather than inferred from the prose, because what a
+  // coach is told about why a movement was removed has to be exactly right.
+  // The pool is filtered on flags and nothing else today, so every
+  // substitution is an injury one; an equipment filter added later has to say
+  // so here rather than have the explanation guess.
+  | {
+      kind: "substitution";
+      slot: string;
+      from: string;
+      to: string;
+      cause: "injury" | "equipment";
+      reason: string;
+    }
   | { kind: "slot_dropped"; slot: string; reason: string }
   | { kind: "session_dropped"; session: string; reason: string }
-  | { kind: "day_relaxed"; session: string; reason: string };
+  | { kind: "day_relaxed"; scope: "week"; reason: string };
 
 export type MaterializedProgram = {
   weeks: MaterializedWeek[];
@@ -310,7 +322,7 @@ export function applyTemplate(input: {
     if (placements) {
       decisions.push({
         kind: "day_relaxed",
-        session: "week",
+        scope: "week",
         reason:
           "The preferred training days could not hold the week without putting two hard sessions of the same kind together, so the other non rest days were used.",
       });
@@ -329,7 +341,7 @@ export function applyTemplate(input: {
     if (placements) {
       decisions.push({
         kind: "day_relaxed",
-        session: "week",
+        scope: "week",
         reason:
           "Two sessions share a day this week. They are never both hard.",
       });
@@ -419,6 +431,7 @@ export function applyTemplate(input: {
             slot: slotLabel,
             from: substitutedFrom,
             to: chosen.name,
+            cause: "injury",
             reason: "The first choice is ruled out by one of this client's flags.",
           });
         }

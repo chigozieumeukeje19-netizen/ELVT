@@ -7,6 +7,8 @@
  * fix that introduces a new unspecified default is not a fix."
  */
 
+import { asPattern, EMPTY_STATE_FILLER, MARKETING_CLICHES } from "./banned-copy";
+
 export type Severity = "high" | "medium";
 
 export type Rule = {
@@ -321,9 +323,10 @@ export const RULES: Rule[] = [
     tell: 11,
     title: "Marketing cliché in copy",
     severity: "medium",
-    pattern:
-      /\b(?:[Tt]ransform your|[Ss]upercharge|[Uu]nleash|[Ee]ffortlessly|[Ss]eamlessly|reimagined|[Ee]levate your|[Uu]nlock the power)\b/,
-    exempt: ["tests/"],
+    pattern: asPattern(MARKETING_CLICHES),
+    // The list itself is not copy. It lives in one file so the audit and the
+    // AI voice check cannot drift, and that file is the one place skipped.
+    exempt: ["tests/", "src/lib/design/banned-copy.ts"],
     fix: "Write what the thing does, in the voice the coach would use.",
   },
   {
@@ -331,9 +334,8 @@ export const RULES: Rule[] = [
     tell: 11,
     title: "A placeholder empty state",
     severity: "medium",
-    pattern:
-      /Nothing here yet|No items yet|Nothing to see here|Coming soon|Lorem ipsum/i,
-    exempt: ["tests/"],
+    pattern: asPattern(EMPTY_STATE_FILLER),
+    exempt: ["tests/", "src/lib/design/banned-copy.ts"],
     fix: "The empty state is the first thing seen on day one. Say what will appear here, when, and what the coach does next.",
   },
 

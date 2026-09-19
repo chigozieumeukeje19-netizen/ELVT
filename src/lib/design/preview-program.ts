@@ -12,7 +12,7 @@ import { buildPeriodizationRows, buildProgramView } from "@/lib/program/view";
  * Movement names and flag keys are library data, not client data.
  */
 
-const LIBRARY: LibraryExercise[] = [
+export const PREVIEW_LIBRARY: LibraryExercise[] = [
   {
     id: "back-squat", name: "Barbell Back Squat", aliases: [],
     pattern: "squat", equipment: ["barbell"], unilateral: false,
@@ -42,7 +42,7 @@ const LIBRARY: LibraryExercise[] = [
 
 const sets = [1, 2, 3].map((set) => ({ set, reps: 8, rir: 2 }));
 
-const TEMPLATE: ProgramTemplateBody = {
+export const PREVIEW_TEMPLATE: ProgramTemplateBody = {
   split: { liftsPerWeek: 2, runsPerWeek: 3 },
   phases: [
     { name: "Base", startWeek: 1, endWeek: 4, tone: "panel" },
@@ -98,7 +98,7 @@ const TEMPLATE: ProgramTemplateBody = {
 };
 
 const applied = applyTemplate({
-  template: TEMPLATE,
+  template: PREVIEW_TEMPLATE,
   placement: {
     preferredTrainingDays: [1, 2, 4, 5, 6],
     preferredLongRunDay: 6,
@@ -107,12 +107,12 @@ const applied = applyTemplate({
     combatSport: false,
     runningEnabled: true,
   },
-  library: LIBRARY,
+  library: PREVIEW_LIBRARY,
   startDate: "2026-09-21",
   weeks: 8,
 });
 
-export const PREVIEW_PROGRAM = buildProgramView(applied, TEMPLATE.phases);
+export const PREVIEW_PROGRAM = buildProgramView(applied, PREVIEW_TEMPLATE.phases);
 export const PREVIEW_PROGRAM_ROWS = buildPeriodizationRows(applied);
 
 /**

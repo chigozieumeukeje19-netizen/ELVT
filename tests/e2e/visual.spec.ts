@@ -55,6 +55,10 @@ const SCREENS = [
   "intake-running-hidden",
   "builder-questionnaire",
   "builder-questionnaire-empty",
+  "blueprint",
+  "blueprint-empty",
+  "program-draft",
+  "program-draft-empty",
 ] as const;
 
 /**
@@ -510,5 +514,53 @@ test.describe("questionnaire builder", () => {
   test("the empty state says what to add", async ({ page }) => {
     await openScreen(page, "builder-questionnaire-empty");
     await expect(page.getByTestId("outline-empty")).toContainText("Add a section");
+  });
+});
+
+/**
+ * The blueprint and the program draft are the two approval screens, and both
+ * only work if the coach can tell what they are approving. These check the
+ * distinction the screens exist to make: which half came from the client and
+ * which half came from a draft, and why each movement changed.
+ */
+test.describe("blueprint and program draft", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("says the facts are not editable and the draft is", async ({ page }) => {
+    await openScreen(page, "blueprint");
+    await expect(page.getByTestId("derived-facts")).toBeVisible();
+    await expect(page.getByTestId("drafted-prose")).toBeVisible();
+    // The half a paste can never write says so.
+    await expect(page.locator("text=never written by an AI draft")).toBeVisible();
+  });
+
+  test("shows the injury flags where they cannot be missed", async ({ page }) => {
+    await openScreen(page, "blueprint");
+    await expect(page.getByTestId("derived-facts")).toContainText("Spine");
+    await expect(page.getByTestId("derived-facts")).toContainText("Knee");
+  });
+
+  test("the empty draft says what is missing rather than looking finished", async ({ page }) => {
+    await openScreen(page, "blueprint-empty");
+    await expect(page.getByTestId("drafted-prose")).toContainText("Not drafted yet");
+  });
+
+  test("explains every substitution by its flag", async ({ page }) => {
+    await openScreen(page, "program-draft");
+    const decisions = page.getByTestId("decision");
+    expect(await decisions.count()).toBeGreaterThan(0);
+    // A coach approving a block for a client with a spinal fusion has to be
+    // able to read why the back squat is not in it.
+    await expect(decisions.filter({ hasText: "flag" }).first()).toBeVisible();
+  });
+
+  test("collapses a decision that repeats every week rather than listing it sixteen times", async ({ page }) => {
+    await openScreen(page, "program-draft");
+    await expect(page.getByTestId("decision").filter({ hasText: "weeks" }).first()).toBeVisible();
+  });
+
+  test("says the rationale is missing rather than showing blank rows", async ({ page }) => {
+    await openScreen(page, "program-draft-empty");
+    await expect(page.getByTestId("rationale-empty")).toContainText("Copy the prompt");
   });
 });

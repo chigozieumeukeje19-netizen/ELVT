@@ -17,6 +17,14 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { BlueprintView } from "@/components/blueprint/BlueprintView";
+import { DecisionList } from "@/components/blueprint/DecisionList";
+import { WeekRationale } from "@/components/blueprint/WeekRationale";
+import {
+  PREVIEW_BLUEPRINT,
+  PREVIEW_BLUEPRINT_EMPTY,
+  PREVIEW_PROGRAM_DRAFT,
+} from "@/lib/design/preview-blueprint";
 import { IntakeSectionPreview } from "@/components/intake/IntakeSectionPreview";
 import { QuestionnaireOutline } from "@/components/questionnaire/QuestionnaireOutline";
 import { INTAKE } from "@/lib/questionnaire/intake";
@@ -90,6 +98,10 @@ const SCREENS = [
   "intake-running-hidden",
   "builder-questionnaire",
   "builder-questionnaire-empty",
+  "blueprint",
+  "blueprint-empty",
+  "program-draft",
+  "program-draft-empty",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -357,6 +369,55 @@ function QuestionnaireBuilderScreen({ empty }: { empty: boolean }) {
   );
 }
 
+function BlueprintScreen({ blueprint }: { blueprint: typeof PREVIEW_BLUEPRINT }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Blueprint"
+          title="Ekaterina Vasilyeva-Whitcombe"
+          note="Version 2, in draft"
+        />
+        <BlueprintView blueprint={blueprint} />
+      </main>
+    </Shell>
+  );
+}
+
+function ProgramDraftScreen({ withRationale }: { withRationale: boolean }) {
+  const draft = PREVIEW_PROGRAM_DRAFT;
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Program draft"
+          title="Ekaterina Vasilyeva-Whitcombe"
+          note={`${draft.program.weeks.length} weeks, from the blueprint and the hybrid template`}
+        />
+
+        <div className="grid gap-8 lg:grid-cols-2">
+          <section>
+            <h2 className="elvt-label">What the applier changed, and why</h2>
+            <div className="mt-2">
+              <DecisionList decisions={draft.explained} />
+            </div>
+          </section>
+
+          <section>
+            <h2 className="elvt-label">What each week is for</h2>
+            <div className="mt-2">
+              <WeekRationale
+                rationale={withRationale ? draft.rationale : []}
+                weekCount={draft.program.weeks.length}
+              />
+            </div>
+          </section>
+        </div>
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -424,5 +485,13 @@ export default async function PreviewPage({
       return <QuestionnaireBuilderScreen empty={false} />;
     case "builder-questionnaire-empty":
       return <QuestionnaireBuilderScreen empty />;
+    case "blueprint":
+      return <BlueprintScreen blueprint={PREVIEW_BLUEPRINT} />;
+    case "blueprint-empty":
+      return <BlueprintScreen blueprint={PREVIEW_BLUEPRINT_EMPTY} />;
+    case "program-draft":
+      return <ProgramDraftScreen withRationale />;
+    case "program-draft-empty":
+      return <ProgramDraftScreen withRationale={false} />;
   }
 }
