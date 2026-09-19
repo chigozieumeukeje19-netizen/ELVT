@@ -24,7 +24,16 @@ const root = path.resolve(__dirname, "../..");
  * the source, and the two are compared.
  */
 
-const VERIFY_DB = process.env.VERIFY_DB ?? "elvt_verify";
+/**
+ * Its own database, not the schema suite's.
+ *
+ * Vitest runs files in parallel workers, and both suites rebuild their
+ * verification database from the migrations. Sharing a name meant whichever
+ * started second hit "duplicate key value violates unique constraint
+ * pg_database_datname_index" and the failure looked like a migration problem
+ * rather than a race.
+ */
+const VERIFY_DB = process.env.INSERTS_DB ?? "elvt_inserts";
 
 type Required = Map<string, Set<string>>;
 
