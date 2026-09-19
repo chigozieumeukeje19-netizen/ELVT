@@ -18,6 +18,13 @@ import {
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
 import { ComposerPreview } from "@/components/messages/ComposerPreview";
+import { PhotoCompare } from "@/components/photos/PhotoCompare";
+import { PhotoGrid } from "@/components/photos/PhotoGrid";
+import {
+  PREVIEW_PHOTO_COMPARISONS,
+  PREVIEW_PHOTO_ONE_WEEK,
+  PREVIEW_PHOTO_WEEKS,
+} from "@/lib/design/preview-photos";
 import { ProgressTable } from "@/components/progress/ProgressTable";
 import { TrendChart } from "@/components/progress/TrendChart";
 import {
@@ -169,6 +176,10 @@ const SCREENS = [
   "progress-thin",
   "progress-empty",
   "progress-table",
+  "photos",
+  "photos-empty",
+  "photos-compare",
+  "photos-compare-unavailable",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -717,6 +728,46 @@ function ProgressScreen({
   );
 }
 
+function PhotosScreen({ weeks }: { weeks: typeof PREVIEW_PHOTO_WEEKS }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Photos"
+          title="Ekaterina Vasilyeva-Whitcombe"
+          note={
+            weeks.length === 0
+              ? "Nothing yet"
+              : `${weeks.length} weeks, links expire in five minutes`
+          }
+        />
+        <PhotoGrid weeks={weeks} urls={{}} />
+      </main>
+    </Shell>
+  );
+}
+
+function PhotoCompareScreen({ weeks }: { weeks: typeof PREVIEW_PHOTO_WEEKS }) {
+  const comparisons = weeks === PREVIEW_PHOTO_WEEKS ? PREVIEW_PHOTO_COMPARISONS : [];
+  const chosen = comparisons[0] ?? null;
+
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader label="Photos" title="Ekaterina Vasilyeva-Whitcombe" note="Compare" />
+        <PhotoCompare
+          from={weeks.find((week) => week.weekNumber === chosen?.from) ?? null}
+          to={weeks.find((week) => week.weekNumber === chosen?.to) ?? null}
+          urls={{}}
+          comparisons={comparisons}
+          selected={chosen?.key ?? null}
+          hrefFor={(key) => `/dev/preview/photos-compare?compare=${key}`}
+        />
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -852,5 +903,13 @@ export default async function PreviewPage({
       return <ProgressScreen series={PREVIEW_PROGRESS_EMPTY} label="Nothing logged yet" />;
     case "progress-table":
       return <ProgressScreen series={PREVIEW_PROGRESS} asTable label="Every reading" />;
+    case "photos":
+      return <PhotosScreen weeks={PREVIEW_PHOTO_WEEKS} />;
+    case "photos-empty":
+      return <PhotosScreen weeks={[]} />;
+    case "photos-compare":
+      return <PhotoCompareScreen weeks={PREVIEW_PHOTO_WEEKS} />;
+    case "photos-compare-unavailable":
+      return <PhotoCompareScreen weeks={PREVIEW_PHOTO_ONE_WEEK} />;
   }
 }

@@ -132,8 +132,13 @@ function findInserts(source: string, file: string): Insert[] {
     for (const line of body.split("\n")) {
       const trimmed = line.trim();
       if (nesting === 0) {
-        const key = trimmed.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*:/);
-        if (key) keys.push(key[1]);
+        // `angle: angle` and `angle,` are the same column. Reading only the
+        // first made every insert using a shorthand property look as though it
+        // had left that column out.
+        const pair = trimmed.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*:/);
+        const shorthand = trimmed.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*,\s*$/);
+        if (pair) keys.push(pair[1]);
+        else if (shorthand) keys.push(shorthand[1]);
       }
       nesting += (line.match(/[{[(]/g) ?? []).length;
       nesting -= (line.match(/[}\])]/g) ?? []).length;

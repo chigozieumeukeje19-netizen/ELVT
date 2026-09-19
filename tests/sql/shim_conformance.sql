@@ -133,3 +133,44 @@ where a.attgenerated = 's'
   and not a.attisdropped
   and n.nspname in ('auth', 'public')
 order by 1;
+
+-- ---------------------------------------------------------------------------
+-- The storage stand-in.
+--
+-- Standing rule: a local stand-in must be no more permissive than production.
+-- The photo policies key on the first segment of a path, so foldername() is the
+-- piece that has to behave identically. A shim that kept the file name would
+-- make [1] the client id here and the week folder in production, and every
+-- client would be able to read every folder.
+-- ---------------------------------------------------------------------------
+
+do $$
+begin
+  perform pg_temp.assert(
+    storage.foldername('abc/week-1/front-123') = array['abc', 'week-1'],
+    'foldername returns the folders and drops the file name'
+  );
+
+  perform pg_temp.assert(
+    (storage.foldername('abc/week-1/front-123'))[1] = 'abc',
+    'the first segment is the client id'
+  );
+
+  perform pg_temp.assert(
+    storage.foldername('nofolders') = '{}'::text[] or storage.foldername('nofolders') is null,
+    'a path with no folders returns nothing rather than the file name'
+  );
+
+  -- The bucket itself is asserted in tests/sql/api_rls_checks.sql, not here.
+  -- This file runs before the migrations, on purpose: it checks the stand-in,
+  -- and the bucket is something a migration creates.
+
+  perform pg_temp.assert(
+    exists (
+      select 1 from information_schema.columns
+      where table_schema = 'storage' and table_name = 'objects' and column_name = 'bucket_id'
+    ),
+    'storage.objects carries bucket_id, which every policy filters on'
+  );
+end;
+$$;

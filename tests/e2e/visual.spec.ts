@@ -86,6 +86,10 @@ const SCREENS = [
   "progress-thin",
   "progress-empty",
   "progress-table",
+  "photos",
+  "photos-empty",
+  "photos-compare",
+  "photos-compare-unavailable",
 ] as const;
 
 /**
@@ -1037,5 +1041,79 @@ test.describe("progress charts", () => {
   test("the empty state says what to check", async ({ page }) => {
     await openScreen(page, "progress-empty");
     await expect(page.getByTestId("chart-empty").first()).toBeVisible();
+  });
+});
+
+/**
+ * Photos.
+ *
+ * No images in the fixtures. Putting photographs of people into a repository to
+ * test a grid would be the wrong trade even with consent, and every slot
+ * rendering its missing state is the case worth checking anyway: a full grid is
+ * the easy one.
+ */
+test.describe("photos", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("shows three angles a week, marking the ones not taken", async ({ page }) => {
+    await openScreen(page, "photos");
+    const weeks = page.getByTestId("photo-week");
+    await expect(weeks).toHaveCount(3);
+
+    // Three slots a week whether or not the photo exists, so a missing angle is
+    // a gap rather than a shorter row.
+    await expect(page.getByTestId("photo-slot")).toHaveCount(9);
+  });
+
+  test("says which week is incomplete", async ({ page }) => {
+    // A client who took the front and forgot the back is a different fact from
+    // one who took nothing, and only the first is worth a message.
+    await openScreen(page, "photos");
+    const partial = page.getByTestId("partial-week");
+    await expect(partial).toHaveCount(1);
+    await expect(partial).toContainText("2 of 3");
+  });
+
+  test("compares by angle rather than by week", async ({ page }) => {
+    await openScreen(page, "photos-compare");
+    // Front against front. A grid of six in week order makes the reader do the
+    // pairing, and they will do it wrong.
+    const rows = page.getByTestId("compare-row");
+    expect(await rows.count()).toBeGreaterThan(0);
+    for (const angle of await rows.evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("data-angle")),
+    )) {
+      expect(["front", "side", "back"]).toContain(angle);
+    }
+  });
+
+  test("gives both sides of a comparison the same size", async ({ page }) => {
+    await openScreen(page, "photos-compare");
+    const sides = page.getByTestId("compare-side");
+    const boxes = await sides.evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const rect = node.getBoundingClientRect();
+        return Math.round(rect.width);
+      }),
+    );
+    // A comparison where one side is bigger has already made its point.
+    expect(new Set(boxes).size).toBe(1);
+  });
+
+  test("offers only comparisons that have photos on both sides", async ({ page }) => {
+    await openScreen(page, "photos-compare");
+    const labels = await page.locator('[aria-label="Comparisons"] a').allInnerTexts();
+    // Weeks 1, 4 and 8 have photos; week 12 does not.
+    expect(labels.join(" ")).not.toContain("week 12");
+  });
+
+  test("says a comparison needs two sets rather than offering a dead button", async ({ page }) => {
+    await openScreen(page, "photos-compare-unavailable");
+    await expect(page.getByTestId("compare-unavailable")).toContainText("Two sets");
+  });
+
+  test("the empty state says when the first set arrives", async ({ page }) => {
+    await openScreen(page, "photos-empty");
+    await expect(page.getByTestId("photos-empty")).toContainText("Monday");
   });
 });

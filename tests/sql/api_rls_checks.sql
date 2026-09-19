@@ -13,6 +13,15 @@
 
 \set ON_ERROR_STOP on
 
+-- Everything below runs in one transaction that is rolled back at the end.
+--
+-- The fixtures these assertions need are written rather than looked for, and
+-- without this they survived the run: a second pass collided on the movement it
+-- had inserted the first time, and the file could only be run against a freshly
+-- rebuilt database. A test that cannot be run twice is a test people stop
+-- running.
+begin;
+
 create or replace function pg_temp.assert(condition boolean, label text)
 returns void language plpgsql as $$
 begin
@@ -24,6 +33,14 @@ end;
 $$;
 
 /* Switches to a client the way PostgREST does. */
+/*
+ * Every write assertion below catches insufficient_privilege and nothing else.
+ *
+ * The first version caught `others`, which meant a wrong column name looked
+ * exactly like a policy doing its job. The photos assertion was passing for
+ * that reason: it named columns the table does not have, the insert raised
+ * before RLS was ever consulted, and the file reported the endpoint as bounded.
+ */
 create or replace function pg_temp.become(client uuid, usr uuid)
 returns void language plpgsql as $$
 begin
@@ -259,7 +276,7 @@ begin
   begin
     insert into public.set_logs (client_id, session_exercise_id, set_number, actual)
     values (theirs, their_exercise, 1, '{}'::jsonb);
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -270,7 +287,7 @@ begin
   blocked := false;
   begin
     insert into public.run_logs (client_id, run_id, distance) values (theirs, null, 5);
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -281,7 +298,7 @@ begin
   blocked := false;
   begin
     insert into public.daily_logs (client_id, date, steps) values (theirs, '2026-01-01', 1);
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -299,7 +316,7 @@ begin
   begin
     insert into public.habit_logs (client_id, habit_id, date, completed)
     values (theirs, their_habit, '2026-01-01', true);
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -310,7 +327,7 @@ begin
   blocked := false;
   begin
     insert into public.meal_logs (client_id, date, custom) values (theirs, '2026-01-01', '{}'::jsonb);
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -321,7 +338,7 @@ begin
   blocked := false;
   begin
     insert into public.day_completion (client_id, date, score) values (theirs, '2026-01-01', 100);
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -333,7 +350,7 @@ begin
   begin
     insert into public.checkin_submissions (form_id, client_id, for_date)
     values (their_form, theirs, '2026-01-01');
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -345,7 +362,7 @@ begin
   begin
     insert into public.messages (thread_id, client_id, sender_id, body, sent_at)
     values (their_thread, theirs, my_user, 'hello', now());
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -355,7 +372,7 @@ begin
   blocked := false;
   begin
     insert into public.threads (client_id, subject) values (theirs, 'hello');
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -368,7 +385,7 @@ begin
   begin
     insert into public.messages (thread_id, client_id, sender_id, body, sent_at)
     values (my_thread, mine, their_user, 'not me', now());
-  exception when others then
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -378,9 +395,9 @@ begin
   perform pg_temp.become(mine, my_user);
   blocked := false;
   begin
-    insert into public.progress_photos (client_id, week, angle, path)
-    values (theirs, 1, 'front', 'x');
-  exception when others then
+    insert into public.progress_photos (client_id, week_number, taken_on, angle, storage_path)
+    values (theirs, 1, '2026-09-21', 'front', 'x');
+  exception when insufficient_privilege then
     blocked := true;
   end;
   reset role;
@@ -399,6 +416,77 @@ begin
   get diagnostics touched = row_count;
   reset role;
   perform pg_temp.assert(touched = 0, 'POST /day-swap cannot move another client''s session');
+
+  -- =========================================================================
+  -- The photo bucket. Separate from the tables, because the bound here is on a
+  -- path rather than on a column, and getting the path split wrong would let
+  -- every client read every folder.
+  -- =========================================================================
+
+  perform pg_temp.assert(
+    (storage.foldername('11111111-1111-4111-8111-111111111111/week-1/front-123'))[1]
+      = '11111111-1111-4111-8111-111111111111',
+    'the first path segment is the client id'
+  );
+
+  perform pg_temp.assert(
+    array_length(storage.foldername('a/week-1/front-123'), 1) = 2,
+    'foldername drops the file name rather than keeping it'
+  );
+
+  -- A client writing into their own folder.
+  perform pg_temp.become(mine, my_user);
+  blocked := false;
+  begin
+    insert into storage.objects (bucket_id, name)
+    values ('client-photos', mine::text || '/week-1/front-1');
+  exception when insufficient_privilege then
+    blocked := true;
+  end;
+  reset role;
+  perform pg_temp.assert(not blocked, 'POST /photos writes into the client''s own folder');
+
+  -- And into somebody else's, which is the one that matters.
+  perform pg_temp.become(mine, my_user);
+  blocked := false;
+  begin
+    insert into storage.objects (bucket_id, name)
+    values ('client-photos', theirs::text || '/week-1/front-1');
+  exception when insufficient_privilege then
+    blocked := true;
+  end;
+  reset role;
+  perform pg_temp.assert(blocked, 'POST /photos cannot write into another client''s folder');
+
+  -- Reading one.
+  insert into storage.objects (bucket_id, name)
+  values ('client-photos', theirs::text || '/week-2/back-1');
+
+  perform pg_temp.become(mine, my_user);
+  select count(*) into visible
+    from storage.objects
+   where bucket_id = 'client-photos'
+     and (storage.foldername(name))[1] = theirs::text;
+  reset role;
+  perform pg_temp.assert(visible = 0, 'a client cannot read another client''s photos');
+
+  -- The bucket is private. A public bucket would make every signed URL
+  -- pointless, since the path alone would be enough.
+  perform pg_temp.assert(
+    (select not public from storage.buckets where id = 'client-photos'),
+    'the photo bucket is private'
+  );
+
+  -- Nothing may delete. Replacing Monday's photo is normal; deleting one is not
+  -- something a client does from the app.
+  perform pg_temp.assert(
+    not exists (
+      select 1 from pg_policies
+      where schemaname = 'storage' and tablename = 'objects'
+        and cmd = 'DELETE' and policyname like 'client_photos%'
+    ),
+    'no policy lets a client delete a photo'
+  );
 
   raise notice 'All client API endpoints are bounded at the RLS layer.';
 end;
@@ -449,3 +537,7 @@ begin
   );
 end;
 $$;
+
+rollback;
+
+\echo 'Rolled back. Nothing this file wrote survives it.'

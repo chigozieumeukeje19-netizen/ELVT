@@ -296,6 +296,13 @@ export const RULES: Rule[] = [
     title: "A symmetric row of equal cards",
     severity: "medium",
     pattern: /grid-cols-3[^"'`]*\bgap-|md:grid-cols-(?:3|4)\b/,
+    // The tell is a row of identical stat cards across the top of a screen,
+    // where hierarchy should exist and does not. Three photographs of the same
+    // person from three angles are genuinely equals: there is no "first", and
+    // making one bigger would be wrong, which the compare view asserts
+    // separately. Exempted here rather than with unslop-ignore so the reason
+    // sits in the rule table where the next person reading it will see it.
+    exempt: ["src/components/photos/"],
     fix: "Hierarchy comes from size and position. Decide what the eye hits first and make it bigger, rather than lining up equals.",
   },
   {

@@ -9,6 +9,62 @@
 
 create schema if not exists auth;
 create schema if not exists extensions;
+create schema if not exists storage;
+
+-- ---------------------------------------------------------------------------
+-- storage.
+--
+-- Modelled rather than skipped, because the photo policies are what stop one
+-- client reading another's progress photographs, and a policy nothing exercises
+-- is a policy nobody knows is broken.
+--
+-- Only the pieces the migrations touch: the two tables and foldername(). The
+-- columns are the ones production has, with the same nullability, so an insert
+-- that works here works there. tests/sql/shim_conformance.sql asserts that.
+-- ---------------------------------------------------------------------------
+
+create table if not exists storage.buckets (
+  id text primary key,
+  name text not null,
+  owner uuid,
+  public boolean not null default false,
+  avif_autodetection boolean not null default false,
+  file_size_limit bigint,
+  allowed_mime_types text[],
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists storage.objects (
+  id uuid primary key default gen_random_uuid(),
+  bucket_id text references storage.buckets (id),
+  name text,
+  owner uuid,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  last_accessed_at timestamptz not null default now(),
+  metadata jsonb,
+  path_tokens text[] generated always as (string_to_array(name, '/')) stored
+);
+
+alter table storage.objects enable row level security;
+
+/*
+ * Splits a path into its folders, dropping the file name.
+ *
+ * Production returns the segments before the last one, so a path of
+ * "<client>/week-1/front-123" gives {<client>, week-1} and [1] is the client
+ * id. Getting this wrong in the shim would make the photo policies look right
+ * here and let every client read every folder in production, so it matches.
+ */
+create or replace function storage.foldername(name text)
+returns text[] language sql immutable as $$
+  select (string_to_array(name, '/'))[1:array_length(string_to_array(name, '/'), 1) - 1];
+$$;
+
+grant usage on schema storage to anon, authenticated, service_role;
+grant select, insert, update on storage.objects to authenticated, service_role;
+grant select on storage.buckets to authenticated, service_role;
 
 -- Supabase ships pgcrypto in the extensions schema before any project
 -- migration runs. Creating it here rather than relying on the foundation

@@ -41,7 +41,8 @@ export const POST = handler(async ({ clientId, db }, request) => {
       return apiError(415, "Photos have to be an image.");
     }
 
-    // The client id comes from the verified token, never from the body.
+    // The client id comes from the verified token, never from the body. A path
+    // a caller can name is a path a caller can point at someone else's folder.
     const path = `${clientId}/week-${week}/${angle}-${Date.now()}`;
 
     const { error } = await db.storage
@@ -49,6 +50,20 @@ export const POST = handler(async ({ clientId, db }, request) => {
       .upload(path, file, { contentType: file.type, upsert: true });
 
     if (error) return apiError(400, "That photo could not be saved.");
+
+    // And the gallery row. Without this the file is in the bucket and the
+    // gallery does not know it exists, which is how a client uploads photos
+    // every Monday and their coach sees an empty tab.
+    const { error: rowError } = await db.from("progress_photos").insert({
+      client_id: clientId,
+      week_number: Number(week),
+      taken_on: new Date().toISOString().slice(0, 10),
+      angle,
+      storage_path: path,
+    });
+
+    if (rowError) return apiError(400, "That photo saved but could not be filed.");
+
     written.push({ angle, path });
   }
 
