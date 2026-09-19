@@ -5,27 +5,29 @@
 @tailwind utilities;
 
 /*
- * Base. Surfaces are borderless by default: separation comes from a 1px --line
- * rule and from the panel step, not from a border plus a shadow on every box.
- * There are no drop shadows anywhere except modals.
+ * Base. DESIGN_V2.md: elevation is carried by surface lightness plus a faint
+ * top highlight, not by a border plus a shadow on every box. Hairline borders
+ * are demoted to rare separators, and the table row rule is the main survivor.
  */
 
 html,
 body {
-  background: var(--ink);
+  background: var(--surface-page);
   color: var(--txt);
 }
 
 body {
   font-family: var(--font-ui), system-ui, sans-serif;
   font-size: var(--text-body);
-  line-height: 1.45;
+  line-height: 22px;
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
 }
 
 /*
- * Headings carry size, not a second typeface. Archivo does the whole UI; the
- * only other face in the portal is the mono used for compared figures.
+ * Headings carry size and weight, not a second typeface. Archivo does the
+ * whole UI. Mono exists for an id shown to a developer and a raw timestamp,
+ * and for nothing that reads as data.
  */
 h1,
 h2,
@@ -33,128 +35,161 @@ h3,
 h4 {
   font-family: var(--font-ui), system-ui, sans-serif;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 ::selection {
-  background: var(--focus);
-  color: var(--ink);
+  background: var(--border-focus);
+  color: var(--txt-inverse);
 }
 
-/* Focus is a ring in --focus, never a color and never a glow. */
+/*
+ * Focus is a ring in the text color, never a signal color and never a glow.
+ * Focus is a state of the interface, not a state of the data.
+ */
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 1px solid var(--border-focus);
   outline-offset: 1px;
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 @layer components {
   /*
-   * A panel is a surface step, not a card. No border, no shadow, no radius
-   * unless it is a modal.
+   * A card is a surface step plus a top highlight in dark, and a white card
+   * with a soft shadow in light. One class, two behaviors, because the lift
+   * rule reverses between themes and a card lighter than a light page is
+   * invisible.
    */
-  .elvt-panel {
-    background: var(--panel);
-    border-radius: var(--radius-flat);
+  .elvt-card {
+    background: var(--surface-card);
+    border-radius: var(--r-lg);
+    box-shadow: var(--lift-1), var(--shadow-card);
   }
 
-  .elvt-panel-raised {
-    background: var(--panel-2);
-    border-radius: var(--radius-flat);
+  .elvt-raised {
+    background: var(--surface-raised);
+    border-radius: var(--r-lg);
+    box-shadow: var(--lift-2), var(--shadow-card);
   }
 
-  /* The only place a shadow is allowed. */
+  .elvt-sunken {
+    background: var(--surface-sunken);
+    border-radius: var(--r-sm);
+  }
+
+  /* The only place a real drop shadow is allowed. */
   .elvt-modal {
-    background: var(--panel);
-    border-radius: var(--radius-raised);
-    box-shadow: 0 16px 48px rgb(0 0 0 / 0.55);
+    background: var(--surface-raised);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-modal);
+    padding: var(--space-6);
   }
 
   /*
-   * Section labels: Archivo at its expanded width, small, uppercase, tracked.
-   * This is how telemetry screens label things and it is the single most
-   * distinctive thing about the type here, so it gets its own class.
+   * Labels. Sentence case, 12px, 500. The v1 all-caps letterspaced style is
+   * retired: it read as telemetry chrome rather than as a product, and it made
+   * every label shout at the same volume as the numbers.
    */
   .elvt-label {
-    font-family: var(--font-ui), system-ui, sans-serif;
-    font-size: var(--text-label);
-    font-stretch: 125%;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--txt-mute);
+    font-size: var(--text-caption);
+    line-height: 16px;
+    font-weight: 500;
+    color: var(--txt-secondary);
   }
 
   /*
-   * Every figure that sits in a column or gets compared. Tabular so digits
-   * line up down a column without extra CSS, which is the whole reason dense
-   * tools reach for mono. Prose never uses this.
+   * Every figure that sits in a column, gets compared, or reads as data.
+   * Tabular figures in Archivo, so columns align without a second typeface.
+   * IBM Plex Mono is retired for data: it made the numbers read as a terminal
+   * readout rather than as part of the product.
    */
   .elvt-num {
-    font-family: var(--font-mono), ui-monospace, monospace;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
   }
 
   .elvt-input {
     width: 100%;
-    background: var(--panel-2);
-    color: var(--txt);
+    background: var(--surface-sunken);
     border: 0;
-    border-bottom: 1px solid var(--line);
-    border-radius: var(--radius-flat);
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--text-body);
-    outline: none;
+    border-radius: var(--r-sm);
+    min-height: var(--control-height);
+    padding: 0 var(--space-3);
+    color: var(--txt);
+    font: inherit;
   }
 
   .elvt-input::placeholder {
-    color: var(--txt-dim);
+    color: var(--txt-tertiary);
   }
 
+  /* Focus lifts the well to card level, which is the whole affordance. */
   .elvt-input:focus-visible {
-    border-bottom-color: var(--focus);
-    outline: none;
+    background: var(--surface-card);
   }
 
+  /*
+   * Primary is light on dark rather than a colored fill, which keeps the three
+   * signals unspent. One per view region.
+   */
   .elvt-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--control-height);
+    padding: 0 var(--space-4);
+    border-radius: var(--r-md);
     background: var(--txt);
-    color: var(--ink);
-    border: 0;
-    border-radius: var(--radius-control);
-    padding: var(--space-2) var(--space-4);
+    color: var(--txt-inverse);
     font-size: var(--text-body);
-    font-weight: 600;
+    font-weight: 500;
+    border: 0;
+    transition: opacity var(--motion-hover) var(--motion-ease-out);
   }
 
-  .elvt-button:disabled {
-    background: var(--txt-dim);
-    color: var(--panel);
-    cursor: not-allowed;
+  .elvt-button:hover {
+    opacity: 0.9;
   }
 
   .elvt-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--control-height);
+    padding: 0 var(--space-4);
+    border-radius: var(--r-md);
     background: transparent;
     color: var(--txt);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-control);
-    padding: var(--space-2) var(--space-4);
     font-size: var(--text-body);
-    font-weight: 600;
+    font-weight: 500;
+    border: 1px solid var(--border-default);
+    transition: background var(--motion-hover) var(--motion-ease-out);
   }
 
+  .elvt-button-secondary:hover {
+    background: var(--surface-hover);
+  }
+
+  /* Status pills are the one thing in the portal that is pill shaped. */
   .elvt-chip {
     display: inline-flex;
     align-items: center;
-    border-radius: var(--radius-control);
-    padding: 0 var(--space-2);
-    font-size: var(--text-label);
-    font-stretch: 125%;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    line-height: 20px;
+    min-height: 28px;
+    padding: 0 var(--space-3);
+    border-radius: var(--r-full);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    transition: background var(--motion-hover) var(--motion-ease-out);
   }
 
-  /* A table is a table. No card wraps it. Rows separated by a 1px rule. */
+  .elvt-chip:hover {
+    background: var(--surface-hover);
+  }
+
+  /*
+   * Tables are the core of this product. Square, no card around them, row
+   * rules only, no zebra striping, numeric columns right aligned.
+   */
   .elvt-table {
     width: 100%;
     border-collapse: collapse;
@@ -162,59 +197,62 @@ h4 {
   }
 
   .elvt-table thead th {
-    background: var(--panel-2);
-    color: var(--txt-mute);
-    font-size: var(--text-label);
-    font-stretch: 125%;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    background: var(--surface-sunken);
+    color: var(--txt-tertiary);
+    font-size: var(--text-caption);
+    font-weight: 500;
     text-align: left;
-    height: var(--row-height);
-    padding: 0 var(--space-3);
+    padding: var(--space-2) var(--space-3);
     white-space: nowrap;
+  }
+
+  .elvt-table thead th.text-right {
+    text-align: right;
   }
 
   .elvt-table tbody tr {
-    border-top: 1px solid var(--line);
+    height: var(--row-height);
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background var(--motion-hover) var(--motion-ease-out);
+  }
+
+  .elvt-table tbody tr:hover {
+    background: var(--surface-hover);
   }
 
   .elvt-table tbody td {
-    height: var(--row-height);
-    padding: 0 var(--space-3);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: var(--space-2) var(--space-3);
+    vertical-align: middle;
+  }
+
+  /* The density toggle, 48 to 40. Nothing else changes. */
+  .elvt-table--compact tbody tr {
+    height: var(--row-height-compact);
   }
 
   /*
-   * A value that has just changed. This is one of the three motions the design
-   * allows, and it reports a state change rather than decorating one.
+   * Motion reports a state change and nothing else. A value updating, a row
+   * saving, a queue item clearing.
    */
   .elvt-value-updated {
-    animation: elvt-value-update var(--motion-state) var(--motion-ease) 1;
+    animation: elvt-value-update var(--motion-reveal) var(--motion-ease) 1;
   }
 
   .elvt-row-saving {
-    transition: opacity var(--motion-state) var(--motion-ease);
-    opacity: 0.55;
+    opacity: 0.6;
   }
 
   .elvt-queue-clearing {
-    transition:
-      opacity var(--motion-state) var(--motion-ease),
-      height var(--motion-state) var(--motion-ease);
     opacity: 0;
-    height: 0;
-    overflow: hidden;
+    transition: opacity var(--motion-reveal) var(--motion-ease);
   }
 }
 
 @keyframes elvt-value-update {
   from {
-    background-color: var(--panel-2);
+    background: var(--surface-hover);
   }
   to {
-    background-color: transparent;
+    background: transparent;
   }
 }

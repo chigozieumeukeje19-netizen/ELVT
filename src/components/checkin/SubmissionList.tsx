@@ -19,7 +19,7 @@ export type SubmissionRow = {
 export function SubmissionList({ rows }: { rows: SubmissionRow[] }) {
   if (rows.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="submissions-empty">
+      <p className="text-txt-secondary" data-testid="submissions-empty">
         Nothing submitted yet. Dailies arrive every evening and the weekly lands
         on Sunday, so the first ones show up here within a day of the program
         starting.
@@ -48,12 +48,12 @@ export function SubmissionList({ rows }: { rows: SubmissionRow[] }) {
                 <th scope="row" className="elvt-num font-normal">
                   {row.forDate}
                 </th>
-                <td className="text-txt-mute">
+                <td className="text-txt-secondary">
                   {row.kind === "week1" ? "Week 1" : row.kind === "weekly" ? "Weekly" : "Daily"}
                 </td>
                 <td className="max-w-[40ch] truncate">{row.headline}</td>
-                <td className="elvt-num text-txt-mute">{row.replies || ""}</td>
-                <td className={waiting ? "text-watch" : "text-txt-mute"}>
+                <td className="elvt-num text-txt-secondary">{row.replies || ""}</td>
+                <td className={waiting ? "text-watch" : "text-txt-secondary"}>
                   {row.submittedAt === null
                     ? "Not submitted"
                     : waiting

@@ -74,7 +74,7 @@ export function bandTextClass(band: Band | null): string {
     case "flag":
       return "text-flag";
     default:
-      return "text-txt-mute";
+      return "text-txt-secondary";
   }
 }
 

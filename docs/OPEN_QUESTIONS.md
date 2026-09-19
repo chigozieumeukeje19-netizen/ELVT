@@ -236,3 +236,30 @@ three signals, which is a small addition to Section 3, or to accept these four
 as a stated exception the way the contraindication amendment already is.
 
 Nothing depends on the answer. All four say what they mean in words.
+
+---
+
+## 10. There is no top bar, so the theme toggle sits in the sidebar
+
+**Item:** v2 steps 1 to 4
+**Status:** a deliberate deviation from DESIGN_V2.md 3.1, pending a decision
+
+3.1 specifies a 52px top bar carrying a breadcrumb, a search field, the theme
+toggle and the coach avatar. The portal has none: v1 decided against one on the
+grounds that a second chrome band costs rows the roster needs, and that decision
+survived into the retint because the density assertion did not move.
+
+The theme toggle is the part that could not wait, because light mode is
+unreachable without it and step 7 requires every screen to be checked in both.
+It is in the sidebar footer next to sign out, where it costs no vertical space
+in the content area.
+
+The arithmetic, measured rather than estimated: a roster row is 48px and 14 of
+them plus the page header and the table head currently land inside 900px with
+room to spare. A 52px top bar does not obviously break that, but it has not been
+built and so has not been measured.
+
+The question is whether the top bar is wanted at all. Search and the avatar have
+nowhere else to go, which argues for it; the roster and the queue are the two
+screens that run full width precisely because density buys columns, which argues
+against. If it is built, the toggle moves to it.

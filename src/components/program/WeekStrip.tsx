@@ -37,7 +37,7 @@ export function WeekStrip({
                 data-testid="week-chip"
                 className={[
                   "flex h-row w-[88px] flex-col justify-center border-line px-2 [border-right-width:1px]",
-                  selected ? "bg-panel-2 text-txt" : "text-txt-mute",
+                  selected ? "bg-raised text-txt" : "text-txt-secondary",
                 ].join(" ")}
               >
                 <span className="flex items-center gap-1">
@@ -82,7 +82,7 @@ function PhaseBands({ weeks }: { weeks: WeekView[] }) {
           style={{ width: run.span * 88 }}
           className={[
             "elvt-label truncate border-line px-2 py-1 [border-right-width:1px]",
-            i % 2 === 0 ? "bg-panel" : "bg-panel-2",
+            i % 2 === 0 ? "bg-card" : "bg-raised",
           ].join(" ")}
         >
           {humanize(run.phase)}

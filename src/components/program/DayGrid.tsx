@@ -67,18 +67,18 @@ export function DayGrid({
               }}
               className={[
                 "min-h-[180px] border-line px-2 py-2 [border-right-width:1px]",
-                isOver ? "bg-panel-2" : "",
+                isOver ? "bg-raised" : "",
               ].join(" ")}
             >
               <div className="flex items-baseline justify-between">
                 <span className="elvt-label">{DAY_SHORT[day.dayOfWeek]}</span>
-                <span className="elvt-num text-label text-txt-mute">
+                <span className="elvt-num text-caption text-txt-secondary">
                   {day.stress > 0 ? day.stress : ""}
                 </span>
               </div>
 
               {/* A thin bar rather than a number, scaled against the block peak. */}
-              <div className="mt-1 h-1 bg-panel-2">
+              <div className="mt-1 h-1 bg-raised">
                 <div
                   aria-hidden="true"
                   className="h-1 bg-txt-dim"
@@ -89,7 +89,7 @@ export function DayGrid({
               </div>
 
               {day.sessions.length === 0 ? (
-                <p className="mt-3 text-label text-txt-dim">Rest</p>
+                <p className="mt-3 text-caption text-txt-tertiary">Rest</p>
               ) : (
                 <ul className="mt-2 space-y-2">
                   {day.sessions.map((session) => {
@@ -105,7 +105,7 @@ export function DayGrid({
                         }}
                         data-testid="session-card"
                         className={[
-                          "bg-panel-2 px-2 py-2",
+                          "bg-raised px-2 py-2",
                           readOnly ? "" : "cursor-grab",
                           saving === session.key ? "elvt-row-saving" : "",
                         ].join(" ")}
@@ -115,7 +115,7 @@ export function DayGrid({
                           {STIMULUS_SHORT[session.stimulus as Stimulus] ??
                             session.stimulus}
                         </p>
-                        <p className="mt-1 truncate text-label text-txt-mute">
+                        <p className="mt-1 truncate text-caption text-txt-secondary">
                           {session.summary}
                         </p>
                       </li>

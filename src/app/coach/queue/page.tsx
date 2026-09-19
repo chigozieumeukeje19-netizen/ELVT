@@ -74,12 +74,12 @@ export default async function QueuePage() {
         the fold and broke the rule about seeing the top edge of the next one.
       */}
       <div className="flex items-baseline gap-3">
-        <h1 className="elvt-num text-hero" data-testid="queue-count">
+        <h1 className="elvt-num text-display" data-testid="queue-count">
           {items.length}
         </h1>
         <div>
           <p className="elvt-label">Queue</p>
-          <p className="text-txt-mute">
+          <p className="text-txt-secondary">
             {items.length === 1 ? "item open" : "items open"}
           </p>
         </div>
@@ -97,7 +97,7 @@ export default async function QueuePage() {
       ) : null}
 
       {items.length === 0 ? (
-        <p className="mt-5 max-w-[60ch] text-txt-mute" data-testid="queue-empty">
+        <p className="mt-5 max-w-[60ch] text-txt-secondary" data-testid="queue-empty">
           Nothing is waiting on you. Triggers run at 21:00 in each client&apos;s
           timezone, and the week rolls Sunday night, so the next cards land
           Monday morning.

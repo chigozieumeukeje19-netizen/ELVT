@@ -37,12 +37,12 @@ export function QueueLanes({ rows }: { rows: QueueRow[] }) {
           <section key={lane} className="mt-6" data-testid="queue-lane" data-lane={lane}>
             <div className="flex items-baseline justify-between gap-4 border-line pb-1 [border-bottom-width:1px]">
               <h2 className="elvt-label">{LANE_TITLES[lane]}</h2>
-              <span className="elvt-num text-txt-dim">{items.length}</span>
+              <span className="elvt-num text-txt-tertiary">{items.length}</span>
             </div>
-            <p className="mt-1 text-txt-dim">{LANE_NOTES[lane]}</p>
+            <p className="mt-1 text-txt-tertiary">{LANE_NOTES[lane]}</p>
 
             {items.length === 0 ? (
-              <p className="mt-2 text-txt-mute" data-testid="lane-empty">
+              <p className="mt-2 text-txt-secondary" data-testid="lane-empty">
                 {lane === "same_day"
                   ? "No flag is at a level that changes today."
                   : lane === "trend"
@@ -70,11 +70,11 @@ export function QueueLanes({ rows }: { rows: QueueRow[] }) {
                     <span className="min-w-0 flex-1">
                       <span className="block truncate">{row.title}</span>
                       {row.detail ? (
-                        <span className="block truncate text-txt-mute">{row.detail}</span>
+                        <span className="block truncate text-txt-secondary">{row.detail}</span>
                       ) : null}
                       {row.suggestedMessage ? (
                         <span
-                          className="mt-1 block max-w-[68ch] bg-panel-2 px-3 py-2 text-txt-mute"
+                          className="mt-1 block max-w-[68ch] bg-raised px-3 py-2 text-txt-secondary"
                           data-testid="suggested-message"
                         >
                           {row.suggestedMessage}

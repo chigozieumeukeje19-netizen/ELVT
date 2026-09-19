@@ -18,7 +18,7 @@ export type CompareRow = {
 export function CompareView({ rows, weeks }: { rows: CompareRow[]; weeks: number[] }) {
   if (rows.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="compare-empty">
+      <p className="text-txt-secondary" data-testid="compare-empty">
         Nothing to compare yet. Two weekly check-ins is enough for a trend, so
         this fills in once the second one is submitted.
       </p>
@@ -51,7 +51,7 @@ export function CompareView({ rows, weeks }: { rows: CompareRow[]; weeks: number
                 return (
                   <td
                     key={week}
-                    className={`text-right ${missing ? "text-txt-dim" : "elvt-num"}`}
+                    className={`text-right ${missing ? "text-txt-tertiary" : "elvt-num"}`}
                     data-testid="compare-cell"
                   >
                     {/* A gap, not a zero. A question that was not asked is not

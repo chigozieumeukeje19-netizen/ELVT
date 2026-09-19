@@ -45,14 +45,14 @@ export default async function ExerciseReviewPage({
     <main className="max-w-[760px] px-5 py-4">
       <BuilderNav current="/coach/builder/exercises/review" />
       <p className="elvt-label">Builder</p>
-      <h1 className="mt-1 text-section">Exercise review</h1>
+      <h1 className="mt-1 text-h2">Exercise review</h1>
       {error ? (
         <p role="alert" className="mt-4 text-flag">
           {error}
         </p>
       ) : null}
 
-      <p className="mt-2 max-w-[60ch] text-txt-mute">
+      <p className="mt-2 max-w-[60ch] text-txt-secondary">
         {rows.length === 0
           ? "Every imported movement has a confirmed name and video. Run the import again after adding a client app file and anything new lands here."
           : `${rows.length} imported movements need a decision. Confirm the name and the video, or discard the row.`}
@@ -72,7 +72,7 @@ export default async function ExerciseReviewPage({
                   className="h-[90px] w-[160px] rounded-none object-cover"
                 />
               ) : (
-                <div className="flex h-[90px] w-[160px] items-center justify-center bg-panel-2">
+                <div className="flex h-[90px] w-[160px] items-center justify-center bg-raised">
                   <span className="elvt-label">No video</span>
                 </div>
               )}
@@ -80,7 +80,7 @@ export default async function ExerciseReviewPage({
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{row.name}</p>
                 {row.review_note ? (
-                  <p className="mt-1 max-w-[60ch] text-txt-mute">{row.review_note}</p>
+                  <p className="mt-1 max-w-[60ch] text-txt-secondary">{row.review_note}</p>
                 ) : null}
                 {row.import_source ? (
                   <p className="elvt-label mt-1">From {row.import_source}</p>

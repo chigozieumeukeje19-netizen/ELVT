@@ -33,7 +33,7 @@ export function TrendChart({ series }: { series: Series }) {
         <figcaption className="flex items-baseline justify-between gap-3">
           <span className="elvt-label">{series.spec.label}</span>
         </figcaption>
-        <p className="mt-2 text-txt-dim" data-testid="chart-empty">
+        <p className="mt-2 text-txt-tertiary" data-testid="chart-empty">
           Two readings make a line. This fills in once there are.
         </p>
       </figure>
@@ -67,7 +67,7 @@ export function TrendChart({ series }: { series: Series }) {
 
   const deltaClass =
     series.improving === null
-      ? "text-txt-dim"
+      ? "text-txt-tertiary"
       : series.improving
         ? "text-ok"
         : "text-flag";
@@ -77,7 +77,7 @@ export function TrendChart({ series }: { series: Series }) {
       <figcaption className="flex items-baseline justify-between gap-3">
         <span className="elvt-label">{series.spec.label}</span>
         <span className="flex items-baseline gap-3">
-          <span className="elvt-num text-emphasis" data-testid="chart-latest">
+          <span className="elvt-num text-h3" data-testid="chart-latest">
             {formatValue(series.latest, series.spec)}
           </span>
           {series.change === null ? null : (

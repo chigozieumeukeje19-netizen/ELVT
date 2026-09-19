@@ -53,17 +53,17 @@ export function FilterBar({
               data-active={on ? "true" : undefined}
               className={[
                 "elvt-chip",
-                on ? "bg-panel-2 text-txt" : dead ? "text-txt-dim" : "text-txt-mute",
+                on ? "bg-raised text-txt" : dead ? "text-txt-tertiary" : "text-txt-secondary",
               ].join(" ")}
             >
               {FILTER_LABELS[key]}
-              <span className="elvt-num ml-2 text-txt-dim">{count}</span>
+              <span className="elvt-num ml-2 text-txt-tertiary">{count}</span>
             </a>
           );
         })}
 
         {active.length > 0 ? (
-          <a href={hrefFor("needs_attention")} className="elvt-label ml-2 text-txt-mute" data-testid="clear-filters">
+          <a href={hrefFor("needs_attention")} className="elvt-label ml-2 text-txt-secondary" data-testid="clear-filters">
             Clear
           </a>
         ) : null}
@@ -71,16 +71,16 @@ export function FilterBar({
 
       {segments.length > 0 ? (
         <div className="mt-2 flex flex-wrap items-center gap-2" data-testid="segments">
-          <span className="elvt-label text-txt-dim">Saved</span>
+          <span className="elvt-label text-txt-tertiary">Saved</span>
           {segments.map((segment) => (
-            <a key={segment.id} href={segmentHrefFor(segment)} className="elvt-chip text-txt-mute">
+            <a key={segment.id} href={segmentHrefFor(segment)} className="elvt-chip text-txt-secondary">
               {segment.name}
             </a>
           ))}
         </div>
       ) : null}
 
-      <p className="mt-2 text-txt-mute" data-testid="filter-summary">
+      <p className="mt-2 text-txt-secondary" data-testid="filter-summary">
         {showing === total
           ? `${total} clients`
           : `${showing} of ${total}, filtered`}
@@ -121,12 +121,12 @@ export function BulkBar({
           type="submit"
           name="action"
           value={name}
-          className="elvt-chip text-txt-mute"
+          className="elvt-chip text-txt-secondary"
           data-testid="bulk-action"
           data-affects={affects[name]}
         >
           {BULK_LABELS[name]}
-          <span className="elvt-num ml-2 text-txt-dim">{affects[name]}</span>
+          <span className="elvt-num ml-2 text-txt-tertiary">{affects[name]}</span>
         </button>
       ))}
     </form>

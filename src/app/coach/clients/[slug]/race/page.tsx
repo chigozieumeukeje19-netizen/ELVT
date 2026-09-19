@@ -74,7 +74,7 @@ export default async function RacePage({
     return (
       <main className="px-5 py-4">
         <ScreenHeader label="Race" title={name} note="Nothing in the diary." />
-        <p className="max-w-[60ch] text-txt-mute" data-testid="race-empty">
+        <p className="max-w-[60ch] text-txt-secondary" data-testid="race-empty">
           Race mode turns on when there is a race to count down to. Add one with
           a date and a distance, and the countdown, the taper, the fueling plan
           and the race week checklist all come from those two facts.

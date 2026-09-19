@@ -165,7 +165,7 @@ export default async function ClientsPage({
   return (
     <main className="px-5 py-4">
       <p className="elvt-label">Roster</p>
-      <h1 className="mt-1 text-section">
+      <h1 className="mt-1 text-h2">
         {rows.length} clients
       </h1>
 

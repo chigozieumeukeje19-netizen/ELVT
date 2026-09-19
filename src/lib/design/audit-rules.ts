@@ -61,7 +61,7 @@ export const RULES: Rule[] = [
     severity: "high",
     pattern:
       /#(?:faf8f5|f5f1e8|f3eee3|fdfbf7|f7f3ec|faf7f2|fdf9f3|f8f5f0)\b/i,
-    fix: "Use --ink for the page and --panel for a surface. The cream set belongs to the client apps only and lives in src/styles/client-export-theme.css.",
+    fix: "Use --surface-page for the page and --surface-card for a surface. The cream set belongs to the client apps only and lives in src/styles/client-export-theme.css.",
   },
   {
     id: "cream-tailwind",
@@ -123,7 +123,7 @@ export const RULES: Rule[] = [
     title: "Generated --radius value",
     severity: "high",
     pattern: /--radius\s*:\s*0\.5rem/,
-    fix: "Radius is three role based values: --radius-flat 0, --radius-control 4px, --radius-raised 8px.",
+    fix: "Radius is role based: --r-sm 6, --r-md 8, --r-lg 12, --r-xl 16, --r-full on status pills alone.",
   },
   {
     id: "single-radius-token",
@@ -132,7 +132,7 @@ export const RULES: Rule[] = [
     severity: "medium",
     pattern: /--radius\s*:/,
     extensions: [".css", ".ts", ".tsx"],
-    fix: "Radius is three role named tokens: --radius-flat, --radius-control, --radius-raised. A single --radius means one shape for every role.",
+    fix: "Radius is five role named tokens: --r-sm, --r-md, --r-lg, --r-xl, --r-full. A single --radius means one shape for every role.",
   },
   {
     id: "uniform-p6",
@@ -140,7 +140,7 @@ export const RULES: Rule[] = [
     title: "The uniform p-6 padding rhythm",
     severity: "medium",
     pattern: /\bp-6\b/,
-    fix: "Spacing is 4/8/12/16/24/32/48 as p-1 through p-7, chosen per surface rather than applied everywhere.",
+    fix: "Spacing is the scale in DESIGN_V2.md 1.3, chosen per surface rather than applied everywhere. Cards pad 20, which is p-5.",
   },
 
   // -------------------------------------------------------------------------
@@ -168,7 +168,7 @@ export const RULES: Rule[] = [
     title: "A primary at the AI purple hue",
     severity: "high",
     pattern: /--(?:primary|brand|accent)\s*:\s*(?:hsl\()?\s*(?:25[5-9]|26\d|27\d|280)\b/,
-    fix: "The portal has no --primary. Interactive surfaces use --txt on --ink, signals use --ok, --watch or --flag.",
+    fix: "The portal has no --primary. A primary button is --txt on --txt-inverse; signals use --ok, --watch or --flag.",
   },
 
   // -------------------------------------------------------------------------
@@ -218,18 +218,21 @@ export const RULES: Rule[] = [
   {
     id: "pill-shape",
     tell: 5,
-    title: "A pill shape",
+    title: "A pill shape outside a status pill",
     severity: "medium",
+    // v2 permits rounded-full, on status pills and nothing else. Narrowed
+    // rather than dropped: a pill shaped button or card is still the tell.
     pattern: /\brounded-full\b|border-radius\s*:\s*9999px|border-radius\s*:\s*99+px/,
-    fix: "Nothing in the portal is pill shaped. Chips and buttons use rounded-control, 4px.",
+    exempt: ["src/components/StatusPill.tsx", "src/styles/globals.css"],
+    fix: "rounded-full is for status pills only, per DESIGN_V2.md 1.4. Buttons use rounded-md, cards rounded-lg.",
   },
   {
     id: "large-radius",
     tell: 5,
-    title: "A large uniform radius",
+    title: "A radius above the scale",
     severity: "medium",
-    pattern: /\brounded-(?:xl|2xl|3xl)\b/,
-    fix: "Three values by role: rounded-flat on tables, rows, inputs and the sidebar, rounded-control on buttons and chips, rounded-raised on modals.",
+    pattern: /\brounded-(?:2xl|3xl)\b/,
+    fix: "Radius is by role: rounded-none on tables and rows, rounded-sm on inputs, rounded-md on buttons, rounded-lg on cards, rounded-xl on modals.",
   },
 
   // -------------------------------------------------------------------------
@@ -276,7 +279,7 @@ export const RULES: Rule[] = [
     severity: "high",
     pattern:
       /\b(?:Inter_Tight|Inter|Geist(?:_Mono)?|Roboto(?:_Mono)?)\b(?!\w)/,
-    fix: "Display and UI is Archivo, which has the width axis the labels need. Numbers are IBM Plex Mono.",
+    fix: "Archivo does the whole UI, including the numbers, with tabular-nums on anything that sits in a column.",
   },
   {
     id: "system-ui-only",
@@ -389,5 +392,83 @@ export const RULES: Rule[] = [
     pattern: /#8A6F34/i,
     extensions: [".ts", ".tsx", ".css"],
     fix: "Gold appears in exactly one place, the sidebar wordmark, via the --wordmark token. Everything else uses --txt or a signal token.",
+  },
+  // -------------------------------------------------------------------------
+  // DESIGN_V2.md. What the respecification adds. Two rules above are narrowed
+  // where v2 now permits something; nothing added here weakens one.
+  // -------------------------------------------------------------------------
+  {
+    id: "mono-on-data",
+    tell: 8,
+    title: "Mono on a figure",
+    severity: "high",
+    // DESIGN_V2.md 1.2 retires the mono face for data. Columns align on
+    // tabular figures in Archivo, and the data then reads as part of the
+    // product rather than as a terminal readout. Mono survives for an id
+    // shown to a developer and a raw timestamp, and for nothing else.
+    pattern: /\bfont-mono\b/,
+    extensions: [".ts", ".tsx", ".css"],
+    // The blueprint paste box holds a raw JSON response on its way to a
+    // parser, which is code a developer reads rather than a figure a coach
+    // compares. Exempted here rather than with unslop-ignore, so the reason
+    // sits in the rule table where the next person reading it will see it.
+    exempt: [
+      "src/app/layout.tsx",
+      "tailwind.config.ts",
+      "tests/",
+      "src/components/blueprint/PromptAndPaste.tsx",
+    ],
+    fix: "Use elvt-num, which is Archivo with tabular-nums. Mono is for an id or a raw timestamp only.",
+  },
+  {
+    id: "caps-label",
+    tell: 8,
+    title: "An all caps letterspaced label",
+    severity: "medium",
+    // v1 set every label in 11px caps with 0.08em tracking, which reads as
+    // telemetry chrome rather than as a product. Labels are sentence case now.
+    pattern: /\buppercase\b|text-transform\s*:\s*uppercase/,
+    extensions: [".tsx", ".css"],
+    exempt: ["src/lib/export/"],
+    fix: "Labels are sentence case at the caption size, 12px 500. Nothing in the portal is set in caps.",
+  },
+  {
+    id: "primitive-leak",
+    tell: 1,
+    title: "A component naming a primitive instead of a role",
+    severity: "high",
+    // Components consume alias roles only. A screen that reaches for
+    // --deep-700 has decided what a surface is, and the next screen will
+    // decide differently.
+    pattern: /--(?:deep|gold)-\d{2,3}\b/,
+    extensions: [".tsx", ".ts"],
+    exempt: ["src/styles/", "src/lib/design/audit-rules.ts"],
+    fix: "Use a role: bg-card, text-txt-secondary, border-line, text-ok. Primitives live in tokens.css and are mapped there.",
+  },
+  {
+    id: "hex-in-component",
+    tell: 1,
+    title: "A hex color in a component",
+    severity: "high",
+    // Nothing outside the token file names a color. This is the rule that
+    // makes the theme swap work at all: a hex in a component is a value that
+    // will not change when the roles do.
+    pattern: /#[0-9a-f]{6}\b/i,
+    extensions: [".tsx"],
+    exempt: ["src/lib/export/", "src/components/icons.tsx"],
+    fix: "Colors come from tokens.css through a Tailwind role utility. A component names no hex.",
+  },
+  {
+    id: "uniform-shadow",
+    tell: 5,
+    title: "A drop shadow used as a default",
+    severity: "medium",
+    // v2 permits shadows, within the scale and by role. It does not permit a
+    // shadow on every box: elevation is a surface step plus a top highlight,
+    // and a real drop shadow belongs to modals and popovers.
+    pattern: /\bshadow-(?:sm|md|lg|xl|2xl)\b/,
+    extensions: [".tsx", ".css"],
+    exempt: ["src/lib/export/"],
+    fix: "Elevation is a surface step plus shadow-lift-1. shadow-modal is for modals and popovers.",
   },
 ];

@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { BuilderNav } from "@/components/BuilderNav";
 import { ExerciseTable } from "@/components/ExerciseTable";
@@ -17,6 +18,8 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { SCREENS, type Screen } from "@/lib/design/preview-screens";
+import { THEME_COOKIE, readTheme } from "@/lib/design/theme";
 import { ComposerPreview } from "@/components/messages/ComposerPreview";
 import { FilterBar } from "@/components/roster/FilterBar";
 import { BulkBarPreview } from "@/components/roster/BulkBarPreview";
@@ -170,85 +173,14 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const SCREENS = [
-  "roster",
-  "roster-stress",
-  "roster-dense",
-  "roster-empty",
-  "queue",
-  "queue-empty",
-  "builder-exercises",
-  "builder-exercises-stress",
-  "builder-exercises-empty",
-  "program-week",
-  "program-week-flagged",
-  "program-periodization",
-  "nutrition-path",
-  "nutrition-path-empty",
-  "nutrition-meals",
-  "nutrition-meals-rest",
-  "nutrition-grocery",
-  "nutrition-swaps",
-  "nutrition-swaps-empty",
-  "intake-goals",
-  "intake-medical",
-  "intake-medical-errors",
-  "intake-running-hidden",
-  "builder-questionnaire",
-  "builder-questionnaire-empty",
-  "blueprint",
-  "blueprint-empty",
-  "program-draft",
-  "program-draft-empty",
-  "checkins",
-  "checkins-empty",
-  "checkin-compare",
-  "checkin-thread",
-  "checkin-thread-empty",
-  "builder-question-bank",
-  "checkin-daily-form",
-  "checkin-weekly-form",
-  "checkin-week1-form",
-  "checkin-no-spine-form",
-  "queue-lanes",
-  "queue-lanes-one",
-  "queue-lanes-empty",
-  "monday-card",
-  "monday-card-quiet",
-  "monday-cards",
-  "messages",
-  "messages-empty",
-  "composer",
-  "composer-thin",
-  "reminders",
-  "reminders-sparse",
-  "progress",
-  "progress-all",
-  "progress-thin",
-  "progress-empty",
-  "progress-table",
-  "photos",
-  "photos-empty",
-  "photos-compare",
-  "photos-compare-unavailable",
-  "roster-filters",
-  "roster-filters-active",
-  "roster-bulk",
-  "race-build",
-  "race-taper",
-  "race-week",
-  "race-no-goal",
-  "race-empty",
-  "client-overview",
-  "client-overview-new",
-] as const;
+async function Shell({ children }: { children: React.ReactNode }) {
+  // The same cookie the coach shell reads, so a preview screenshot is taken in
+  // the theme the page would actually render in rather than in a default.
+  const theme = readTheme((await cookies()).get(THEME_COOKIE)?.value);
 
-type Screen = (typeof SCREENS)[number];
-
-function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-ink">
-      <Sidebar current="/coach/clients" queueCount={SEED_QUEUE.length} />
+    <div className="min-h-screen bg-page">
+      <Sidebar current="/coach/clients" queueCount={SEED_QUEUE.length} theme={theme} />
       {/*
         A deterministic ready signal for the visual suite. Waiting on network
         idle is unreliable in Next: a font request, a prefetch or a socket can
@@ -268,7 +200,7 @@ function RosterScreen({ rows, label }: { rows: typeof SEED_ROSTER; label: string
     <Shell>
       <main className="px-5 py-4">
         <p className="elvt-label">Roster</p>
-        <h1 className="mt-1 text-section">{label}</h1>
+        <h1 className="mt-1 text-h2">{label}</h1>
         <div className="mt-4">
           <RosterTable rows={rows} />
         </div>
@@ -282,15 +214,15 @@ function QueueScreen({ items }: { items: typeof SEED_QUEUE }) {
     <Shell>
       <main className="px-5 py-4">
         <p className="elvt-label">Queue</p>
-        <h1 className="elvt-num mt-1 text-hero" data-testid="queue-count">
+        <h1 className="elvt-num mt-1 text-display" data-testid="queue-count">
           {items.length}
         </h1>
-        <p className="text-txt-mute">
+        <p className="text-txt-secondary">
           {items.length === 1 ? "item open" : "items open"}
         </p>
 
         {items.length === 0 ? (
-          <p className="mt-5 max-w-[60ch] text-txt-mute" data-testid="queue-empty">
+          <p className="mt-5 max-w-[60ch] text-txt-secondary" data-testid="queue-empty">
             Nothing is waiting on you. Triggers run at 21:00 in each client&apos;s
             timezone, and the week rolls Sunday night, so the next cards land
             Monday morning.
@@ -479,14 +411,14 @@ function IntakeScreen({
   const section = shown.sections.find((candidate) => candidate.key === sectionKey)!;
 
   return (
-    <div className="min-h-screen bg-ink">
+    <div className="min-h-screen bg-page">
       <div
         className="mx-auto w-full max-w-[560px] px-4 py-5"
         data-testid="screen-ready"
       >
         <p className="elvt-label">ELVT intake</p>
-        <h1 className="mt-1 text-section">{section.title}</h1>
-        <p className="mt-2 text-txt-mute">{section.intent}</p>
+        <h1 className="mt-1 text-h2">{section.title}</h1>
+        <p className="mt-2 text-txt-secondary">{section.intent}</p>
 
         <IntakeSectionPreview section={section} answers={answers} errors={errors} />
       </div>
@@ -577,7 +509,7 @@ function CompareScreen() {
     <Shell>
       <main className="px-5 py-4">
         <ScreenHeader label="Check-ins" title="The same question, week by week" />
-        <p className="mb-3 text-txt-dim">
+        <p className="mb-3 text-txt-tertiary">
           One bad week is noise. Two is a signal. This is where that shows.
         </p>
         <CompareView rows={PREVIEW_COMPARE} weeks={PREVIEW_COMPARE_WEEKS} />
@@ -621,8 +553,8 @@ function QuestionBankScreen() {
                   <th scope="row" className="max-w-[40ch] truncate font-normal">
                     {question.text}
                   </th>
-                  <td className="text-txt-mute">{humanize(question.category)}</td>
-                  <td className="max-w-[28ch] truncate text-txt-mute">
+                  <td className="text-txt-secondary">{humanize(question.category)}</td>
+                  <td className="max-w-[28ch] truncate text-txt-secondary">
                     {question.produces.map(humanize).join(", ")}
                   </td>
                 </tr>
@@ -645,10 +577,10 @@ function FormScreen({
   spineKeys?: string[];
 }) {
   return (
-    <div className="min-h-screen bg-ink">
+    <div className="min-h-screen bg-page">
       <div className="mx-auto w-full max-w-[560px] px-4 py-5" data-testid="screen-ready">
         <p className="elvt-label">ELVT check-in</p>
-        <h1 className="mt-1 text-section">{title}</h1>
+        <h1 className="mt-1 text-h2">{title}</h1>
         <ol className="mt-4" data-testid="form-questions">
           {form.map((question, index) => (
             <li
@@ -657,7 +589,7 @@ function FormScreen({
               data-spine={spineKeys?.includes(question.key) ? "true" : undefined}
               className="flex h-row items-center gap-3 border-line [border-bottom-width:1px]"
             >
-              <span className="elvt-num w-[3ch] shrink-0 text-txt-dim">{index + 1}</span>
+              <span className="elvt-num w-[3ch] shrink-0 text-txt-tertiary">{index + 1}</span>
               <span className="min-w-0 flex-1 truncate">{question.text}</span>
               {spineKeys?.includes(question.key) ? (
                 <span className="elvt-label shrink-0 text-watch">Spine</span>
@@ -675,12 +607,12 @@ function QueueLaneScreen({ rows }: { rows: typeof PREVIEW_QUEUE_ROWS }) {
     <Shell>
       <main className="px-5 py-4">
         <div className="flex items-baseline gap-3">
-          <h1 className="elvt-num text-hero" data-testid="queue-count">
+          <h1 className="elvt-num text-display" data-testid="queue-count">
             {rows.length}
           </h1>
           <div>
             <p className="elvt-label">Queue</p>
-            <p className="text-txt-mute">{rows.length === 1 ? "item open" : "items open"}</p>
+            <p className="text-txt-secondary">{rows.length === 1 ? "item open" : "items open"}</p>
           </div>
         </div>
         <QueueLanes rows={rows} />
@@ -694,12 +626,12 @@ function MondayScreen({ cards }: { cards: typeof PREVIEW_CARDS }) {
     <Shell>
       <main className="px-5 py-4">
         <div className="flex items-baseline gap-3">
-          <h1 className="elvt-num text-hero" data-testid="queue-count">
+          <h1 className="elvt-num text-display" data-testid="queue-count">
             {cards.length}
           </h1>
           <div>
             <p className="elvt-label">Queue</p>
-            <p className="text-txt-mute">
+            <p className="text-txt-secondary">
               {cards.length === 1 ? "review waiting" : "reviews waiting"}
             </p>
           </div>
@@ -909,7 +841,7 @@ function RaceEmptyScreen() {
     <Shell>
       <main className="px-5 py-4">
         <ScreenHeader label="Race" title="Theo Vance" note="Nothing in the diary." />
-        <p className="max-w-[60ch] text-txt-mute" data-testid="race-empty">
+        <p className="max-w-[60ch] text-txt-secondary" data-testid="race-empty">
           Race mode turns on when there is a race to count down to. Add one with
           a date and a distance, and the countdown, the taper, the fueling plan
           and the race week checklist all come from those two facts.
@@ -934,7 +866,7 @@ function RosterFilterScreen({
     <Shell>
       <main className="px-5 py-4">
         <p className="elvt-label">Roster</p>
-        <h1 className="mt-1 text-section">Who is drifting</h1>
+        <h1 className="mt-1 text-h2">Who is drifting</h1>
 
         <div className="mt-4">
           <FilterBar

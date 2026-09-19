@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { SCREENS } from "@/lib/design/preview-screens";
 
 const ROOT = path.resolve(__dirname, "../..");
 
@@ -67,17 +68,32 @@ describe("design preview routes", () => {
     expect(offenders).toEqual([]);
   });
 
-  it("every preview screen has a matching visual assertion", () => {
-    // Condition from the review: a new screen gets a preview route and the
-    // visual spec grows with it. This keeps the two in step.
-    const screens = [...page.matchAll(/^\s+"([a-z0-9-]+)",$/gm)].map((m) => m[1]);
-    expect(screens.length).toBeGreaterThan(0);
+  it("every preview screen is rendered by the route", () => {
+    /*
+     * The list used to be written out three times -- the route, the visual
+     * suite, the review capture -- and this held the copies in step. There is
+     * one list now, in src/lib/design/preview-screens.ts, so what is worth
+     * checking has changed: a name on the list with no case in the switch is a
+     * route that 404s, and the switch is exhaustive so the compiler cannot
+     * catch it on its own.
+     */
+    expect(SCREENS.length).toBeGreaterThan(0);
 
-    const spec = readFileSync(path.join(ROOT, "tests/e2e/visual.spec.ts"), "utf8");
-    const listed = [...spec.matchAll(/^\s+"([a-z0-9-]+)",$/gm)].map((m) => m[1]);
+    const missing = SCREENS.filter((screen) => !page.includes(`case "${screen}":`));
+    expect(missing).toEqual([]);
+  });
 
-    for (const screen of screens) {
-      expect(listed, `${screen} is not in the visual spec`).toContain(screen);
+  it("the visual suite and the review capture walk that same list", () => {
+    // Neither may restate it. A second list is how a screen ends up rendered
+    // and never looked at.
+    for (const file of ["tests/e2e/visual.spec.ts", "tests/review/screenshots.spec.ts"]) {
+      const body = readFileSync(path.join(ROOT, file), "utf8");
+      expect(body, `${file} does not read the shared screen list`).toContain(
+        'from "@/lib/design/preview-screens"',
+      );
+      expect(body, `${file} restates the screen list`).not.toMatch(
+        /const SCREENS\s*=/,
+      );
     }
   });
 });

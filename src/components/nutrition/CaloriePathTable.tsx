@@ -22,7 +22,7 @@ export function CaloriePathTable({
 }) {
   if (path.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="path-empty">
+      <p className="text-txt-secondary" data-testid="path-empty">
         No calorie path yet. Generate one from the client&rsquo;s start and goal
         numbers and it will fill this table week by week.
       </p>
@@ -63,7 +63,7 @@ export function CaloriePathTable({
                 key={row.week}
                 data-testid="path-row"
                 aria-current={current ? "true" : undefined}
-                className={current ? "bg-panel-2 text-txt" : undefined}
+                className={current ? "bg-raised text-txt" : undefined}
               >
                 <th scope="row" className="elvt-num font-normal">
                   {row.week}
@@ -72,10 +72,10 @@ export function CaloriePathTable({
                 <td className="elvt-num text-right">{row.protein}g</td>
                 <td className="elvt-num text-right">{row.carbs}g</td>
                 <td className="elvt-num text-right">{row.fat}g</td>
-                <td className="max-w-[28ch] truncate text-txt-mute">
+                <td className="max-w-[28ch] truncate text-txt-secondary">
                   {row.note || (row.isDeload ? "Deload" : "")}
                 </td>
-                <td className="text-txt-mute">{humanize(row.status)}</td>
+                <td className="text-txt-secondary">{humanize(row.status)}</td>
               </tr>
             );
           })}

@@ -79,13 +79,16 @@ export function RosterTable({ rows }: { rows: RosterRow[] }) {
         <tbody>
           {rows.map((row) => (
             <tr key={row.id} data-testid="roster-row">
+              {/*
+                One line, and the phase is not on it. It was here as a sub-line
+                under the name AND in the Status column, which is the same fact
+                twice: it cost the row a second line, and a 48px row that
+                renders 58 is how the roster lost a row above the fold.
+              */}
               <td>
                 <Link href={`/coach/clients/${row.slug}`} className="text-txt font-semibold">
                   {row.name}
                 </Link>
-                {row.phase ? (
-                  <span className="block text-small text-txt-tertiary">{humanize(row.phase)}</span>
-                ) : null}
               </td>
               <td className="text-txt-secondary">
                 {row.program ? humanize(row.program) : "Not started"}

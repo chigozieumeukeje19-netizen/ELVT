@@ -70,7 +70,7 @@ export function PromptAndPaste({
 
       {open ? (
         <pre
-          className="mt-3 max-h-[320px] overflow-auto bg-panel-2 p-3 text-txt-mute"
+          className="mt-3 max-h-[320px] overflow-auto bg-raised p-3 text-txt-secondary"
           data-testid="prompt-text"
         >
           {prompt}
@@ -103,7 +103,7 @@ export function PromptAndPaste({
             </p>
             <ul className="mt-1">
               {warnings.map((warning, index) => (
-                <li key={index} className="text-txt-mute">
+                <li key={index} className="text-txt-secondary">
                   {warning.detail}
                 </li>
               ))}

@@ -52,7 +52,7 @@ export function MealPlanEditor({
                 <th scope="row" className="font-normal">
                   <span className="truncate">{meal.name}</span>
                   {meal.absorbsRounding ? (
-                    <span className="elvt-label ml-2 text-txt-dim">
+                    <span className="elvt-label ml-2 text-txt-tertiary">
                       Takes the remainder
                     </span>
                   ) : null}
@@ -66,12 +66,12 @@ export function MealPlanEditor({
           </tbody>
           <tfoot>
             <tr data-testid="meal-total">
-              <th scope="row" className="font-normal text-txt-mute">
+              <th scope="row" className="font-normal text-txt-secondary">
                 Day total
               </th>
               <td className="elvt-num text-right">{summed}</td>
               <td className="elvt-num text-right">{proteinSummed}g</td>
-              <td colSpan={2} className="text-txt-mute">
+              <td colSpan={2} className="text-txt-secondary">
                 {summed === dayCalories && proteinSummed === dayProtein
                   ? "Matches the target"
                   : `Target is ${dayCalories} and ${dayProtein}g`}

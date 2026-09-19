@@ -29,7 +29,7 @@ export function ReviewThread({
   return (
     <div data-testid="review-thread">
       {messages.length === 0 ? (
-        <p className="text-txt-mute" data-testid="thread-empty">
+        <p className="text-txt-secondary" data-testid="thread-empty">
           No review yet. What you write here reaches the client and they can
           answer it, so it is a conversation rather than a note.
         </p>
@@ -43,7 +43,7 @@ export function ReviewThread({
             >
               <p className="elvt-label">
                 {message.from === "coach" ? "You" : "Them"}
-                <span className="elvt-num ml-3 text-txt-dim">{message.at}</span>
+                <span className="elvt-num ml-3 text-txt-tertiary">{message.at}</span>
               </p>
               <p className="mt-1 max-w-[70ch] whitespace-pre-line">{message.body}</p>
             </li>

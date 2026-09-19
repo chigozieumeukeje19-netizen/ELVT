@@ -15,7 +15,7 @@ export function WeekRationale({
 }) {
   if (rationale.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="rationale-empty">
+      <p className="text-txt-secondary" data-testid="rationale-empty">
         No rationale yet. Copy the prompt, paste the answer back, and a line per
         week lands here for you to edit before the program is published.
       </p>
@@ -32,10 +32,10 @@ export function WeekRationale({
             data-testid="rationale-row"
             className="flex items-start gap-3 border-line py-2 [border-bottom-width:1px]"
           >
-            <span className="elvt-num w-[3ch] shrink-0 text-txt-dim">{week}</span>
+            <span className="elvt-num w-[3ch] shrink-0 text-txt-tertiary">{week}</span>
             <span className="min-w-0 flex-1">
               {entry?.rationale ?? (
-                <span className="text-txt-dim">Nothing written for this week.</span>
+                <span className="text-txt-tertiary">Nothing written for this week.</span>
               )}
             </span>
           </li>

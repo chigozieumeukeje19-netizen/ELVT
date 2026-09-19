@@ -42,7 +42,7 @@ function CoachLoginForm() {
   return (
     <form onSubmit={onSubmit} className="w-full max-w-[320px]">
       <p className="elvt-label">ELVT OS</p>
-      <h1 className="mt-1 text-section">Coach sign in</h1>
+      <h1 className="mt-1 text-h2">Coach sign in</h1>
 
       <label className="mt-5 block">
         <span className="elvt-label">Email</span>

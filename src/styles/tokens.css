@@ -1,92 +1,235 @@
 /*
- * ELVT OS portal tokens. Direction: INSTRUMENT PANEL, locked 17 Sep 2026.
- * DESIGN.md Part 2 is the source; nothing here is invented alongside it.
+ * ELVT OS portal tokens. Direction: DEEP WATER, DESIGN_V2.md.
  *
- * A dense, dark, read-first control surface for one operator monitoring eight
- * to twenty athletes. Dark base because the coach reads this early and often,
- * and because it makes a small number of colored data points carry weight.
+ * A performance team's operations room rendered with care. Deep navy surfaces
+ * rather than grey or near-black, elevation carried by lightness rather than
+ * by borders, generous chrome around dense data. Calm around the edges and
+ * tight in the middle: the shell breathes, the tables do not.
+ *
+ * Three tiers, and the rule that makes them worth having: components consume
+ * ONLY the alias roles in the second block. Nothing outside this file names a
+ * primitive, and nothing anywhere names a hex.
  */
 
 :root {
-  /* Surfaces and text. The whole neutral range, no others. */
-  --ink: #0E0F10;
-  --panel: #16181A;
-  --panel-2: #1D2023;
-  --line: #2A2E32;
-  --txt: #F2F1EE;
-  --txt-mute: #8C9196;
-  --txt-dim: #5A5F64;
+  /* ---------------------------------------------------------------------
+   * TIER 1. PRIMITIVES. Never consumed directly by a component.
+   * ------------------------------------------------------------------ */
+
+  /* Navy. The backbone: blue-leaning neutral, never grey, never purple. */
+  --deep-25: #F6F8FB;
+  --deep-50: #EDF1F7;
+  --deep-100: #DDE4EE;
+  --deep-200: #C2CCDB;
+  --deep-300: #9BA8BC;
+  --deep-400: #74829A;
+  --deep-500: #55637B;
+  --deep-600: #3C485E;
+  --deep-700: #2A3447;
+  --deep-800: #1C2434;
+  --deep-900: #141B28;
+  --deep-950: #0E141E;
+
+  /* The three that carry meaning, and nothing else does. */
+  --ok-300: #6FBF93;
+  --ok-400: #4EA277;
+  --ok-500: #3A8760;
+  --ok-600: #2C6B4C;
+  --ok-50: #E6F4EC;
+
+  --watch-300: #E0B653;
+  --watch-400: #C9982F;
+  --watch-500: #A87D1E;
+  --watch-600: #866315;
+  --watch-50: #FBF2DE;
+
+  --flag-300: #E08076;
+  --flag-400: #CC5B4E;
+  --flag-500: #B0453A;
+  --flag-600: #8E362D;
+  --flag-50: #FBEAE8;
 
   /*
-   * Signal colors. The only saturated colors in the portal. Each means exactly
-   * one thing, everywhere, forever. Desaturated on purpose: a screen showing
-   * eight clients often carries all three at once, and saturated versions turn
-   * the roster into a Christmas tree.
+   * Brand gold. The sidebar wordmark and nothing else, ever. It is identity
+   * rather than a UI accent, and using it on a control would pull the portal
+   * toward the cream and gold client-app look, which is hard fail 0.
    */
-  --ok: #4E9E6A;    /* on plan, adherence at or above 85, completed */
-  --watch: #C9A227; /* drifting, adherence 60 to 84, due today */
-  --flag: #C04A38;  /* actionable flag, adherence below 60, overdue, missed */
-  --focus: #E8E6E1; /* selection and keyboard focus, deliberately not a color */
+  /* unslop-ignore */
+  --gold-400: #C9A961;
+  /* unslop-ignore */
+  --gold-500: #A98B43;
+  /* unslop-ignore */
+  --gold-600: #8A6F34;
+
+  /* ---------------------------------------------------------------------
+   * TIER 2. ALIAS ROLES, DARK. The default, and the one that matters.
+   *
+   * Elevation goes LIGHTER, not darker, carried by surface lightness plus a
+   * faint top highlight rather than by a drop shadow. This is the single rule
+   * that makes a dark product feel considered rather than flat.
+   * ------------------------------------------------------------------ */
+
+  --surface-page: var(--deep-950);
+  --surface-card: var(--deep-900);
+  --surface-raised: var(--deep-800);
+  --surface-sunken: #0A0F17;
+  --surface-hover: var(--deep-800);
+
+  --txt: #E8EDF4;          /* soft, never pure white */
+  --txt-secondary: var(--deep-300);
+  --txt-tertiary: var(--deep-400);
+  --txt-inverse: var(--deep-950);
+
+  --border-subtle: rgb(255 255 255 / 0.06);
+  --border-default: rgb(255 255 255 / 0.10);
 
   /*
-   * The adherence band thresholds live here so markup and logic read the same
-   * numbers. 85 and 60 are defined once, in this file and in
-   * src/lib/design/bands.ts which parses them from here.
+   * The focus ring carries no color. Focus is a state of the interface, not a
+   * state of the data, and coloring it would dilute the three signals.
+   */
+  --border-focus: #E8EDF4;
+  --focus-ring: rgb(232 237 244 / 0.18);
+
+  --wordmark: var(--gold-400);
+
+  --ok: var(--ok-300);
+  --watch: var(--watch-300);
+  --flag: var(--flag-300);
+  --ok-wash: rgb(111 191 147 / 0.12);
+  --watch-wash: rgb(224 182 83 / 0.12);
+  --flag-wash: rgb(224 128 118 / 0.12);
+
+  /* One line per chart, so 1 is the only one most screens use. */
+  --chart-1: var(--deep-200);
+  --chart-2: var(--ok-300);
+  --chart-3: var(--watch-300);
+  --chart-4: var(--deep-400);
+
+  --lift-1: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  --lift-2: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  --shadow-card: none;
+  --shadow-modal: 0 16px 48px rgb(5 8 13 / 0.55);
+  --scrim: rgb(5 8 13 / 0.55);
+
+  /*
+   * The adherence band thresholds, so markup and logic read the same numbers.
+   * 85 and 60 are defined once, here and in src/lib/design/bands.ts which
+   * parses them from here.
    */
   --band-ok-min: 85;
   --band-watch-min: 60;
 
-  /*
-   * ELVT gold appears in exactly one place: the wordmark in the sidebar. It is
-   * brand identity, not a UI accent. Using it for a button or a highlight
-   * would pull the portal toward the cream and gold client-app look, which is
-   * hard fail 0.
-   */
-  /* DESIGN.md Part 2 puts ELVT gold in exactly one place, the sidebar
-     wordmark. It is brand identity, not a UI accent, and the rule that flags
-     this hex everywhere else is what keeps it that way. */
-  /* unslop-ignore */
-  --wordmark: #8A6F34;
+  /* ---------------------------------------------------------------------
+   * TIER 1 continued. Scales.
+   * ------------------------------------------------------------------ */
 
-  /* Spacing, 4px base. Seven values. Nothing else, no arbitrary lengths. */
+  /* 4px base. Cards pad 20, page gutters 32, section to section 48. */
+  --space-0: 0px;
+  --space-px: 2px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
 
   /*
-   * Radius, three values, applied by role rather than by habit.
-   * Nothing is pill shaped.
+   * Radii by role. Tables, rows and the sidebar stay square: a data grid with
+   * rounded rows reads as a list of cards rather than as a table.
    */
-  --radius-flat: 0px;  /* tables, rows, inputs, the sidebar */
-  --radius-control: 4px; /* buttons, chips, menus */
-  --radius-raised: 8px;  /* modals and the Monday review card */
+  --r-none: 0px;
+  --r-sm: 6px;   /* inputs, badges, small controls */
+  --r-md: 8px;   /* buttons */
+  --r-lg: 12px;  /* cards */
+  --r-xl: 16px;  /* modals */
+  --r-full: 999px; /* status pills only */
 
-  /* Type scale. Six sizes. Nothing between them. */
-  --text-label: 11px;    /* Archivo Expanded, uppercase, 0.08em tracking */
-  --text-body: 13px;
-  --text-emphasis: 15px;
-  --text-section: 20px;
-  --text-name: 32px;
-  --text-hero: 56px;     /* the one number a screen is about */
+  /* Type scale. Sizes only; weight and tracking live on the utilities. */
+  --text-caption: 12px;
+  --text-small: 13px;
+  --text-body: 14px;
+  --text-h3: 15px;
+  --text-h2: 18px;
+  --text-metric: 20px;
+  --text-h1: 24px;
+  --text-metric-lg: 28px;
+  --text-display: 44px;
 
   /* Density. The roster shows at least 14 rows above the fold at 1440x900. */
-  --row-height: 44px;
-  --sidebar-width: 240px;
-  /* Below the lg breakpoint the sidebar collapses to an icon rail, so the
-     content keeps the width a dense table needs. */
-  --rail-width: 44px;
+  /* Control height. Buttons, inputs and nav items, DESIGN_V2.md 3.1 and 3.6. */
+  --control-height: 36px;
+
+  /* The active-item marker in the sidebar, DESIGN_V2.md 3.1. */
+  --marker-width: 3px;
+
+  --row-height: 48px;
+  --row-height-compact: 40px;
+  --sidebar-width: 248px;
+  --rail-width: 64px;
+  --topbar-height: 52px;
+  --page-max: 1280px;
 
   /*
-   * Motion. Three uses only: a value updating, a row saving, a queue item
-   * clearing. Each under 150ms. There is no decorative duration token because
-   * there is no decorative motion.
+   * Motion. State only: a value updating, a row saving, a queue item clearing.
+   * Elements settle, never bounce.
    */
-  --motion-state: 120ms;
-  --motion-ease: cubic-bezier(0.2, 0, 0.38, 1);
+  --motion-hover: 150ms;
+  --motion-reveal: 200ms;
+  --motion-modal: 250ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-out: ease-out;
+}
+
+/*
+ * TIER 2. ALIAS ROLES, LIGHT.
+ *
+ * Same layout, same components, roles swap. Elevation REVERSES to the
+ * conventional white card on a tinted page with a soft shadow: the dark
+ * lightness rule does not carry across, because a card lighter than a light
+ * page is invisible.
+ *
+ * Light exists for daylight and for printing a client summary. It is not an
+ * afterthought and every screen is checked in it.
+ */
+:root[data-theme="light"] {
+  --surface-page: var(--deep-50);
+  --surface-card: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: var(--deep-100);
+  --surface-hover: var(--deep-25);
+
+  --txt: var(--deep-900);
+  --txt-secondary: var(--deep-500);
+  --txt-tertiary: var(--deep-400);
+  --txt-inverse: #FFFFFF;
+
+  --border-subtle: var(--deep-100);
+  --border-default: var(--deep-200);
+  --border-focus: var(--deep-900);
+  --focus-ring: rgb(20 27 40 / 0.18);
+
+  --ok: var(--ok-600);
+  --watch: var(--watch-600);
+  --flag: var(--flag-600);
+  --ok-wash: var(--ok-50);
+  --watch-wash: var(--watch-50);
+  --flag-wash: var(--flag-50);
+
+  --chart-1: var(--deep-600);
+  --chart-2: var(--ok-600);
+  --chart-3: var(--watch-600);
+  --chart-4: var(--deep-400);
+
+  /* No top highlight on a white card. A soft shadow does the lifting. */
+  --lift-1: none;
+  --lift-2: none;
+  --shadow-card: 0 1px 2px rgb(14 20 30 / 0.05), 0 2px 8px rgb(14 20 30 / 0.04);
+  --shadow-modal: 0 16px 48px rgb(14 20 30 / 0.18);
+  --scrim: rgb(14 20 30 / 0.35);
 }
 
 /*
@@ -95,7 +238,9 @@
  */
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --motion-state: 0ms;
+    --motion-hover: 0ms;
+    --motion-reveal: 0ms;
+    --motion-modal: 0ms;
   }
 
   *,

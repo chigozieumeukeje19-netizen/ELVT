@@ -22,8 +22,8 @@ export default async function TodayPage() {
     return (
       <main className="mx-auto max-w-[520px] px-5 py-6">
         <p className="elvt-label">Today</p>
-        <h1 className="mt-1 text-section">Your program is being built</h1>
-        <p className="mt-2 text-txt-mute">
+        <h1 className="mt-1 text-h2">Your program is being built</h1>
+        <p className="mt-2 text-txt-secondary">
           Your coach is setting this up. It will be here before your first
           session.
         </p>
@@ -34,14 +34,14 @@ export default async function TodayPage() {
   return (
     <main className="mx-auto max-w-[520px] px-5 py-6">
       <p className="elvt-label">Today</p>
-      <h1 className="mt-1 text-name" data-testid="client-greeting">
+      <h1 className="mt-1 text-h1" data-testid="client-greeting">
         {client.first_name}
       </h1>
-      <p className="mt-2 max-w-[48ch] text-txt-mute">{client.goal_statement}</p>
+      <p className="mt-2 max-w-[48ch] text-txt-secondary">{client.goal_statement}</p>
 
       <section className="mt-6">
         <p className="elvt-label">Program length</p>
-        <p className="elvt-num mt-1 text-section">
+        <p className="elvt-num mt-1 text-h2">
           {client.program_length_weeks} weeks
         </p>
       </section>

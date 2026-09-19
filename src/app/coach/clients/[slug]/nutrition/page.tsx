@@ -173,7 +173,7 @@ export default async function ClientNutritionPage({
             key={row.week}
             href={`/coach/clients/${slug}/nutrition?week=${row.week}${isRestDay ? "&day=rest" : ""}`}
             aria-current={row.week === currentWeek ? "page" : undefined}
-            className={`elvt-chip ${row.week === currentWeek ? "bg-panel-2 text-txt" : ""}`}
+            className={`elvt-chip ${row.week === currentWeek ? "bg-raised text-txt" : ""}`}
           >
             <span className="elvt-num">{row.week}</span>
           </a>
@@ -192,7 +192,7 @@ export default async function ClientNutritionPage({
                 basis={target.basis}
               />
             ) : (
-              <p className="text-txt-mute">
+              <p className="text-txt-secondary">
                 No meals set up yet. Add them and they will split this week&rsquo;s
                 target exactly, with the last meal taking the remainder.
               </p>

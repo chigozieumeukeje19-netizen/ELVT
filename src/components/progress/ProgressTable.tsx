@@ -15,7 +15,7 @@ export function ProgressTable({ series }: { series: Series[] }) {
 
   if (dates.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="progress-table-empty">
+      <p className="text-txt-secondary" data-testid="progress-table-empty">
         Nothing logged in this range. Try a longer one, or check the client has
         been using the app.
       </p>
@@ -47,7 +47,7 @@ export function ProgressTable({ series }: { series: Series[] }) {
                 return (
                   <td key={one.metric} className="elvt-num text-right">
                     {point?.value === null || point?.value === undefined
-                      ? <span className="text-txt-dim">not logged</span>
+                      ? <span className="text-txt-tertiary">not logged</span>
                       : formatValue(point.value, one.spec)}
                   </td>
                 );

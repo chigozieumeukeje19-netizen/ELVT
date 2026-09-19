@@ -25,7 +25,7 @@ export type ThreadRow = {
 export function ThreadList({ rows }: { rows: ThreadRow[] }) {
   if (rows.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="threads-empty">
+      <p className="text-txt-secondary" data-testid="threads-empty">
         No threads yet. A review or a trigger message starts one, and the client
         can answer in it.
       </p>
@@ -51,7 +51,7 @@ export function ThreadList({ rows }: { rows: ThreadRow[] }) {
               <th scope="row" className="max-w-[22ch] truncate font-normal">
                 {row.name}
               </th>
-              <td className="max-w-[40ch] truncate text-txt-mute">
+              <td className="max-w-[40ch] truncate text-txt-secondary">
                 {row.lastFrom === "client" ? "They: " : "You: "}
                 {row.lastBody}
               </td>
@@ -68,7 +68,7 @@ export function ThreadList({ rows }: { rows: ThreadRow[] }) {
               <td className={`elvt-num text-right ${bandTextClass(row.touchpoints.band)}`}>
                 {row.touchpoints.thisWeek}
               </td>
-              <td className="elvt-num text-txt-mute">{row.scheduled || ""}</td>
+              <td className="elvt-num text-txt-secondary">{row.scheduled || ""}</td>
             </tr>
           ))}
         </tbody>

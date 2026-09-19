@@ -41,7 +41,7 @@ export function Composer({
             key={template.key}
             type="button"
             data-testid="quick-reply"
-            className="elvt-chip text-txt-mute"
+            className="elvt-chip text-txt-secondary"
             onClick={() => {
               const result = fill(template, values);
               if (!result.ok) {
@@ -84,7 +84,7 @@ export function Composer({
           checked={schedule}
           onChange={(event) => setSchedule(event.target.checked)}
         />
-        <span className="text-txt-mute">Send it later</span>
+        <span className="text-txt-secondary">Send it later</span>
       </label>
 
       {schedule ? (
@@ -103,7 +103,7 @@ export function Composer({
       <label className="mt-3 block">
         <span className="elvt-label">Voice note</span>
         <input
-          className="mt-1 w-full text-txt-mute"
+          className="mt-1 w-full text-txt-secondary"
           type="file"
           name="voice"
           accept="audio/*"

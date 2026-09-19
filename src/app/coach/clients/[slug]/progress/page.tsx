@@ -142,7 +142,7 @@ export default async function ProgressPage({
               key={entry.key}
               href={query({ range: entry.key })}
               aria-current={entry.key === range ? "page" : undefined}
-              className={`elvt-chip ${entry.key === range ? "bg-panel-2 text-txt" : "text-txt-mute"}`}
+              className={`elvt-chip ${entry.key === range ? "bg-raised text-txt" : "text-txt-secondary"}`}
             >
               {entry.label}
             </a>
@@ -151,7 +151,7 @@ export default async function ProgressPage({
 
         <a
           href={query({ all: showAll ? undefined : "1" })}
-          className={`elvt-chip ${showAll ? "bg-panel-2 text-txt" : "text-txt-mute"}`}
+          className={`elvt-chip ${showAll ? "bg-raised text-txt" : "text-txt-secondary"}`}
           data-testid="show-everything"
         >
           {showAll ? "Just their phase" : `Show everything, ${everythingElse(goal).length} more`}

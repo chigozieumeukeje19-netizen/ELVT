@@ -17,22 +17,22 @@ export function StressRail({ week }: { week: WeekView }) {
 
       <dl className="mt-3">
         <div className="flex h-row items-center justify-between border-line [border-top-width:1px]">
-          <dt className="text-txt-mute">Stress</dt>
+          <dt className="text-txt-secondary">Stress</dt>
           <dd className="elvt-num">{week.stress}</dd>
         </div>
         <div className="flex h-row items-center justify-between border-line [border-top-width:1px]">
-          <dt className="text-txt-mute">Planned miles</dt>
+          <dt className="text-txt-secondary">Planned miles</dt>
           <dd className="elvt-num">{week.mileage}</dd>
         </div>
         <div className="flex h-row items-center justify-between border-line [border-top-width:1px]">
-          <dt className="text-txt-mute">Deload</dt>
+          <dt className="text-txt-secondary">Deload</dt>
           <dd className="text-txt">{week.isDeload ? "Yes" : "No"}</dd>
         </div>
       </dl>
 
       <h2 className="elvt-label mt-5">Flags</h2>
       {week.flags.length === 0 ? (
-        <p className="mt-2 text-txt-mute">
+        <p className="mt-2 text-txt-secondary">
           Nothing on this week reads as a conflict.
         </p>
       ) : (

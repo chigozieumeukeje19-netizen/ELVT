@@ -111,7 +111,7 @@ export default async function BlueprintPage({
       ) : null}
 
       {rows.length > 1 ? (
-        <p className="mb-4 text-txt-mute">
+        <p className="mb-4 text-txt-secondary">
           {rows.length} versions. The approved one is what every later draft
           reads, so an older program stays explicable after this changes.
         </p>
@@ -131,7 +131,7 @@ export default async function BlueprintPage({
 
         <section>
           <h2 className="elvt-label">Or write it yourself</h2>
-          <p className="mt-1 text-txt-dim">
+          <p className="mt-1 text-txt-tertiary">
             Everything here is editable until you approve. The facts on the left
             are not: those came from the client.
           </p>

@@ -23,7 +23,7 @@ export type SwapGroup = {
 export function SwapList({ groups }: { groups: SwapGroup[] }) {
   if (groups.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="swaps-empty">
+      <p className="text-txt-secondary" data-testid="swaps-empty">
         No swaps set up yet. Add one per macro category and the client can trade
         without leaving the day&rsquo;s numbers.
       </p>
@@ -35,7 +35,7 @@ export function SwapList({ groups }: { groups: SwapGroup[] }) {
       {groups.map((group) => (
         <section key={group.category}>
           <p className="elvt-label">{group.category}</p>
-          <p className="text-txt-mute">Instead of {group.swapsFor}</p>
+          <p className="text-txt-secondary">Instead of {group.swapsFor}</p>
 
           <ul className="mt-2">
             {group.options.map((option) => (
@@ -46,9 +46,9 @@ export function SwapList({ groups }: { groups: SwapGroup[] }) {
               >
                 <span className="min-w-0 truncate">{option.name}</span>
                 <span className="flex shrink-0 items-center gap-4">
-                  <span className="text-txt-mute">{option.portion}</span>
+                  <span className="text-txt-secondary">{option.portion}</span>
                   <span className="elvt-num">{option.calories}</span>
-                  <span className="elvt-num text-txt-mute">{option.protein}g</span>
+                  <span className="elvt-num text-txt-secondary">{option.protein}g</span>
                 </span>
               </li>
             ))}

@@ -8,32 +8,51 @@ import type { Config } from "tailwindcss";
  * extended. Left in place, the stock padding, radius and display sizes stay one
  * keystroke away, and reaching for them is exactly what DESIGN.md Part 1 bans.
  * Replacing the scales means the banned values cannot be typed at all.
+ *
+ * Only the alias roles are exposed. DESIGN_V2.md is explicit that components
+ * consume roles and never primitives, so there is no `deep-700` utility to
+ * reach for: a screen that wants a surface asks for a surface.
  */
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
+  darkMode: ["selector", '[data-theme="light"] *'],
   theme: {
-    // Only the portal palette. There is no slate, zinc, gray, indigo or violet
-    // to reach for, so the untouched-default tells cannot be typed by accident.
+    // Only the portal's alias roles. There is no slate, zinc, gray, indigo or
+    // violet to reach for, so the untouched-default tells cannot be typed by
+    // accident, and no primitive either.
     colors: {
       transparent: "transparent",
       current: "currentColor",
-      ink: "var(--ink)",
-      panel: "var(--panel)",
-      "panel-2": "var(--panel-2)",
-      line: "var(--line)",
+
+      page: "var(--surface-page)",
+      card: "var(--surface-card)",
+      raised: "var(--surface-raised)",
+      sunken: "var(--surface-sunken)",
+      hover: "var(--surface-hover)",
+
       txt: "var(--txt)",
-      "txt-mute": "var(--txt-mute)",
-      "txt-dim": "var(--txt-dim)",
+      "txt-secondary": "var(--txt-secondary)",
+      "txt-tertiary": "var(--txt-tertiary)",
+      "txt-inverse": "var(--txt-inverse)",
+
+      line: "var(--border-subtle)",
+      "line-default": "var(--border-default)",
+      focus: "var(--border-focus)",
+
       ok: "var(--ok)",
       watch: "var(--watch)",
       flag: "var(--flag)",
-      focus: "var(--focus)",
+      "ok-wash": "var(--ok-wash)",
+      "watch-wash": "var(--watch-wash)",
+      "flag-wash": "var(--flag-wash)",
+
       wordmark: "var(--wordmark)",
     },
 
-    // 4px base, seven steps. No arbitrary lengths.
+    // 4px base. The twelve values in DESIGN_V2.md 1.3, no arbitrary lengths.
     spacing: {
-      0: "0px",
+      0: "var(--space-0)",
+      px: "var(--space-px)",
       1: "var(--space-1)",
       2: "var(--space-2)",
       3: "var(--space-3)",
@@ -41,44 +60,79 @@ const config: Config = {
       5: "var(--space-5)",
       6: "var(--space-6)",
       7: "var(--space-7)",
+      8: "var(--space-8)",
+      9: "var(--space-9)",
+      10: "var(--space-10)",
+      control: "var(--control-height)",
+      marker: "var(--marker-width)",
       row: "var(--row-height)",
+      "row-compact": "var(--row-height-compact)",
       sidebar: "var(--sidebar-width)",
       rail: "var(--rail-width)",
+      topbar: "var(--topbar-height)",
     },
 
-    // Three values, by role. Nothing is pill shaped, so there is no full.
+    // Five values plus full, by role. Tables, rows and the sidebar stay square,
+    // and `full` is for status pills alone.
     borderRadius: {
-      none: "0px",
-      flat: "var(--radius-flat)",
-      control: "var(--radius-control)",
-      raised: "var(--radius-raised)",
+      none: "var(--r-none)",
+      sm: "var(--r-sm)",
+      md: "var(--r-md)",
+      lg: "var(--r-lg)",
+      xl: "var(--r-xl)",
+      full: "var(--r-full)",
     },
 
-    // Six sizes, nothing between them.
+    // The scale in DESIGN_V2.md 1.2, nothing between. Weight travels with the
+    // size because the spec pairs them, so `text-h1` is 24/32 at 700 and a
+    // heading cannot end up at the wrong weight by omission.
     fontSize: {
-      label: ["var(--text-label)", { lineHeight: "16px" }],
-      body: ["var(--text-body)", { lineHeight: "1.45" }],
-      emphasis: ["var(--text-emphasis)", { lineHeight: "1.4" }],
-      section: ["var(--text-section)", { lineHeight: "1.25" }],
-      name: ["var(--text-name)", { lineHeight: "1.1" }],
-      hero: ["var(--text-hero)", { lineHeight: "1" }],
+      caption: ["var(--text-caption)", { lineHeight: "16px", fontWeight: "500" }],
+      small: ["var(--text-small)", { lineHeight: "20px", fontWeight: "400" }],
+      body: ["var(--text-body)", { lineHeight: "22px", fontWeight: "400" }],
+      "body-strong": ["var(--text-body)", { lineHeight: "22px", fontWeight: "600" }],
+      h3: ["var(--text-h3)", { lineHeight: "22px", fontWeight: "600" }],
+      h2: ["var(--text-h2)", { lineHeight: "26px", fontWeight: "600" }],
+      h1: ["var(--text-h1)", { lineHeight: "32px", fontWeight: "700", letterSpacing: "-0.02em" }],
+      "metric-sm": ["var(--text-body)", { lineHeight: "20px", fontWeight: "600" }],
+      metric: ["var(--text-metric)", { lineHeight: "26px", fontWeight: "600" }],
+      "metric-lg": ["var(--text-metric-lg)", { lineHeight: "34px", fontWeight: "700" }],
+      display: ["var(--text-display)", { lineHeight: "48px", fontWeight: "700", letterSpacing: "-0.02em" }],
     },
 
     fontFamily: {
       sans: ["var(--font-ui)", "system-ui", "sans-serif"],
+      // Permitted in exactly two places: an id shown to a developer and a raw
+      // timestamp. Never a weight, a calorie, a mile, a score or a percentage.
       mono: ["var(--font-mono)", "ui-monospace", "monospace"],
     },
 
-    // Modals are the only surface allowed a shadow, and it is defined in CSS
-    // on .elvt-modal. Nothing else can reach for one.
+    /*
+     * Elevation is a surface step plus a top highlight, not a drop shadow.
+     * `modal` is the only real shadow and `card` is none in dark and a soft
+     * stack in light, so a card cannot pick up a shadow by accident in the
+     * theme that forbids it.
+     */
     boxShadow: {
       none: "none",
+      "lift-1": "var(--lift-1)",
+      "lift-2": "var(--lift-2)",
+      card: "var(--shadow-card)",
+      modal: "var(--shadow-modal)",
     },
 
     extend: {
       borderWidth: { DEFAULT: "1px" },
-      transitionDuration: { state: "var(--motion-state)" },
-      transitionTimingFunction: { state: "var(--motion-ease)" },
+      maxWidth: { page: "var(--page-max)" },
+      transitionDuration: {
+        hover: "var(--motion-hover)",
+        reveal: "var(--motion-reveal)",
+        modal: "var(--motion-modal)",
+      },
+      transitionTimingFunction: {
+        reveal: "var(--motion-ease)",
+        hover: "var(--motion-ease-out)",
+      },
     },
   },
   plugins: [],

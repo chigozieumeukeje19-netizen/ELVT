@@ -8,8 +8,8 @@ export default function HomePage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-[420px] flex-col justify-center px-5">
       <p className="elvt-label">ELVT OS</p>
-      <h1 className="mt-2 text-section">Coaching portal</h1>
-      <p className="mt-2 text-txt-mute">
+      <h1 className="mt-2 text-h2">Coaching portal</h1>
+      <p className="mt-2 text-txt-secondary">
         Programs, check-ins and the Monday queue.
       </p>
 

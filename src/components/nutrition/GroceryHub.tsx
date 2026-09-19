@@ -20,7 +20,7 @@ export function GroceryHub({
 }) {
   if (lines.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="grocery-empty">
+      <p className="text-txt-secondary" data-testid="grocery-empty">
         Nothing on the list. Add the items the meal plan is built from and the
         quantities will follow the week&rsquo;s target.
       </p>
@@ -53,7 +53,7 @@ export function GroceryHub({
                       <span className="elvt-num">
                         {line.quantity} {line.unit}
                       </span>
-                      <span className="elvt-label w-[9ch] text-txt-dim">
+                      <span className="elvt-label w-[9ch] text-txt-tertiary">
                         {line.scaled ? "Scaled" : "Held flat"}
                       </span>
                     </span>

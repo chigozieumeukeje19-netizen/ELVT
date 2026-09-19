@@ -77,8 +77,8 @@ export default function ClientLoginPage() {
       <main className="flex min-h-screen items-center justify-center px-5">
         <div className="w-full max-w-[320px]" data-testid="screen-ready">
           <p className="elvt-label">ELVT</p>
-          <h1 className="mt-1 text-section">Check your email</h1>
-          <p className="mt-2 text-txt-mute">
+          <h1 className="mt-1 text-h2">Check your email</h1>
+          <p className="mt-2 text-txt-secondary">
             A sign in link is on its way to {email}. It works once and lasts an
             hour.
           </p>
@@ -111,8 +111,8 @@ export default function ClientLoginPage() {
         data-testid="screen-ready"
       >
         <p className="elvt-label">ELVT</p>
-        <h1 className="mt-1 text-section">Sign in</h1>
-        <p className="mt-2 text-txt-mute">
+        <h1 className="mt-1 text-h2">Sign in</h1>
+        <p className="mt-2 text-txt-secondary">
           Enter your email and we will send you a link.
         </p>
 

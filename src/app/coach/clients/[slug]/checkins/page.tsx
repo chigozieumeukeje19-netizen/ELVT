@@ -157,7 +157,7 @@ export default async function CheckinsPage({
 
       <section className="mt-8">
         <h2 className="elvt-label">The same question, week by week</h2>
-        <p className="mt-1 text-txt-dim">
+        <p className="mt-1 text-txt-tertiary">
           One bad week is noise. Two is a signal. This is where that shows.
         </p>
         <div className="mt-2">

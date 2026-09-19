@@ -42,7 +42,7 @@ function Line({
       <span className="elvt-label shrink-0">{label}</span>
       <span className="min-w-0 text-right">
         <span className={`elvt-num ${className || "text-txt"}`}>{value}</span>
-        {note ? <span className="ml-2 text-txt-mute">{note}</span> : null}
+        {note ? <span className="ml-2 text-txt-secondary">{note}</span> : null}
       </span>
     </div>
   );
@@ -62,12 +62,12 @@ export function RaceCountdown({
   return (
     <section data-testid="race-countdown">
       <div className="flex items-baseline gap-3">
-        <p className="elvt-num text-hero" data-testid="race-days-out" data-days-out={status.daysOut}>
+        <p className="elvt-num text-display" data-testid="race-days-out" data-days-out={status.daysOut}>
           {Math.abs(status.daysOut)}
         </p>
         <div className="min-w-0">
           <p className="elvt-label">{race.name}</p>
-          <p className="text-txt-mute">
+          <p className="text-txt-secondary">
             {past ? "days since" : status.daysOut === 0 ? "it is today" : "days out"}, read on{" "}
             {viewedDate}
           </p>
@@ -75,10 +75,10 @@ export function RaceCountdown({
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-2">
-        <span className="elvt-chip bg-panel-2 text-txt" data-testid="race-phase" data-phase={status.phase}>
+        <span className="elvt-chip bg-raised text-txt" data-testid="race-phase" data-phase={status.phase}>
           {PHASE_LABELS[status.phase]}
         </span>
-        <span className="text-txt-mute">
+        <span className="text-txt-secondary">
           {status.weeksRemaining === 0
             ? past
               ? "Run."
@@ -106,7 +106,7 @@ export function RaceDetails({
   const pace = racePace(race);
 
   return (
-    <section className="elvt-panel px-4 py-2" data-testid="race-details">
+    <section className="elvt-card px-4 py-2" data-testid="race-details">
       <Line label="Distance" value={distanceName(race.metres)} />
       <Line label="Date" value={race.date} />
       <Line
@@ -151,9 +151,9 @@ export function FuelingPlanCard({
 
   if (!plan) {
     return (
-      <section className="elvt-panel px-4 py-4" data-testid="fueling">
+      <section className="elvt-card px-4 py-4" data-testid="fueling">
         <p className="elvt-label">Fueling</p>
-        <p className="mt-2 max-w-[60ch] text-txt-mute">
+        <p className="mt-2 max-w-[60ch] text-txt-secondary">
           A fueling plan is built from how long the race will take, and there is
           nothing here to work that out from yet. Put a goal time on the race,
           or log a run, and this fills in.
@@ -163,10 +163,10 @@ export function FuelingPlanCard({
   }
 
   return (
-    <section className="elvt-panel px-4 py-2" data-testid="fueling">
+    <section className="elvt-card px-4 py-2" data-testid="fueling">
       <div className="py-2">
         <p className="elvt-label">Fueling</p>
-        <p className="mt-1 text-txt-mute">
+        <p className="mt-1 text-txt-secondary">
           Built on {formatDuration(plan.estimatedSeconds)},{" "}
           {plan.source === "goal_time" ? "the goal time" : "their recent pace"}.
         </p>
@@ -188,7 +188,7 @@ export function FuelingPlanCard({
             value={`${plan.firstFuelMinutes}`}
             note={`minutes, then every ${plan.everyMinutes}`}
           />
-          <p className="max-w-[60ch] py-2 text-txt-mute">{plan.note}</p>
+          <p className="max-w-[60ch] py-2 text-txt-secondary">{plan.note}</p>
         </>
       )}
     </section>
@@ -208,7 +208,7 @@ export function RaceWeekChecklist({ race, viewedDate }: { race: Race; viewedDate
             data-testid="checklist-line"
             data-today={line.isToday ? "true" : undefined}
             className={`flex min-h-[44px] items-baseline gap-3 py-2 ${
-              line.isPast ? "text-txt-dim" : line.isToday ? "text-txt" : "text-txt-mute"
+              line.isPast ? "text-txt-tertiary" : line.isToday ? "text-txt" : "text-txt-secondary"
             }`}
           >
             <span className="elvt-num w-[92px] shrink-0">{line.date}</span>
@@ -224,7 +224,7 @@ export function RaceWeekChecklist({ race, viewedDate }: { race: Race; viewedDate
 export function MileageTable({ rows }: { rows: WeekMileage[] }) {
   if (rows.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="mileage-empty">
+      <p className="text-txt-secondary" data-testid="mileage-empty">
         No weeks planned yet. Planned against completed shows up once the
         program is built.
       </p>
@@ -252,8 +252,8 @@ export function MileageTable({ rows }: { rows: WeekMileage[] }) {
               return (
                 <tr key={row.weekNumber} data-testid="mileage-row" data-week={row.weekNumber}>
                   <td className="elvt-num text-txt">{row.weekNumber}</td>
-                  <td className="elvt-num text-txt-mute">{row.startsOn}</td>
-                  <td className="elvt-num text-txt-mute">
+                  <td className="elvt-num text-txt-secondary">{row.startsOn}</td>
+                  <td className="elvt-num text-txt-secondary">
                     {row.planned === null ? NO_DATA : row.planned}
                   </td>
                   <td className="elvt-num text-txt">{row.completed}</td>
@@ -264,7 +264,7 @@ export function MileageTable({ rows }: { rows: WeekMileage[] }) {
                   >
                     {row.percent === null ? NO_DATA : `${Math.round(row.percent)}%`}
                   </td>
-                  <td className="text-txt-mute">
+                  <td className="text-txt-secondary">
                     {row.isRaceWeek ? "Race week" : row.isTaper ? "Taper" : NO_DATA}
                   </td>
                 </tr>

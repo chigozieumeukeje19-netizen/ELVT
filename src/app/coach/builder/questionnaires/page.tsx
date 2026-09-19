@@ -59,7 +59,7 @@ export default async function QuestionnaireBuilderPage({
         <a
           href="/coach/builder/questionnaires"
           aria-current={selected ? undefined : "page"}
-          className={`elvt-chip ${selected ? "" : "bg-panel-2 text-txt"}`}
+          className={`elvt-chip ${selected ? "" : "bg-raised text-txt"}`}
         >
           ELVT intake
         </a>
@@ -68,7 +68,7 @@ export default async function QuestionnaireBuilderPage({
             key={row.id}
             href={`/coach/builder/questionnaires?id=${row.id}`}
             aria-current={selected?.id === row.id ? "page" : undefined}
-            className={`elvt-chip ${selected?.id === row.id ? "bg-panel-2 text-txt" : ""}`}
+            className={`elvt-chip ${selected?.id === row.id ? "bg-raised text-txt" : ""}`}
           >
             {row.name}
           </a>
@@ -76,7 +76,7 @@ export default async function QuestionnaireBuilderPage({
       </nav>
 
       {selected ? null : (
-        <p className="mb-5 max-w-[70ch] text-txt-mute">
+        <p className="mb-5 max-w-[70ch] text-txt-secondary">
           This one ships in code, because the blueprint drafter, the flag filter
           and the calorie path all read its keys by name. Copy it to make a
           version you can edit.

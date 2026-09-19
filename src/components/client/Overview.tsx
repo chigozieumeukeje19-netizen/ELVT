@@ -163,11 +163,11 @@ export function TopStrip({
 
   return (
     <header className="mb-4" data-testid="top-strip">
-      <h1 className="text-name" data-testid="client-name">
+      <h1 className="text-h1" data-testid="client-name">
         {name}
       </h1>
 
-      <p className="mt-1 text-txt-mute" data-testid="client-facts">
+      <p className="mt-1 text-txt-secondary" data-testid="client-facts">
         {facts.join(" · ")}
       </p>
 
@@ -179,17 +179,17 @@ export function TopStrip({
 
       <div className="mt-2 flex flex-wrap items-center gap-2">
         {phase ? (
-          <span className="elvt-chip bg-panel-2 text-txt" data-testid="phase-chip">
+          <span className="elvt-chip bg-raised text-txt" data-testid="phase-chip">
             {phase}
           </span>
         ) : null}
         {position ? (
-          <span className="text-txt-mute" data-testid="block-dates">
+          <span className="text-txt-secondary" data-testid="block-dates">
             {startDate} to {position.endsOn}
           </span>
         ) : null}
         {raceLine ? (
-          <span className="elvt-chip text-txt-mute" data-testid="race-line">
+          <span className="elvt-chip text-txt-secondary" data-testid="race-line">
             {raceLine}
           </span>
         ) : null}
@@ -200,12 +200,12 @@ export function TopStrip({
 
 export function OneThing({ text }: { text: string | null }) {
   return (
-    <section className="elvt-panel mb-5 px-4 py-4" data-testid="one-thing">
+    <section className="elvt-card mb-5 px-4 py-4" data-testid="one-thing">
       <p className="elvt-label">The one thing</p>
       {text ? (
         <p className="mt-2 max-w-[60ch] text-txt">{text}</p>
       ) : (
-        <p className="mt-2 max-w-[60ch] text-txt-mute">
+        <p className="mt-2 max-w-[60ch] text-txt-secondary">
           The intake asks them what they know they should be doing and are not,
           and their answer lands here when the Blueprint is approved. Until then
           it is blank, and it is the one line worth writing by hand on the
@@ -221,7 +221,7 @@ export function Flags({ flags }: { flags: ActiveFlag[] }) {
     <section className="mb-5" data-testid="flags">
       <p className="elvt-label">Active flags</p>
       {flags.length === 0 ? (
-        <p className="mt-2 max-w-[60ch] text-txt-mute">
+        <p className="mt-2 max-w-[60ch] text-txt-secondary">
           None on file. Flags come from the intake and shape the program; they
           are not an open item to clear.
         </p>
@@ -234,7 +234,7 @@ export function Flags({ flags }: { flags: ActiveFlag[] }) {
               className="flex min-h-[44px] items-baseline justify-between gap-4 py-2"
             >
               <span className="text-txt">{humanize(flag.key)}</span>
-              <span className="elvt-num text-txt-mute">{flag.since ?? "On file"}</span>
+              <span className="elvt-num text-txt-secondary">{flag.since ?? "On file"}</span>
             </li>
           ))}
         </ul>
@@ -248,19 +248,19 @@ export function LastCheckin({ summary, slug }: { summary: CheckinSummary | null;
     <section className="mb-5" data-testid="last-checkin">
       <div className="flex items-baseline justify-between gap-4">
         <p className="elvt-label">Last check-in</p>
-        <Link href={`/coach/clients/${slug}/checkins`} className="text-txt-mute">
+        <Link href={`/coach/clients/${slug}/checkins`} className="text-txt-secondary">
           All of them
         </Link>
       </div>
 
       {summary === null ? (
-        <p className="mt-2 max-w-[60ch] text-txt-mute">
+        <p className="mt-2 max-w-[60ch] text-txt-secondary">
           Nothing submitted yet. The weekly lands on their check-in day and shows
           up here the moment it is sent.
         </p>
       ) : (
         <>
-          <p className="mt-2 text-txt-mute">
+          <p className="mt-2 text-txt-secondary">
             {summary.forDate}, {summary.daysAgo === 0 ? "today" : `${summary.daysAgo}d ago`}
             {summary.reviewed ? ", reviewed" : ", not reviewed yet"}
           </p>
@@ -283,7 +283,7 @@ export function Touchpoints({ lines }: { lines: TouchpointLine[] }) {
     <section className="mb-5" data-testid="touchpoints">
       <p className="elvt-label">Last five touchpoints</p>
       {lines.length === 0 ? (
-        <p className="mt-2 max-w-[60ch] text-txt-mute">
+        <p className="mt-2 max-w-[60ch] text-txt-secondary">
           Nothing has reached them yet. A message, a check-in review or a call
           all count, and two a week is the number that moves compliance.
         </p>
@@ -296,7 +296,7 @@ export function Touchpoints({ lines }: { lines: TouchpointLine[] }) {
               className="flex min-h-[44px] items-baseline justify-between gap-4 py-2"
             >
               <span className="text-txt">{humanize(line.kind)}</span>
-              <span className="elvt-num text-txt-mute">
+              <span className="elvt-num text-txt-secondary">
                 {line.daysAgo === 0 ? "Today" : `${line.daysAgo}d ago`}
               </span>
             </li>
@@ -312,7 +312,7 @@ export function Upcoming({ events }: { events: UpcomingEvent[] }) {
     <section className="mb-5" data-testid="upcoming">
       <p className="elvt-label">Upcoming</p>
       {events.length === 0 ? (
-        <p className="mt-2 max-w-[60ch] text-txt-mute">
+        <p className="mt-2 max-w-[60ch] text-txt-secondary">
           Nothing in the next six weeks. Photos, a race, a phase change or a
           retest all show up here as they come into range.
         </p>
@@ -327,9 +327,9 @@ export function Upcoming({ events }: { events: UpcomingEvent[] }) {
             >
               <span className="min-w-0">
                 <span className="text-txt">{UPCOMING_LABELS[event.kind]}</span>
-                <span className="ml-2 text-txt-mute">{event.detail}</span>
+                <span className="ml-2 text-txt-secondary">{event.detail}</span>
               </span>
-              <span className="elvt-num shrink-0 text-txt-mute">
+              <span className="elvt-num shrink-0 text-txt-secondary">
                 {event.inDays === 0 ? "Today" : `${event.inDays}d`}
               </span>
             </li>
@@ -348,9 +348,9 @@ export function CoachNotes({
   action: (formData: FormData) => void;
 }) {
   return (
-    <section className="elvt-panel mb-5 px-4 py-4" data-testid="coach-notes">
+    <section className="elvt-card mb-5 px-4 py-4" data-testid="coach-notes">
       <p className="elvt-label">Coach notes</p>
-      <p className="mt-1 text-txt-mute">Private. The client never sees this.</p>
+      <p className="mt-1 text-txt-secondary">Private. The client never sees this.</p>
 
       <form action={action} className="mt-2">
         <textarea

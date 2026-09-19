@@ -58,12 +58,12 @@ export function ReminderSettings({
               <th scope="row" className="font-normal">
                 {humanize(setting.kind)}
                 {grouped.has(setting.kind) && setting.enabled ? (
-                  <span className="elvt-label ml-2 text-txt-dim" data-testid="grouped">
+                  <span className="elvt-label ml-2 text-txt-tertiary" data-testid="grouped">
                     Sent together
                   </span>
                 ) : null}
               </th>
-              <td className="max-w-[28ch] truncate text-txt-mute">
+              <td className="max-w-[28ch] truncate text-txt-secondary">
                 {REMINDER_COPY[setting.kind]}
               </td>
               <td className="elvt-num">
@@ -78,14 +78,14 @@ export function ReminderSettings({
                   />
                 )}
               </td>
-              <td className="text-txt-mute">
+              <td className="text-txt-secondary">
                 {setting.days.length === 0
                   ? "Every day"
                   : setting.days.map((day) => DAY_NAMES[day]).join(", ")}
               </td>
               <td>
                 {readOnly ? (
-                  <span className="text-txt-mute">{setting.enabled ? "Yes" : "No"}</span>
+                  <span className="text-txt-secondary">{setting.enabled ? "Yes" : "No"}</span>
                 ) : (
                   <input
                     type="checkbox"
@@ -103,7 +103,7 @@ export function ReminderSettings({
 
   return (
     <div>
-      <p className="mb-2 max-w-[70ch] text-txt-mute">
+      <p className="mb-2 max-w-[70ch] text-txt-secondary">
         Anything set within an hour of something else goes out as one message.
         Five pings in a morning is how an app gets muted, and a muted app
         delivers nothing at all.

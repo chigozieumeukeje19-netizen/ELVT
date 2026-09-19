@@ -28,7 +28,7 @@ const NO_DATA = "·";
 export function ExerciseTable({ rows }: { rows: ExerciseRow[] }) {
   if (rows.length === 0) {
     return (
-      <p className="max-w-[68ch] px-3 py-5 text-txt-mute">
+      <p className="max-w-[68ch] px-3 py-5 text-txt-secondary">
         The library is empty. Add a movement below, or run the import against
         the v1 client app files to bring the whole vetted set in at once.
       </p>
@@ -61,21 +61,21 @@ export function ExerciseTable({ rows }: { rows: ExerciseRow[] }) {
                   {row.name}
                 </Link>
                 {row.needs_review ? (
-                  <span className="elvt-label ml-2 text-txt-mute">Review</span>
+                  <span className="elvt-label ml-2 text-txt-secondary">Review</span>
                 ) : null}
               </td>
-              <td className="text-txt-mute">
+              <td className="text-txt-secondary">
                 {row.pattern ? humanize(row.pattern) : NO_DATA}
               </td>
-              <td className="text-txt-mute">
+              <td className="text-txt-secondary">
                 {row.primary_muscle ? humanize(row.primary_muscle) : NO_DATA}
               </td>
-              <td className="text-txt-mute">
+              <td className="text-txt-secondary">
                 {row.equipment.length
                   ? row.equipment.map(humanize).join(", ")
                   : NO_DATA}
               </td>
-              <td className="text-txt-mute">
+              <td className="text-txt-secondary">
                 {row.level ? humanize(row.level) : NO_DATA}
               </td>
               {/*
@@ -83,15 +83,15 @@ export function ExerciseTable({ rows }: { rows: ExerciseRow[] }) {
                 of the movement, not an open flag, and DESIGN.md Part 2 gives
                 --flag exactly one meaning. The words carry it instead.
               */}
-              <td className={row.contraindications.length ? "text-txt" : "text-txt-dim"}>
+              <td className={row.contraindications.length ? "text-txt" : "text-txt-tertiary"}>
                 {row.contraindications.length
                   ? row.contraindications.map(humanize).join(", ")
                   : NO_DATA}
               </td>
-              <td className="elvt-num text-txt-mute">
+              <td className="elvt-num text-txt-secondary">
                 {row.alternatives > 0 ? row.alternatives : NO_DATA}
               </td>
-              <td className="text-txt-mute">
+              <td className="text-txt-secondary">
                 {row.youtube_id ? "Yes" : NO_DATA}
               </td>
             </tr>

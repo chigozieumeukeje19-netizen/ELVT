@@ -28,10 +28,10 @@ export function IntakeClient({
     return (
       <div className="mx-auto w-full max-w-[560px] px-4 py-6" data-testid="intake-done">
         <p className="elvt-label">ELVT intake</p>
-        <h1 className="mt-1 text-section">
+        <h1 className="mt-1 text-h2">
           {firstName ? `Thanks ${firstName}` : "Thanks"}
         </h1>
-        <p className="mt-2 text-txt-mute">
+        <p className="mt-2 text-txt-secondary">
           That is with your coach. You will hear back with your plan, and the app
           will have your first week in it before you start.
         </p>

@@ -1,4 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
+import { SCREENS } from "@/lib/design/preview-screens";
+import { EM_DASH } from "@/lib/design/semantic";
+import { THEMES, THEME_COOKIE, type Theme } from "@/lib/design/theme";
 
 /**
  * The visual and density pass. DESIGN.md Part 3 step 2.
@@ -18,89 +21,42 @@ import { expect, test, type Page } from "@playwright/test";
  * render, then on the fonts the screenshot needs, fails in milliseconds when
  * the page is wrong.
  */
-async function openScreen(page: Page, screen: string) {
+async function openScreen(page: Page, screen: string, theme: Theme = "dark") {
+  // The server decides the theme from this cookie before the first byte goes
+  // out, so setting it here is exactly what the toggle does. Nothing about the
+  // measurement is theme-aware beyond this line.
+  if (theme !== "dark") {
+    const baseURL = test.info().project.use.baseURL!;
+    await page.context().addCookies([{ name: THEME_COOKIE, value: theme, url: baseURL }]);
+  }
+
   await page.goto(`/dev/preview/${screen}`, { waitUntil: "domcontentloaded" });
   await expect(page.getByTestId("screen-ready")).toBeVisible();
   // Layout measurements and screenshots both depend on the real face being
   // loaded, and this resolves as soon as it is.
   await page.evaluate(() => document.fonts.ready);
+
+  // The theme that was asked for is the theme that rendered. Without this a
+  // cookie that never arrived would quietly give a second dark run and the
+  // light pass would report itself green having checked nothing.
+  await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
 }
+
+/**
+ * What the page surface role resolves to in each theme.
+ *
+ * Written out rather than read back from the stylesheet on purpose: reading it
+ * would assert that CSS applies a variable, which it does. Pinning the value is
+ * what catches the page drifting off the role.
+ */
+const PAGE_SURFACE: Record<Theme, string> = {
+  dark: "rgb(14, 20, 30)",
+  light: "rgb(237, 241, 247)",
+};
 
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 
-const SCREENS = [
-  "roster",
-  "roster-stress",
-  "roster-dense",
-  "roster-empty",
-  "queue",
-  "queue-empty",
-  "builder-exercises",
-  "builder-exercises-stress",
-  "builder-exercises-empty",
-  "program-week",
-  "program-week-flagged",
-  "program-periodization",
-  "nutrition-path",
-  "nutrition-path-empty",
-  "nutrition-meals",
-  "nutrition-meals-rest",
-  "nutrition-grocery",
-  "nutrition-swaps",
-  "nutrition-swaps-empty",
-  "intake-goals",
-  "intake-medical",
-  "intake-medical-errors",
-  "intake-running-hidden",
-  "builder-questionnaire",
-  "builder-questionnaire-empty",
-  "blueprint",
-  "blueprint-empty",
-  "program-draft",
-  "program-draft-empty",
-  "checkins",
-  "checkins-empty",
-  "checkin-compare",
-  "checkin-thread",
-  "checkin-thread-empty",
-  "builder-question-bank",
-  "checkin-daily-form",
-  "checkin-weekly-form",
-  "checkin-week1-form",
-  "checkin-no-spine-form",
-  "queue-lanes",
-  "queue-lanes-one",
-  "queue-lanes-empty",
-  "monday-card",
-  "monday-card-quiet",
-  "monday-cards",
-  "messages",
-  "messages-empty",
-  "composer",
-  "composer-thin",
-  "reminders",
-  "reminders-sparse",
-  "progress",
-  "progress-all",
-  "progress-thin",
-  "progress-empty",
-  "progress-table",
-  "photos",
-  "photos-empty",
-  "photos-compare",
-  "photos-compare-unavailable",
-  "roster-filters",
-  "roster-filters-active",
-  "roster-bulk",
-  "race-build",
-  "race-taper",
-  "race-week",
-  "race-no-goal",
-  "race-empty",
-  "client-overview",
-  "client-overview-new",
-] as const;
 
 /**
  * Text that is wider than its box and hidden with no ellipsis is clipped
@@ -185,28 +141,39 @@ async function pageScrollsSideways(page: Page) {
   );
 }
 
-for (const [label, viewport] of [
-  ["desktop 1440x900", DESKTOP],
-  ["phone 390x844", PHONE],
-] as const) {
-  test.describe(label, () => {
-    test.use({ viewport });
+/*
+ * Every screen, both viewports, BOTH themes. DESIGN_V2.md 2.2 and step 7:
+ * light is not an afterthought, and a token-correct page can still read wrong
+ * in it. A highlight that carries elevation in dark is invisible on a white
+ * card, so the only way to know is to render it.
+ */
+for (const theme of THEMES) {
+  for (const [label, viewport] of [
+    ["desktop 1440x900", DESKTOP],
+    ["phone 390x844", PHONE],
+  ] as const) {
+    test.describe(`${theme} ${label}`, () => {
+      test.use({ viewport });
 
-    for (const screen of SCREENS) {
-      test(`${screen} renders with nothing clipped`, async ({ page }, testInfo) => {
-        await openScreen(page, screen);
+      for (const screen of SCREENS) {
+        test(`${screen} renders with nothing clipped`, async ({ page }, testInfo) => {
+          await openScreen(page, screen, theme);
 
-        await testInfo.attach(`${screen}-${viewport.width}x${viewport.height}.png`, {
-          body: await page.screenshot({ fullPage: true }),
-          contentType: "image/png",
+          await testInfo.attach(
+            `${screen}-${theme}-${viewport.width}x${viewport.height}.png`,
+            {
+              body: await page.screenshot({ fullPage: true }),
+              contentType: "image/png",
+            },
+          );
+
+          expect(await silentlyClipped(page)).toEqual([]);
+          expect(await overflowingViewport(page)).toEqual([]);
+          expect(await pageScrollsSideways(page)).toBe(false);
         });
-
-        expect(await silentlyClipped(page)).toEqual([]);
-        expect(await overflowingViewport(page)).toEqual([]);
-        expect(await pageScrollsSideways(page)).toBe(false);
-      });
-    }
-  });
+      }
+    });
+  }
 }
 
 /**
@@ -260,13 +227,15 @@ test.describe("no raw enum values reach a screen", () => {
 test.describe("roster density", () => {
   test.use({ viewport: DESKTOP });
 
-  test("rows are 44px", async ({ page }) => {
+  test("rows are 48px", async ({ page }) => {
     await openScreen(page, "roster");
     const row = page.getByTestId("roster-row").first();
     const box = await row.boundingBox();
-    // The 1px rule between rows sits on the row, so 44 or 45 are both correct.
-    expect(box!.height).toBeGreaterThanOrEqual(44);
-    expect(box!.height).toBeLessThanOrEqual(45);
+    // DESIGN_V2.md 3.4. The 1px rule between rows sits on the row, so 48 or 49
+    // are both correct. v1 was 44; the v2 scale is more generous and the
+    // density target below did not move to pay for it.
+    expect(box!.height).toBeGreaterThanOrEqual(48);
+    expect(box!.height).toBeLessThanOrEqual(49);
   });
 
   test("fits at least 14 rows above the fold", async ({ page }) => {
@@ -308,13 +277,45 @@ test.describe("roster density", () => {
 test.describe("the type and color system is actually applied", () => {
   test.use({ viewport: DESKTOP });
 
-  test("numbers in columns are set in the mono face", async ({ page }) => {
+  test("numbers in columns are tabular Archivo, not a second typeface", async ({ page }) => {
     await openScreen(page, "roster");
-    const font = await page
+    const figure = await page
       .locator(".elvt-num")
       .first()
-      .evaluate((el) => getComputedStyle(el).fontFamily);
-    expect(font).toMatch(/Plex Mono/i);
+      .evaluate((el) => {
+        const style = getComputedStyle(el);
+        return {
+          family: style.fontFamily,
+          numeric: `${style.fontVariantNumeric} ${style.fontFeatureSettings}`,
+        };
+      });
+
+    // v2 retires mono for data. A column still has to line up, so the figures
+    // are tabular rather than a different face.
+    expect(figure.family).toMatch(/Archivo/i);
+    expect(figure.family).not.toMatch(/Plex Mono/i);
+    expect(figure.numeric).toMatch(/tnum|tabular-nums/);
+  });
+
+  test("no figure anywhere on the roster is set in the mono face", async ({ page }) => {
+    await openScreen(page, "roster");
+    const mono = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>("body *"))
+        .filter((el) => el.children.length === 0 && /\d/.test(el.textContent ?? ""))
+        .filter((el) => /mono/i.test(getComputedStyle(el).fontFamily))
+        .map((el) => (el.textContent ?? "").trim()),
+    );
+    expect(mono).toEqual([]);
+  });
+
+  test("labels are sentence case, not all caps with tracking", async ({ page }) => {
+    await openScreen(page, "roster");
+    const shouting = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>(".elvt-label"))
+        .filter((el) => getComputedStyle(el).textTransform === "uppercase")
+        .map((el) => (el.textContent ?? "").trim()),
+    );
+    expect(shouting).toEqual([]);
   });
 
   test("the interface is set in Archivo", async ({ page }) => {
@@ -325,26 +326,93 @@ test.describe("the type and color system is actually applied", () => {
     expect(font).toMatch(/Archivo/i);
   });
 
-  test("the page is the ink base, not a cream one", async ({ page }) => {
-    await openScreen(page, "roster");
-    const bg = await page.evaluate(
-      () => getComputedStyle(document.body).backgroundColor,
-    );
-    expect(bg).toBe("rgb(14, 15, 16)");
-  });
+  for (const theme of THEMES) {
+    test(`the ${theme} page is the Deep Water surface, not a cream one`, async ({ page }) => {
+      await openScreen(page, "roster", theme);
+      const bg = await page.evaluate(
+        () => getComputedStyle(document.body).backgroundColor,
+      );
 
-  test("nothing outside a modal carries a shadow", async ({ page }) => {
-    await openScreen(page, "roster");
-    const shadowed = await page.evaluate(() =>
-      Array.from(document.querySelectorAll<HTMLElement>("body *"))
-        .filter((el) => {
-          const shadow = getComputedStyle(el).boxShadow;
-          return shadow && shadow !== "none" && !el.classList.contains("elvt-modal");
-        })
-        .map((el) => `${el.tagName}.${el.className}`),
-    );
-    expect(shadowed).toEqual([]);
-  });
+      // The exact token, per theme. Not a range: a page that drifts off the
+      // surface role is the drift this check exists to catch.
+      expect(bg).toBe(PAGE_SURFACE[theme]);
+
+      // And never the client app. Hard fail 0: that theme lives in its own
+      // token file and the portal must never reach for it. Cream is warm and
+      // light; Deep Water light is cool and blue, so a red channel above the
+      // blue one at high lightness is the tell.
+      const [red, green, blue] = bg.match(/\d+/g)!.map(Number);
+      expect(red + green + blue > 600 && red > blue).toBe(false);
+    });
+  }
+
+  /*
+   * v2 grants elevation a shadow, so the v1 rule "nothing outside a modal"
+   * cannot stand. What did NOT change is tell 9: a shadow on every box is
+   * still a failure. So this checks two things instead of one -- the shadow
+   * came from the permitted set, and it is rare.
+   */
+  for (const theme of THEMES) {
+    test(`shadows in ${theme} come from the scale and stay rare`, async ({ page }) => {
+      await openScreen(page, "roster", theme);
+
+      const { shadowed, boxes, offScale } = await page.evaluate(() => {
+        /*
+         * The permitted set, read the only way that compares like with like:
+         * render a probe carrying each permitted declaration and take the
+         * browser's own computed string. Comparing a computed shadow against
+         * the token text fails on formatting alone -- rgb(255 255 255 / 0.04)
+         * and rgba(255, 255, 255, 0.04) are the same shadow.
+         */
+
+        /*
+         * A Tailwind shadow utility expands to three parts, two of which are
+         * the fully transparent ring placeholders. They paint nothing, so they
+         * are dropped from both sides before comparing.
+         */
+        const real = (shadow: string) =>
+          shadow
+            .split(/,(?![^()]*\))/)
+            .map((part) => part.trim())
+            .filter((part) => !/^rgba\(0, 0, 0, 0\)/.test(part))
+            .join(", ");
+
+        const permitted = new Set<string>(["", "none"]);
+        const probe = document.createElement("div");
+        document.body.append(probe);
+        for (const declaration of [
+          "var(--lift-1), var(--shadow-card)",
+          "var(--lift-2), var(--shadow-card)",
+          "var(--shadow-modal)",
+          "var(--lift-1)",
+          "var(--lift-2)",
+          "var(--shadow-card)",
+        ]) {
+          probe.style.boxShadow = declaration;
+          permitted.add(real(getComputedStyle(probe).boxShadow));
+        }
+        probe.remove();
+
+        const all = Array.from(document.querySelectorAll<HTMLElement>("body *"));
+        const withShadow = all.filter(
+          (el) => getComputedStyle(el).boxShadow !== "none",
+        );
+
+        return {
+          boxes: all.length,
+          shadowed: withShadow.length,
+          offScale: withShadow
+            .map((el) => real(getComputedStyle(el).boxShadow))
+            .filter((shadow) => !permitted.has(shadow)),
+        };
+      });
+
+      expect(offScale).toEqual([]);
+      // Tell 9 still holds. A roster is a table on a page; if most of the
+      // elements on it are lifted, nothing is.
+      expect(shadowed).toBeLessThan(boxes * 0.1);
+    });
+  }
 
   test("the empty state says what will appear and when", async ({ page }) => {
     await openScreen(page, "queue-empty");
@@ -622,8 +690,9 @@ test.describe("check-ins", () => {
     const spine = page.locator('[data-testid="form-question"][data-spine="true"]');
     expect(await spine.count()).toBeGreaterThan(0);
 
-    // Read from the attribute, not the rendered text: elvt-label uppercases,
-    // so innerText says SPINE and a match on "Spine" quietly finds nothing.
+    // Read from the attribute, not the rendered text. The mark is a state of
+    // the question, and reading it off the label's words would make this pass
+    // or fail on copy.
     const marks = await page.getByTestId("form-question").evaluateAll((nodes) =>
       nodes.map((node) => node.getAttribute("data-spine") === "true"),
     );
@@ -1307,13 +1376,20 @@ test.describe("client overview", () => {
   test.use({ viewport: DESKTOP });
 
   test("has exactly one number at hero size", async ({ page }) => {
-    // DESIGN.md Part 2: one number at 56px per screen. Six equal tiles across
-    // the top is hard fail 9, and these six are not equals anyway.
+    // One number at display size per screen. Six equal tiles across the top is
+    // hard fail 9, and these six are not equals anyway. The size is read from
+    // the token rather than written here: v1 said 56, v2 says 44, and a rule
+    // that names a number goes stale the next time the scale moves.
     await openScreen(page, "client-overview");
 
-    const heroes = await page.locator("main *").evaluateAll((nodes) =>
-      nodes.filter((node) => Math.round(parseFloat(getComputedStyle(node).fontSize)) >= 48).length,
-    );
+    const heroes = await page.locator("main *").evaluateAll((nodes) => {
+      const display = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--text-display"),
+      );
+      return nodes.filter(
+        (node) => Math.round(parseFloat(getComputedStyle(node).fontSize)) >= display,
+      ).length;
+    });
     expect(heroes).toBe(1);
     await expect(page.getByTestId("elvt-score")).toHaveText("78");
   });
@@ -1349,23 +1425,56 @@ test.describe("client overview", () => {
     ).not.toContain("race");
   });
 
-  test("colours nothing but the banded numbers", async ({ page }) => {
-    // The weight row is neutral on purpose: up is not good or bad without
-    // knowing the goal.
+  test("colors nothing but the figures that earned it", async ({ page }) => {
+    /*
+     * Every state here comes from the adherence semantic, which is the only
+     * thing in the build allowed to decide one.
+     *
+     * The v1 rule said the weight row is never colored. That was right for the
+     * wrong reason: weight is neutral when the blueprint states no goal
+     * direction, and this client's does -- recomp, which means hold -- so a
+     * move off level is a real signal and gets one. The no-direction case is
+     * neutral and is proved in tests/unit/semantic.test.ts.
+     */
     await openScreen(page, "client-overview");
-    const bands = await page
+    const states = await page
       .getByTestId("overview-tile")
       .evaluateAll((nodes) =>
-        nodes.map((node) => [node.getAttribute("data-tile"), node.getAttribute("data-band")]),
+        nodes.map((node) => [node.getAttribute("data-tile"), node.getAttribute("data-state")]),
       );
-    expect(bands.find(([key]) => key === "weight")![1]).toBe("none");
-    expect(bands.find(([key]) => key === "steps")![1]).toBe("flag");
+    expect(states.find(([key]) => key === "weight")![1]).toBe("watch");
+    expect(states.find(([key]) => key === "steps")![1]).toBe("flag");
+
+    // And nothing that is not a figure carries a signal color.
+    const strays = await page.evaluate(() => {
+      const signals = ["--ok", "--watch", "--flag"].map((name) =>
+        getComputedStyle(document.documentElement).getPropertyValue(name).trim(),
+      );
+      const asRgb = (hex: string) => {
+        const probe = document.createElement("span");
+        probe.style.color = hex;
+        document.body.append(probe);
+        const value = getComputedStyle(probe).color;
+        probe.remove();
+        return value;
+      };
+      const wanted = new Set(signals.map(asRgb));
+      return Array.from(document.querySelectorAll<HTMLElement>("main *"))
+        .filter((el) => el.children.length === 0)
+        .filter((el) => wanted.has(getComputedStyle(el).color))
+        .filter((el) => !el.classList.contains("elvt-num"))
+        .map((el) => (el.textContent ?? "").trim());
+    });
+    expect(strays).toEqual([]);
   });
 
   test("says what will appear on a client with nothing yet", async ({ page }) => {
     await openScreen(page, "client-overview-new");
 
-    await expect(page.getByTestId("elvt-score")).toHaveText("\u00B7");
+    // Absent is an em dash and a reason, not a middot and not a zero. The
+    // semantic owns that; v1 used a middot here and nowhere else.
+    await expect(page.getByTestId("elvt-score")).toHaveText(EM_DASH);
+    await expect(page.getByTestId("elvt-score")).toHaveAttribute("data-state", "absent");
     await expect(page.getByTestId("one-thing")).toContainText("intake");
     await expect(page.getByTestId("flags")).toContainText("None on file");
     await expect(page.getByTestId("last-checkin")).toContainText("check-in day");

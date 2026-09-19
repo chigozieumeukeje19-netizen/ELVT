@@ -138,8 +138,8 @@ export function IntakeForm({
       <header>
         <p className="elvt-label">ELVT intake</p>
         <div className="mt-2 flex items-baseline justify-between">
-          <h1 className="text-section">{section.title}</h1>
-          <span className="elvt-num text-txt-mute" data-testid="progress-count">
+          <h1 className="text-h2">{section.title}</h1>
+          <span className="elvt-num text-txt-secondary" data-testid="progress-count">
             {bar.answered} of {bar.total}
           </span>
         </div>
@@ -148,7 +148,7 @@ export function IntakeForm({
             included. A bar that reads 90 and then asks four more things is
             worse than no bar. */}
         <div
-          className="mt-2 h-1 w-full bg-panel-2"
+          className="mt-2 h-1 w-full bg-raised"
           role="progressbar"
           aria-valuenow={bar.percent}
           aria-valuemin={0}
@@ -159,7 +159,7 @@ export function IntakeForm({
           <div className="h-1 bg-txt-mute" style={{ width: `${bar.percent}%` }} />
         </div>
 
-        <p className="mt-3 text-txt-mute">{section.intent}</p>
+        <p className="mt-3 text-txt-secondary">{section.intent}</p>
       </header>
 
       <nav aria-label="Sections" className="mt-4 flex flex-wrap gap-1">
@@ -172,7 +172,7 @@ export function IntakeForm({
             onClick={() => setIndex(i)}
             className={[
               "elvt-chip",
-              i === index ? "bg-panel-2 text-txt" : perSection[i].complete ? "text-ok" : "text-txt-dim",
+              i === index ? "bg-raised text-txt" : perSection[i].complete ? "text-ok" : "text-txt-tertiary",
             ].join(" ")}
           >
             <span className="elvt-num">{i + 1}</span>
@@ -193,7 +193,7 @@ export function IntakeForm({
       </div>
 
       {saveNote ? (
-        <p className="mt-4 text-txt-mute" data-testid="save-note">
+        <p className="mt-4 text-txt-secondary" data-testid="save-note">
           {saveNote}
         </p>
       ) : null}
@@ -223,7 +223,7 @@ export function IntakeForm({
         </button>
       </div>
 
-      <p className="mt-4 text-txt-mute">
+      <p className="mt-4 text-txt-secondary">
         You can close this and come back. Your answers are kept as you go.
       </p>
     </div>

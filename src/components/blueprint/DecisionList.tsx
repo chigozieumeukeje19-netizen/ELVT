@@ -13,7 +13,7 @@ import type { ExplainedDecision } from "@/lib/blueprint/program-draft";
 export function DecisionList({ decisions }: { decisions: ExplainedDecision[] }) {
   if (decisions.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="decisions-empty">
+      <p className="text-txt-secondary" data-testid="decisions-empty">
         The template applied with nothing changed. No substitutions, no dropped
         slots, no days moved.
       </p>
@@ -46,7 +46,7 @@ export function DecisionList({ decisions }: { decisions: ExplainedDecision[] }) 
           />
           <span className="min-w-0 flex-1">{decision.explanation}</span>
           {count > 1 ? (
-            <span className="elvt-label shrink-0 text-txt-dim">
+            <span className="elvt-label shrink-0 text-txt-tertiary">
               {count} weeks
             </span>
           ) : null}

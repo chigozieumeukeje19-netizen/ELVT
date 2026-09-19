@@ -31,13 +31,13 @@ export function QuestionField({
     <fieldset className="border-line py-4 [border-bottom-width:1px]" data-testid="question">
       <legend className="sr-only">{question.text}</legend>
 
-      <p className="text-emphasis" id={`${question.key}-label`}>
+      <p className="text-h3" id={`${question.key}-label`}>
         {question.text}
-        {question.required ? <span className="elvt-label ml-2 text-txt-dim">Needed</span> : null}
+        {question.required ? <span className="elvt-label ml-2 text-txt-tertiary">Needed</span> : null}
       </p>
 
       {question.help ? (
-        <p className="mt-1 text-txt-mute" id={`${question.key}-help`}>
+        <p className="mt-1 text-txt-secondary" id={`${question.key}-help`}>
           {question.help}
         </p>
       ) : null}
@@ -128,7 +128,7 @@ function Control({
               onClick={() => onChange(choice.answer)}
               className={[
                 "h-row flex-1 border-line text-body [border-width:1px]",
-                value === choice.answer ? "bg-panel-2 text-txt" : "text-txt-mute",
+                value === choice.answer ? "bg-raised text-txt" : "text-txt-secondary",
               ].join(" ")}
             >
               {choice.label}
@@ -158,7 +158,7 @@ function Control({
                 }}
                 className={[
                   "flex h-row w-full items-center justify-between border-line px-3 text-left [border-bottom-width:1px]",
-                  on ? "bg-panel-2 text-txt" : "text-txt-mute",
+                  on ? "bg-raised text-txt" : "text-txt-secondary",
                 ].join(" ")}
               >
                 <span className="min-w-0 truncate">{option}</span>
@@ -191,7 +191,7 @@ function Control({
                 onClick={() => onChange(step)}
                 className={[
                   "elvt-num h-row flex-1 border-line [border-width:1px]",
-                  value === step ? "bg-panel-2 text-txt" : "text-txt-mute",
+                  value === step ? "bg-raised text-txt" : "text-txt-secondary",
                 ].join(" ")}
               >
                 {step}
@@ -228,7 +228,7 @@ function Control({
                     type="file"
                     accept="image/*"
                     capture="environment"
-                    className="w-[132px] text-txt-mute"
+                    className="w-[132px] text-txt-secondary"
                     onChange={(event) => {
                       const has = (event.target.files?.length ?? 0) > 0;
                       onChange(
@@ -251,7 +251,7 @@ function Control({
           accept="video/*,image/*"
           aria-labelledby={labelledBy}
           aria-describedby={described}
-          className="w-full text-txt-mute"
+          className="w-full text-txt-secondary"
           onChange={(event) =>
             onChange(event.target.files?.[0]?.name ?? null)
           }
@@ -270,7 +270,7 @@ function Control({
             aria-describedby={described}
             onChange={(event) => onChange(event.target.checked ? "signed" : null)}
           />
-          <span className="min-w-0 text-txt-mute">
+          <span className="min-w-0 text-txt-secondary">
             I confirm this is accurate
           </span>
         </label>

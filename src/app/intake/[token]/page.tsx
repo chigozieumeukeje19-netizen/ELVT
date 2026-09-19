@@ -33,8 +33,8 @@ export default async function IntakePage({
     return (
       <main className="mx-auto w-full max-w-[560px] px-4 py-6" data-testid="intake-done">
         <p className="elvt-label">ELVT intake</p>
-        <h1 className="mt-1 text-section">That is with your coach</h1>
-        <p className="mt-2 text-txt-mute">
+        <h1 className="mt-1 text-h2">That is with your coach</h1>
+        <p className="mt-2 text-txt-secondary">
           Nothing else to do. You will hear back with your plan, and the app will
           have your first week in it before you start.
         </p>
@@ -46,7 +46,7 @@ export default async function IntakePage({
   const firstName = Array.isArray(embedded) ? embedded[0]?.first_name : embedded?.first_name;
 
   return (
-    <main className="min-h-screen bg-ink">
+    <main className="min-h-screen bg-page">
       <IntakeClient
         token={token}
         questionnaire={INTAKE}

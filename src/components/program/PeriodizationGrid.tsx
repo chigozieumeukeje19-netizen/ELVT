@@ -18,7 +18,7 @@ export function PeriodizationGrid({
 }) {
   if (rows.length === 0) {
     return (
-      <p className="max-w-[68ch] text-txt-mute">
+      <p className="max-w-[68ch] text-txt-secondary">
         Nothing to show yet. Once the program has movements on it, this grid
         edits a lift across every week of the block at once.
       </p>
@@ -56,8 +56,8 @@ export function PeriodizationGrid({
                   key={i}
                   className={[
                     "elvt-num",
-                    cell ? "text-txt" : "text-txt-dim",
-                    i + 1 === currentWeek ? "bg-panel-2" : "",
+                    cell ? "text-txt" : "text-txt-tertiary",
+                    i + 1 === currentWeek ? "bg-raised" : "",
                   ].join(" ")}
                 >
                   {cell ?? "·"}

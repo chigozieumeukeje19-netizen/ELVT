@@ -27,7 +27,7 @@ export function PhotoCompare({
 }) {
   if (comparisons.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="compare-unavailable">
+      <p className="text-txt-secondary" data-testid="compare-unavailable">
         Two sets of photos make a comparison. There is one so far, so this fills
         in after the next Monday they take them.
       </p>
@@ -42,7 +42,7 @@ export function PhotoCompare({
             key={comparison.key}
             href={hrefFor(comparison.key)}
             aria-current={comparison.key === selected ? "page" : undefined}
-            className={`elvt-chip ${comparison.key === selected ? "bg-panel-2 text-txt" : "text-txt-mute"}`}
+            className={`elvt-chip ${comparison.key === selected ? "bg-raised text-txt" : "text-txt-secondary"}`}
           >
             {comparison.label}
           </a>
@@ -70,11 +70,11 @@ export function PhotoCompare({
                         <img
                           src={urls[side.photo.id]}
                           alt={`${angle} in week ${side.week}`}
-                          className="aspect-[3/4] w-full bg-panel-2 object-cover"
+                          className="aspect-[3/4] w-full bg-raised object-cover"
                         />
                       ) : (
-                        <div className="flex aspect-[3/4] w-full items-center justify-center bg-panel-2">
-                          <span className="elvt-label text-txt-dim">Not taken</span>
+                        <div className="flex aspect-[3/4] w-full items-center justify-center bg-raised">
+                          <span className="elvt-label text-txt-tertiary">Not taken</span>
                         </div>
                       )}
                       <figcaption className="elvt-label mt-1">Week {side.week}</figcaption>

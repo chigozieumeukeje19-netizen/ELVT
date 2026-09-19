@@ -42,7 +42,7 @@ export default async function QuestionBankPage({
         <a
           href="/coach/builder/questions"
           aria-current={category ? undefined : "page"}
-          className={`elvt-chip ${category ? "" : "bg-panel-2 text-txt"}`}
+          className={`elvt-chip ${category ? "" : "bg-raised text-txt"}`}
         >
           All
         </a>
@@ -51,7 +51,7 @@ export default async function QuestionBankPage({
             key={name}
             href={`/coach/builder/questions?category=${name}`}
             aria-current={category === name ? "page" : undefined}
-            className={`elvt-chip ${category === name ? "bg-panel-2 text-txt" : ""}`}
+            className={`elvt-chip ${category === name ? "bg-raised text-txt" : ""}`}
           >
             {humanize(name)}
           </a>
@@ -86,11 +86,11 @@ export default async function QuestionBankPage({
                   <th scope="row" className="max-w-[40ch] truncate font-normal">
                     {question.text}
                   </th>
-                  <td className="text-txt-mute">{humanize(question.category)}</td>
-                  <td className="max-w-[26ch] truncate text-txt-mute">
+                  <td className="text-txt-secondary">{humanize(question.category)}</td>
+                  <td className="max-w-[26ch] truncate text-txt-secondary">
                     {audience || "Everyone"}
                   </td>
-                  <td className="max-w-[28ch] truncate text-txt-mute">
+                  <td className="max-w-[28ch] truncate text-txt-secondary">
                     {question.produces.map(humanize).join(", ")}
                   </td>
                 </tr>

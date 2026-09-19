@@ -16,7 +16,7 @@ export function BlueprintView({ blueprint }: { blueprint: Blueprint }) {
     <div className="grid gap-6 lg:grid-cols-2" data-testid="blueprint-view">
       <section className="min-w-0">
         <h2 className="elvt-label">What they told us</h2>
-        <p className="mt-1 text-txt-dim">
+        <p className="mt-1 text-txt-tertiary">
           Straight from the intake. Not editable here, and never written by an
           AI draft.
         </p>
@@ -57,7 +57,7 @@ export function BlueprintView({ blueprint }: { blueprint: Blueprint }) {
 
       <section className="min-w-0">
         <h2 className="elvt-label">The draft</h2>
-        <p className="mt-1 text-txt-dim">
+        <p className="mt-1 text-txt-tertiary">
           Editable. Nothing reaches the client until you approve it.
         </p>
 
@@ -71,7 +71,7 @@ export function BlueprintView({ blueprint }: { blueprint: Blueprint }) {
         {drafted.triggers.length > 0 ? (
           <div className="mt-5">
             <h3 className="elvt-label">Proposed triggers</h3>
-            <p className="mt-1 text-txt-dim">
+            <p className="mt-1 text-txt-tertiary">
               From their own numbers, not from a house default.
             </p>
             <ul className="mt-2" data-testid="proposed-triggers">
@@ -114,7 +114,7 @@ function Prose({ label, text }: { label: string; text: string }) {
     <div>
       <p className="elvt-label">{label}</p>
       <p className="mt-1 max-w-[70ch]">
-        {text || <span className="text-txt-dim">Not drafted yet.</span>}
+        {text || <span className="text-txt-tertiary">Not drafted yet.</span>}
       </p>
     </div>
   );

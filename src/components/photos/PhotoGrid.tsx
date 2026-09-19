@@ -20,7 +20,7 @@ export function PhotoGrid({
 }) {
   if (weeks.length === 0) {
     return (
-      <p className="text-txt-mute" data-testid="photos-empty">
+      <p className="text-txt-secondary" data-testid="photos-empty">
         No photos yet. They are asked for on Monday morning, front, side and
         back, so the first set lands within a week of the program starting.
       </p>
@@ -33,7 +33,7 @@ export function PhotoGrid({
         <section key={week.weekNumber} data-testid="photo-week">
           <div className="flex items-baseline justify-between gap-3">
             <p className="elvt-label">Week {week.weekNumber}</p>
-            <span className="elvt-num text-txt-dim">
+            <span className="elvt-num text-txt-tertiary">
               {week.takenOn}
               {week.taken < 3 ? (
                 <span className="elvt-label ml-3 text-watch" data-testid="partial-week">
@@ -55,14 +55,14 @@ export function PhotoGrid({
                     <img
                       src={url}
                       alt={`${angle} on ${photo!.takenOn}`}
-                      className="aspect-[3/4] w-full bg-panel-2 object-cover"
+                      className="aspect-[3/4] w-full bg-raised object-cover"
                     />
                   ) : (
                     <div
-                      className="flex aspect-[3/4] w-full items-center justify-center bg-panel-2"
+                      className="flex aspect-[3/4] w-full items-center justify-center bg-raised"
                       data-testid="photo-missing"
                     >
-                      <span className="elvt-label text-txt-dim">
+                      <span className="elvt-label text-txt-tertiary">
                         {photo ? "Link expired" : "Not taken"}
                       </span>
                     </div>

@@ -43,7 +43,7 @@ export function MondayCard({
 
   return (
     <article
-      className="elvt-panel-raised rounded-raised p-3"
+      className="elvt-raised rounded-lg p-3"
       data-testid="monday-card"
       data-severity={card.severity}
     >
@@ -52,12 +52,12 @@ export function MondayCard({
           <p className="elvt-label">
             Week {card.weekNumber} of {card.weekCount}
           </p>
-          <h2 className="mt-1 truncate text-name">{card.name}</h2>
+          <h2 className="mt-1 truncate text-h1">{card.name}</h2>
         </div>
 
         <div className="text-right">
           <p className="elvt-label">ELVT score</p>
-          <p className="elvt-num text-hero" data-testid="card-score">
+          <p className="elvt-num text-display" data-testid="card-score">
             {Math.round(card.score)}
           </p>
           {/*
@@ -96,17 +96,17 @@ export function MondayCard({
               <li key={line.key} data-testid="adherence-line" className="min-w-[8ch]">
                 <p className="elvt-label truncate">{line.label}</p>
                 <p
-                  className={`elvt-num text-emphasis ${figureClass(adherenceFigure(line.done, line.planned).state)}`}
+                  className={`elvt-num text-h3 ${figureClass(adherenceFigure(line.done, line.planned).state)}`}
                   title={adherenceFigure(line.done, line.planned).label}
                 >
                   {line.planned === 0 ? (
-                    <span className="text-txt-dim">none planned</span>
+                    <span className="text-txt-tertiary">none planned</span>
                   ) : (
                     `${line.done}/${line.planned}`
                   )}
                 </p>
                 {line.percent === null ? null : (
-                  <p className="elvt-num text-txt-dim">{line.percent}%</p>
+                  <p className="elvt-num text-txt-tertiary">{line.percent}%</p>
                 )}
               </li>
             ))}
@@ -118,10 +118,10 @@ export function MondayCard({
               <ul className="mt-1" data-testid="card-flags">
                 {card.flags.map((flag) => (
                   <li key={flag.key} className="flex gap-3 py-1">
-                    <span className="elvt-num shrink-0 text-txt-dim">{flag.date}</span>
+                    <span className="elvt-num shrink-0 text-txt-tertiary">{flag.date}</span>
                     <span className="min-w-0 flex-1">
                       <span className="text-flag">{flag.label}</span>{" "}
-                      <span className="text-txt-mute">{flag.detail}</span>
+                      <span className="text-txt-secondary">{flag.detail}</span>
                     </span>
                   </li>
                 ))}
@@ -134,7 +134,7 @@ export function MondayCard({
           <h3 className="elvt-label">
             What they said
             {card.spineVariable ? (
-              <span className="ml-2 text-txt-dim">
+              <span className="ml-2 text-txt-tertiary">
                 {humanize(card.spineVariable)} changed last Monday
               </span>
             ) : null}
@@ -163,7 +163,7 @@ export function MondayCard({
 
           {hiddenAnswers > 0 ? (
             <a
-              className="elvt-label mt-2 inline-block text-txt-mute"
+              className="elvt-label mt-2 inline-block text-txt-secondary"
               href={`/coach/clients/${card.slug}/checkins`}
               data-testid="more-answers"
             >
@@ -176,13 +176,13 @@ export function MondayCard({
       <section className="mt-4">
         <div className="flex items-baseline justify-between gap-4">
           <h3 className="elvt-label">What I would change</h3>
-          <span className="elvt-num text-txt-dim">
+          <span className="elvt-num text-txt-tertiary">
             {decided} of {card.changes.length} decided
           </span>
         </div>
 
         {card.changes.length === 0 ? (
-          <p className="mt-2 text-txt-mute" data-testid="no-changes">
+          <p className="mt-2 text-txt-secondary" data-testid="no-changes">
             Nothing to change. No flag fired and nothing has pointed the same way
             two weeks running, so the week stands.
           </p>
@@ -198,8 +198,8 @@ export function MondayCard({
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <span className="min-w-0">
                     <span className="elvt-label">{change.label}</span>{" "}
-                    <span className="elvt-num text-txt-mute">{change.from}</span>
-                    <span className="elvt-num mx-2 text-txt-dim">to</span>
+                    <span className="elvt-num text-txt-secondary">{change.from}</span>
+                    <span className="elvt-num mx-2 text-txt-tertiary">to</span>
                     <span className="elvt-num">
                       {change.decision === "edit" ? (change.editedTo ?? change.to) : change.to}
                     </span>
@@ -217,7 +217,7 @@ export function MondayCard({
                           data-testid={`decide-${decision}`}
                           className={[
                             "elvt-chip",
-                            change.decision === decision ? "bg-panel-2 text-txt" : "text-txt-mute",
+                            change.decision === decision ? "bg-raised text-txt" : "text-txt-secondary",
                           ].join(" ")}
                         >
                           {humanize(decision)}
@@ -225,13 +225,13 @@ export function MondayCard({
                       ))}
                     </span>
                   ) : (
-                    <span className="elvt-label shrink-0 text-txt-dim">
+                    <span className="elvt-label shrink-0 text-txt-tertiary">
                       {humanize(change.decision)}
                     </span>
                   )}
                 </div>
 
-                <p className="mt-1 max-w-[70ch] text-txt-mute">{change.reason}</p>
+                <p className="mt-1 max-w-[70ch] text-txt-secondary">{change.reason}</p>
               </li>
             ))}
           </ul>
@@ -241,7 +241,7 @@ export function MondayCard({
       <section className="mt-4">
         <h3 className="elvt-label">The message</h3>
         <p
-          className="mt-1 max-w-[68ch] whitespace-pre-line bg-panel-2 px-3 py-2"
+          className="mt-1 max-w-[68ch] whitespace-pre-line bg-raised px-3 py-2"
           data-testid="card-message"
         >
           {card.message}
@@ -276,9 +276,9 @@ function Figure({
   return (
     <div>
       <dt className="elvt-label">{label}</dt>
-      <dd className="elvt-num text-section">
+      <dd className="elvt-num text-h2">
         {value === null ? (
-          <span className="text-txt-dim">no data</span>
+          <span className="text-txt-tertiary">no data</span>
         ) : signed && value > 0 ? (
           `+${value}`
         ) : (

@@ -79,7 +79,7 @@ export default async function TemplatesPage({
             <tbody>
               {programRows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-txt-mute">
+                  <td colSpan={7} className="text-txt-secondary">
                     No program templates yet. Add one below, then apply it to a
                     client from their program tab.
                   </td>
@@ -88,24 +88,24 @@ export default async function TemplatesPage({
                 programRows.map((t) => (
                   <tr key={t.id} data-testid="program-template-row">
                     <td>{t.name}</td>
-                    <td className="text-txt-mute">
+                    <td className="text-txt-secondary">
                       {t.goal_type ? humanize(t.goal_type) : NO_DATA}
                     </td>
-                    <td className="elvt-num text-txt-mute">
+                    <td className="elvt-num text-txt-secondary">
                       {t.duration_weeks ?? NO_DATA}
                     </td>
-                    <td className="text-txt-mute">{t.split ?? NO_DATA}</td>
-                    <td className="elvt-num text-txt-mute">
+                    <td className="text-txt-secondary">{t.split ?? NO_DATA}</td>
+                    <td className="elvt-num text-txt-secondary">
                       {t.body?.deload?.everyNWeeks
                         ? `Every ${t.body.deload.everyNWeeks}`
                         : "None"}
                     </td>
-                    <td className="text-txt-mute">
+                    <td className="text-txt-secondary">
                       {t.body?.caloriePathShape
                         ? humanize(t.body.caloriePathShape)
                         : NO_DATA}
                     </td>
-                    <td className="elvt-num text-txt-mute">
+                    <td className="elvt-num text-txt-secondary">
                       {t.body?.sessions?.length ?? 0}
                     </td>
                   </tr>
@@ -191,7 +191,7 @@ export default async function TemplatesPage({
         <h2 className="elvt-label">Workouts</h2>
         <ul className="mt-3" data-testid="workout-template-list">
           {(workouts.data ?? []).length === 0 ? (
-            <li className="py-3 text-txt-mute">
+            <li className="py-3 text-txt-secondary">
               No workout templates yet. A program template places these on days.
             </li>
           ) : (
@@ -236,7 +236,7 @@ export default async function TemplatesPage({
         <h2 className="elvt-label">Runs</h2>
         <ul className="mt-3" data-testid="run-template-list">
           {(runs.data ?? []).length === 0 ? (
-            <li className="py-3 text-txt-mute">
+            <li className="py-3 text-txt-secondary">
               No run templates yet. A run is its own object, with distance, pace
               and fueling, not a workout with cardio in it.
             </li>
@@ -247,7 +247,7 @@ export default async function TemplatesPage({
                 className="flex h-row items-center gap-4 border-line [border-top-width:1px]"
               >
                 <span className="min-w-0 flex-1 truncate">{r.name}</span>
-                <span className="elvt-num text-txt-mute">
+                <span className="elvt-num text-txt-secondary">
                   {((r.body ?? {}) as { distanceTarget?: number }).distanceTarget ??
                     NO_DATA}
                 </span>

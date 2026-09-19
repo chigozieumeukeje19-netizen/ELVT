@@ -161,7 +161,7 @@ export default async function ExerciseEditPage({
       */}
       <section className="mt-7 border-line pt-5 [border-top-width:1px]">
         <h2 className="elvt-label">Rules this movement out for</h2>
-        <p className="mt-2 max-w-[68ch] text-txt-mute">
+        <p className="mt-2 max-w-[68ch] text-txt-secondary">
           A client carrying any flag ticked here never sees this movement, in a
           generated program or in a swap list.
         </p>
@@ -188,7 +188,7 @@ export default async function ExerciseEditPage({
 
       <section className="mt-7 border-line pt-5 [border-top-width:1px]">
         <h2 className="elvt-label">Swaps</h2>
-        <p className="mt-2 max-w-[68ch] text-txt-mute">
+        <p className="mt-2 max-w-[68ch] text-txt-secondary">
           What this becomes when the client cannot do it. The applier picks from
           here before it gives up on the slot.
         </p>
@@ -215,7 +215,7 @@ export default async function ExerciseEditPage({
             ))}
           </ul>
         ) : (
-          <p className="mt-3 text-txt-mute">
+          <p className="mt-3 text-txt-secondary">
             No swaps yet. Without one, a client who cannot do this movement gets
             the slot dropped rather than replaced.
           </p>

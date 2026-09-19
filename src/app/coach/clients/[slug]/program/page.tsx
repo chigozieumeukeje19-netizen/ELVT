@@ -140,7 +140,7 @@ export default async function ClientProgramPage({
 
       <section className="mt-7 border-line pt-5 [border-top-width:1px]">
         <h2 className="elvt-label">Periodization</h2>
-        <p className="mt-2 max-w-[68ch] text-txt-mute">
+        <p className="mt-2 max-w-[68ch] text-txt-secondary">
           One movement per row, one column per week. Edit a lift across the whole
           block rather than a week at a time.
         </p>

@@ -31,7 +31,7 @@ export function ClientTabs({
             data-testid="client-tab"
             data-tab={tab}
             data-active={on ? "true" : undefined}
-            className={`elvt-chip ${on ? "bg-panel-2 text-txt" : "text-txt-mute"}`}
+            className={`elvt-chip ${on ? "bg-raised text-txt" : "text-txt-secondary"}`}
           >
             {TAB_LABELS[tab]}
           </Link>

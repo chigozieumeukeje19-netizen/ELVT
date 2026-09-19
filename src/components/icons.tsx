@@ -7,13 +7,13 @@
  * otherwise go.
  */
 
-type IconProps = { className?: string };
+type IconProps = { className?: string; size?: number };
 
-function Svg({ children, className }: IconProps & { children: React.ReactNode }) {
+function Svg({ children, className, size = 16 }: IconProps & { children: React.ReactNode }) {
   return (
     <svg
-      width="16"
-      height="16"
+      width={size}
+      height={size}
       viewBox="0 0 16 16"
       fill="none"
       stroke="currentColor"
@@ -117,6 +117,23 @@ export function SignOutIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <path d="M6 14H3.5v-12H6M10 11l3-3-3-3M13 8H6" />
+    </Svg>
+  );
+}
+
+export function SunIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="8" cy="8" r="3" />
+      <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M12.95 3.05l-1.06 1.06M4.11 11.89l-1.06 1.06" />
+    </Svg>
+  );
+}
+
+export function MoonIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M13.5 9.5A5.6 5.6 0 0 1 6.5 2.5a5.6 5.6 0 1 0 7 7Z" />
     </Svg>
   );
 }
