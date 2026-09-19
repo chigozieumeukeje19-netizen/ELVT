@@ -62,7 +62,16 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-ink">
       <Sidebar current="/coach/clients" queueCount={SEED_QUEUE.length} />
-      <div className="pl-rail lg:pl-sidebar">{children}</div>
+      {/*
+        A deterministic ready signal for the visual suite. Waiting on network
+        idle is unreliable in Next: a font request, a prefetch or a socket can
+        keep the network busy forever, and the test hangs until its timeout
+        rather than failing. Waiting on a element the screen must render is
+        exact.
+      */}
+      <div className="pl-rail lg:pl-sidebar" data-testid="screen-ready">
+        {children}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -55,7 +55,10 @@ describe("design preview routes", () => {
       .filter(Boolean);
 
     const offenders = tracked.filter((file) => {
-      const body = readFileSync(path.join(ROOT, file), "utf8");
+      // A file can be tracked and already deleted from the working tree.
+      const full = path.join(ROOT, file);
+      if (!existsSync(full)) return false;
+      const body = readFileSync(full, "utf8");
       // playwright.config.ts is the one place that sets it, and it is not in
       // this glob set. Anything here setting it is a deploy surface.
       return /ENABLE_DESIGN_PREVIEW\s*[:=]/.test(body);

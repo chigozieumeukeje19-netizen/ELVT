@@ -85,6 +85,16 @@ locally but is not on a cloud project. Statements at risk:
 None of these have been run as a non superuser. The first `supabase db push`
 to ELVT OS PROD is the first real test of them.
 
+**JWT signing may differ on a cloud project.** The exchange endpoint mints
+HS256 tokens signed with `SUPABASE_JWT_SECRET`, which is how a local stack
+validates them. Supabase's newer key system allows a project to move to
+asymmetric JWT signing keys, and a token signed with the legacy shared secret
+would not be accepted there. Local is unaffected. Before ELVT OS PROD serves a
+Base44 session, check which signing scheme that project uses; if it is
+asymmetric, `src/lib/client-token.ts` needs to change. The end to end test
+"the token it returns is scoped to one client at the RLS layer" is what proves
+this path works, and it has not run yet.
+
 **`pg_cron` and `pg_net` are absent.** Spec Part 13 wants scheduled jobs for
 the nightly trigger evaluation, the week roll, reminder dispatch and the
 retention scan. None of that is built or testable yet.

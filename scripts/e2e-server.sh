@@ -7,6 +7,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PORT="${1:-3000}"
 
+# shellcheck source=scripts/lib/env.sh
+. "$ROOT/scripts/lib/env.sh"
+
+# The server reads these at request time and throws without them, which turns
+# every assertion in the suite into an error page. Refuse to start instead.
+require_env "$ROOT"
+
 if [ ! -f "$ROOT/.next/BUILD_ID" ]; then
   cat >&2 <<'MSG'
 

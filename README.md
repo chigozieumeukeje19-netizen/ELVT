@@ -5,28 +5,55 @@ it through the API.
 
 Source of truth for scope and sequence is `docs/ELVT_OS_PORTAL_SPEC.md`.
 
-## Getting started
+## Running the gate from a clean checkout
 
 ```bash
 npm install
-cp .env.example .env.local
-npm run db:start      # local Supabase via the CLI and Docker
-npm run db:reset      # applies every migration, then seeds
-npm run dev
+
+cp .env.example .env.local     # step one. Nothing runs without it.
+
+supabase start                 # prints the values .env.local needs
+supabase status                # print them again at any time
 ```
 
-`npm run db:start` prints the anon key and the service role key. Paste those
-into `.env.local`, along with the JWT secret it prints, then generate the two
-secrets of your own:
+Fill four values in `.env.local` from `supabase status`:
+
+| `.env.local` | `supabase status` line |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | API URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon key, or Publishable key on a newer CLI |
+| `SUPABASE_SERVICE_ROLE_KEY` | service_role key, or Secret key on a newer CLI |
+| `SUPABASE_JWT_SECRET` | JWT secret |
+
+Then generate the one secret that is yours to invent:
 
 ```bash
-openssl rand -base64 48   # CLIENT_JWT_SECRET
-openssl rand -hex 32      # PORTAL_API_KEY
+openssl rand -hex 32           # PORTAL_API_KEY
 ```
 
-Sign in as the coach with `coach@elvt.test` and the password in `.env.example`.
-Magic links sent locally do not leave the machine; read them in Inbucket at
-<http://127.0.0.1:54324>.
+### Key formats
+
+Both work. A newer CLI prints `sb_publishable_...` and `sb_secret_...`; an
+older one prints JWTs starting `eyJ`. supabase-js sends either as the `apikey`
+header and Supabase accepts both, so paste whichever yours shows.
+
+`SUPABASE_JWT_SECRET` is a separate thing and the new key format does not
+replace it. It signs the short lived client tokens
+`POST /api/v1/auth/exchange` hands to Base44, and PostgREST validates them
+against it. `npm run e2e:preflight` proves whichever keys you pasted are
+actually accepted, rather than only that they are non blank.
+
+### Then run it
+
+```bash
+supabase db reset              # migrations, then the seed
+npm run test:e2e               # preflight, build, then Playwright
+npm test                       # design audit, unit, schema and RLS
+```
+
+Sign in as the coach with `coach@elvt.test` and the password in
+`.env.example`. Magic links sent locally never leave the machine; read them in
+Inbucket at <http://127.0.0.1:54324>.
 
 ## Tests
 

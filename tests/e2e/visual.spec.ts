@@ -9,6 +9,23 @@ import { expect, test, type Page } from "@playwright/test";
  * target.
  */
 
+/**
+ * Opens a preview screen and waits for something specific.
+ *
+ * Never network idle. A Next page can keep the network busy indefinitely, so
+ * that wait turns a broken screen into a timeout: 27 tests at 60 seconds each
+ * is 22 minutes of nothing useful. Waiting on the element the screen must
+ * render, then on the fonts the screenshot needs, fails in milliseconds when
+ * the page is wrong.
+ */
+async function openScreen(page: Page, screen: string) {
+  await page.goto(`/dev/preview/${screen}`, { waitUntil: "domcontentloaded" });
+  await expect(page.getByTestId("screen-ready")).toBeVisible();
+  // Layout measurements and screenshots both depend on the real face being
+  // loaded, and this resolves as soon as it is.
+  await page.evaluate(() => document.fonts.ready);
+}
+
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 
@@ -111,8 +128,7 @@ for (const [label, viewport] of [
 
     for (const screen of SCREENS) {
       test(`${screen} renders with nothing clipped`, async ({ page }, testInfo) => {
-        await page.goto(`/dev/preview/${screen}`);
-        await page.waitForLoadState("networkidle");
+        await openScreen(page, screen);
 
         await testInfo.attach(`${screen}-${viewport.width}x${viewport.height}.png`, {
           body: await page.screenshot({ fullPage: true }),
@@ -137,8 +153,7 @@ test.describe("no raw enum values reach a screen", () => {
 
   for (const screen of SCREENS) {
     test(`${screen}`, async ({ page }) => {
-      await page.goto(`/dev/preview/${screen}`);
-      await page.waitForLoadState("networkidle");
+      await openScreen(page, screen);
 
       const raw = await page.evaluate(() => {
         const found: string[] = [];
@@ -180,7 +195,7 @@ test.describe("roster density", () => {
   test.use({ viewport: DESKTOP });
 
   test("rows are 44px", async ({ page }) => {
-    await page.goto("/dev/preview/roster");
+    await openScreen(page, "roster");
     const row = page.getByTestId("roster-row").first();
     const box = await row.boundingBox();
     // The 1px rule between rows sits on the row, so 44 or 45 are both correct.
@@ -189,7 +204,7 @@ test.describe("roster density", () => {
   });
 
   test("fits at least 14 rows above the fold", async ({ page }) => {
-    await page.goto("/dev/preview/roster-dense");
+    await openScreen(page, "roster-dense");
 
     const rows = page.getByTestId("roster-row");
     expect(await rows.count()).toBeGreaterThanOrEqual(14);
@@ -207,7 +222,7 @@ test.describe("roster density", () => {
   });
 
   test("puts the client name in full, not truncated", async ({ page }) => {
-    await page.goto("/dev/preview/roster-stress");
+    await openScreen(page, "roster-stress");
 
     // The 40 character stress name. A dense column may ellipsize a program
     // label; it may not ellipsize who the row is about.
@@ -228,7 +243,7 @@ test.describe("the type and color system is actually applied", () => {
   test.use({ viewport: DESKTOP });
 
   test("numbers in columns are set in the mono face", async ({ page }) => {
-    await page.goto("/dev/preview/roster");
+    await openScreen(page, "roster");
     const font = await page
       .locator(".elvt-num")
       .first()
@@ -237,7 +252,7 @@ test.describe("the type and color system is actually applied", () => {
   });
 
   test("the interface is set in Archivo", async ({ page }) => {
-    await page.goto("/dev/preview/roster");
+    await openScreen(page, "roster");
     const font = await page.evaluate(
       () => getComputedStyle(document.body).fontFamily,
     );
@@ -245,7 +260,7 @@ test.describe("the type and color system is actually applied", () => {
   });
 
   test("the page is the ink base, not a cream one", async ({ page }) => {
-    await page.goto("/dev/preview/roster");
+    await openScreen(page, "roster");
     const bg = await page.evaluate(
       () => getComputedStyle(document.body).backgroundColor,
     );
@@ -253,7 +268,7 @@ test.describe("the type and color system is actually applied", () => {
   });
 
   test("nothing outside a modal carries a shadow", async ({ page }) => {
-    await page.goto("/dev/preview/roster");
+    await openScreen(page, "roster");
     const shadowed = await page.evaluate(() =>
       Array.from(document.querySelectorAll<HTMLElement>("body *"))
         .filter((el) => {
@@ -266,7 +281,7 @@ test.describe("the type and color system is actually applied", () => {
   });
 
   test("the empty state says what will appear and when", async ({ page }) => {
-    await page.goto("/dev/preview/queue-empty");
+    await openScreen(page, "queue-empty");
     const text = await page.getByTestId("queue-empty").textContent();
     expect(text).toContain("Monday");
     expect(text).not.toMatch(/nothing here yet/i);
@@ -293,39 +308,39 @@ test.describe("program tab", () => {
   test.use({ viewport: DESKTOP });
 
   test("the week strip carries every week and marks the current one", async ({ page }) => {
-    await page.goto("/dev/preview/program-week");
+    await openScreen(page, "program-week");
     const chips = page.getByTestId("week-chip");
     expect(await chips.count()).toBe(8);
     await expect(page.locator('[aria-current="page"][data-testid="week-chip"]')).toHaveCount(1);
   });
 
   test("the phase bands span the block", async ({ page }) => {
-    await page.goto("/dev/preview/program-week");
+    await openScreen(page, "program-week");
     await expect(page.getByTestId("phase-bands")).toBeVisible();
     await expect(page.getByTestId("phase-bands")).toContainText("Base");
     await expect(page.getByTestId("phase-bands")).toContainText("Build");
   });
 
   test("the day grid is seven columns", async ({ page }) => {
-    await page.goto("/dev/preview/program-week");
+    await openScreen(page, "program-week");
     await expect(page.getByTestId("day-column")).toHaveCount(7);
   });
 
   test("session cards are draggable", async ({ page }) => {
-    await page.goto("/dev/preview/program-week");
+    await openScreen(page, "program-week");
     const cards = page.getByTestId("session-card");
     expect(await cards.count()).toBeGreaterThan(0);
   });
 
   test("the stress rail reports the week", async ({ page }) => {
-    await page.goto("/dev/preview/program-week");
+    await openScreen(page, "program-week");
     const rail = page.getByRole("complementary", { name: "Week load" });
     await expect(rail).toContainText("Stress");
     await expect(rail).toContainText("Planned miles");
   });
 
   test("a week with a conflict says what it is", async ({ page }) => {
-    await page.goto("/dev/preview/program-week-flagged");
+    await openScreen(page, "program-week-flagged");
     const flags = page.getByTestId("stress-flags");
     if ((await flags.count()) > 0) {
       await expect(flags.locator("li").first()).not.toBeEmpty();
@@ -333,14 +348,14 @@ test.describe("program tab", () => {
   });
 
   test("the periodization grid has one column per week", async ({ page }) => {
-    await page.goto("/dev/preview/program-periodization");
+    await openScreen(page, "program-periodization");
     const headers = page.locator('[data-testid="periodization-grid"] thead th');
     // One movement column plus one per week.
     expect(await headers.count()).toBe(9);
   });
 
   test("the periodization grid has a row per movement", async ({ page }) => {
-    await page.goto("/dev/preview/program-periodization");
+    await openScreen(page, "program-periodization");
     expect(await page.getByTestId("periodization-row").count()).toBeGreaterThan(0);
   });
 });
