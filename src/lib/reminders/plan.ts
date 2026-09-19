@@ -100,6 +100,76 @@ export type DueReminder = {
  */
 export const DIGEST_WINDOW_MINUTES = 60;
 
+/**
+ * How late a reminder can be and still be worth sending.
+ *
+ * A reminder is due once its time has passed, which is right: a job that was
+ * down for two hours should catch up rather than skip the day. Taken alone it
+ * is also how "Weigh in before you eat" arrives at four in the afternoon, and
+ * how a client who opens the app after a quiet evening gets the whole day at
+ * once. A reminder whose content is false by the time it lands is not late, it
+ * is wrong, and it costs more trust than the missed ping does.
+ *
+ * So each kind carries the window in which it is still true. Past it the
+ * reminder is dropped for the day rather than sent: nothing is recorded, and
+ * tomorrow is a new day with its own times.
+ *
+ * Ninety minutes is the default and the number each of these is reasoned
+ * against. What moves it is how long the thing being asked for stays possible,
+ * never how important it is.
+ */
+export const DEFAULT_LATE_MINUTES = 90;
+
+export const LATE_MINUTES: Record<ReminderKind, number> = {
+  // The day's plan is worth reading all morning and is a curiosity by the
+  // evening.
+  morning_plan: 180,
+  // A session can still be done late. This is the one kind where a ping four
+  // hours on is the difference between a trained day and a missed one.
+  workout: 360,
+  run: 360,
+  // A macro target is still reachable well into the evening.
+  protein: 240,
+  // Water is the same, and the reminder is cheap.
+  water: 240,
+  // Steps can be walked off after dinner.
+  steps: 240,
+  // Reflecting on the day only works while the day is fresh.
+  evening_reflection: 120,
+  // "Before you eat" stops being true within the hour, and a weight taken
+  // after breakfast is a worse number than no number.
+  weigh_in: 60,
+  // Morning light, standing the same way as last week. By lunchtime the photo
+  // is not comparable to the series it joins.
+  photos: 90,
+  // The weekly sits open all day and the whole point is not to miss it.
+  checkin_due: 720,
+};
+
+/** The window for one kind. */
+export function lateMinutesFor(kind: ReminderKind): number {
+  return LATE_MINUTES[kind] ?? DEFAULT_LATE_MINUTES;
+}
+
+const MINUTES_PER_HOUR = 60;
+
+/**
+ * The same window in words, for the screen that sets the times.
+ *
+ * Here rather than in the component because the number and the sentence about
+ * it should not be able to disagree.
+ */
+export function lateInWords(kind: ReminderKind): string {
+  const minutes = lateMinutesFor(kind);
+
+  // Whole hours read as hours and everything else reads as minutes. "1.5
+  // hours" is a worse way to say ninety minutes than ninety minutes is.
+  if (minutes % MINUTES_PER_HOUR !== 0) return `${minutes} minutes`;
+
+  const hours = minutes / MINUTES_PER_HOUR;
+  return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+}
+
 function minutesOf(time: string): number {
   const [hour, minute] = time.split(":").map(Number);
   if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
@@ -171,10 +241,12 @@ export type DispatchInput = {
 /**
  * Everything due for one client right now, grouped.
  *
- * A reminder is due once its time has passed and it has not gone yet. That
- * means a job that was down for two hours catches up rather than skipping the
- * day, and the catch up is one digest rather than four pings at once, which is
- * exactly the case the digest rule exists for.
+ * A reminder is due once its time has passed and it has not gone yet, and it is
+ * still worth sending while it is inside its lateness window. That means a job
+ * that was down for two hours catches up rather than skipping the day, and the
+ * catch up is one digest rather than four pings at once, which is exactly the
+ * case the digest rule exists for. A job that was down since breakfast does not
+ * deliver breakfast.
  */
 export function planReminders(input: DispatchInput): {
   local: LocalMoment;
@@ -189,6 +261,12 @@ export function planReminders(input: DispatchInput): {
     .filter((setting) => !input.alreadySent.includes(setting.kind))
     .filter((setting) => !input.alreadyDone.includes(setting.kind))
     .filter((setting) => minutesOf(setting.time) <= nowMinutes)
+    // Due, but still true? Past its window the reminder is dropped rather than
+    // sent late. Nothing is written, so it is not "already sent" tomorrow.
+    .filter(
+      (setting) =>
+        nowMinutes - minutesOf(setting.time) <= lateMinutesFor(setting.kind),
+    )
     .map((setting) => ({ kind: setting.kind, time: setting.time }));
 
   return { local, dispatches: digest(due) };

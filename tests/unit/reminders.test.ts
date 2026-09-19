@@ -3,6 +3,8 @@ import {
   defaultSettings,
   digest,
   DIGEST_WINDOW_MINUTES,
+  lateInWords,
+  lateMinutesFor,
   planReminders,
   REMINDER_COPY,
   REMINDER_KINDS,
@@ -178,8 +180,23 @@ describe("what is due right now", () => {
     expect(ny.local.hour).toBe(8);
     expect(ny.local.weekday).toBe(1);
 
-    // The same instant is late afternoon in Kabul, so their whole morning has
-    // already passed and more is due.
+    /*
+     * 08:00 against a 06:30 morning. The plan, the photos, the run and the
+     * session are all still true; the weigh-in is not. It says "before you
+     * eat" and it is ninety minutes past, which is outside its own window of
+     * sixty even though it is inside the default.
+     */
+    expect(ny.dispatches.flatMap((d) => d.kinds)).toEqual([
+      "morning_plan",
+      "photos",
+      "run",
+      "workout",
+    ]);
+
+    // The same instant is late afternoon in Kabul. Their morning has passed,
+    // and passing is not the same as pending: this used to assert that more
+    // was due, which was only true while a reminder could arrive at any hour.
+    // What is due there is the afternoon, and the morning is gone for the day.
     const kabul = planReminders({
       instant: MONDAY_MORNING,
       timezone: "Asia/Kabul",
@@ -188,9 +205,84 @@ describe("what is due right now", () => {
       alreadySent: [],
     });
     expect(kabul.local.hour).toBe(16);
-    expect(
-      kabul.dispatches.flatMap((d) => d.kinds).length,
-    ).toBeGreaterThan(ny.dispatches.flatMap((d) => d.kinds).length);
+    expect(kabul.dispatches.flatMap((d) => d.kinds)).toEqual(["protein", "steps"]);
+  });
+
+  /*
+   * The lateness cutoff. Due is not the same as still true: a reminder that
+   * has gone stale is dropped for the day rather than delivered late, and how
+   * long it stays true depends on the kind.
+   */
+  describe("how late is too late", () => {
+    const at = (localHour: number, localMinute = 0) =>
+      // New York is UTC-4 on this date.
+      new Date(`2026-09-21T${String(localHour + 4).padStart(2, "0")}:${String(localMinute).padStart(2, "0")}:00Z`);
+
+    const kindsAt = (instant: Date, settings: ReminderSetting[] = SETTINGS) =>
+      planReminders({
+        instant,
+        timezone: "America/New_York",
+        settings,
+        alreadyDone: [],
+        alreadySent: [],
+      }).dispatches.flatMap((dispatch) => dispatch.kinds);
+
+    it("drops a reminder once it is no longer true", () => {
+      const weighIn: ReminderSetting[] = [
+        { kind: "weigh_in", time: "06:30", enabled: true, days: [] },
+      ];
+
+      // Inside the hour it is still before breakfast.
+      expect(kindsAt(at(7, 25), weighIn)).toEqual(["weigh_in"]);
+      // Past it, a weight taken after eating is a worse number than none.
+      expect(kindsAt(at(7, 35), weighIn)).toEqual([]);
+    });
+
+    it("gives a session longer than a weigh-in, because it can still be done", () => {
+      const both: ReminderSetting[] = [
+        { kind: "weigh_in", time: "06:30", enabled: true, days: [] },
+        { kind: "workout", time: "06:30", enabled: true, days: [] },
+      ];
+
+      // Four hours on: the weigh-in is gone, the session is not.
+      expect(kindsAt(at(10, 30), both)).toEqual(["workout"]);
+      // Seven hours on, both are past their windows.
+      expect(kindsAt(at(13, 30), both)).toEqual([]);
+    });
+
+    it("carries a window for every kind, and none of them is zero", () => {
+      for (const kind of REMINDER_KINDS) {
+        expect(lateMinutesFor(kind), kind).toBeGreaterThan(0);
+      }
+    });
+
+    it("does not let a stale reminder ride along in someone else's digest", () => {
+      // The digest groups by closeness in time, so a dead reminder next to a
+      // live one would be delivered by the grouping if it were filtered later.
+      const settings: ReminderSetting[] = [
+        { kind: "weigh_in", time: "06:30", enabled: true, days: [] },
+        { kind: "morning_plan", time: "07:00", enabled: true, days: [] },
+      ];
+      expect(kindsAt(at(8, 0), settings)).toEqual(["morning_plan"]);
+    });
+
+    it("a dropped reminder is simply not sent, and is not owed tomorrow", () => {
+      // Nothing about the plan records a drop, so the same settings on the
+      // following morning produce the same reminder at the same time.
+      const weighIn: ReminderSetting[] = [
+        { kind: "weigh_in", time: "06:30", enabled: true, days: [] },
+      ];
+      expect(kindsAt(at(13, 0), weighIn)).toEqual([]);
+      expect(
+        planReminders({
+          instant: new Date("2026-09-22T10:45:00Z"), // 06:45 the next morning
+          timezone: "America/New_York",
+          settings: weighIn,
+          alreadyDone: [],
+          alreadySent: [],
+        }).dispatches.flatMap((dispatch) => dispatch.kinds),
+      ).toEqual(["weigh_in"]);
+    });
   });
 
   it("does not send a reminder before its time", () => {
@@ -282,5 +374,25 @@ describe("what is due right now", () => {
       alreadySent: [],
     });
     expect(out.dispatches.flatMap((d) => d.kinds)).not.toContain("water");
+  });
+});
+
+describe("the window in words", () => {
+  it("says minutes under an hour and hours above it", () => {
+    expect(lateInWords("weigh_in")).toBe("1 hour");
+    expect(lateInWords("photos")).toBe("90 minutes");
+    expect(lateInWords("workout")).toBe("6 hours");
+    expect(lateInWords("checkin_due")).toBe("12 hours");
+  });
+
+  it("agrees with the number it describes, for every kind", () => {
+    // The screen states the window and the planner enforces it. If those two
+    // ever disagree, the coach is being told something that is not true.
+    for (const kind of REMINDER_KINDS) {
+      const minutes = lateMinutesFor(kind);
+      const words = lateInWords(kind);
+      const value = Number(words.split(" ")[0]);
+      expect(words.includes("minute") ? value : value * 60, kind).toBe(minutes);
+    }
   });
 });

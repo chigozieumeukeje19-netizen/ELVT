@@ -1,6 +1,7 @@
 import { humanize } from "@/components/Field";
 import {
   DIGEST_WINDOW_MINUTES,
+  lateInWords,
   REMINDER_COPY,
   type ReminderSetting,
 } from "@/lib/reminders/plan";
@@ -49,6 +50,7 @@ export function ReminderSettings({
             <th scope="col">What it says</th>
             <th scope="col">Time</th>
             <th scope="col">Days</th>
+            <th scope="col">Stops after</th>
             <th scope="col">On</th>
           </tr>
         </thead>
@@ -83,6 +85,9 @@ export function ReminderSettings({
                   ? "Every day"
                   : setting.days.map((day) => DAY_NAMES[day]).join(", ")}
               </td>
+              <td className="text-txt-secondary" data-testid="stops-after">
+                {lateInWords(setting.kind)}
+              </td>
               <td>
                 {readOnly ? (
                   <span className="text-txt-secondary">{setting.enabled ? "Yes" : "No"}</span>
@@ -107,6 +112,13 @@ export function ReminderSettings({
         Anything set within an hour of something else goes out as one message.
         Five pings in a morning is how an app gets muted, and a muted app
         delivers nothing at all.
+      </p>
+
+      <p className="mb-3 max-w-[70ch] text-txt-secondary">
+        Each one also stops being sent once it stops being true. A weigh-in that
+        says &ldquo;before you eat&rdquo; is wrong by mid-morning rather than
+        late, so it is dropped for the day instead of arriving after breakfast.
+        A session can still be trained, so it waits longer.
       </p>
 
       {readOnly || !action || !clientId ? (
