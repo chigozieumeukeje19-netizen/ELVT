@@ -45,40 +45,57 @@ is the only way to get rows GoTrue is guaranteed to accept. The password comes
 from the environment in that script, so SEED_COACH_PASSWORD is the one source
 of truth; the SQL used to carry its own copy that could drift.
 
-## The privilege risk, which is a production risk
+## Three times the stand-in was kinder than production
 
-Local and the plain Postgres verifier both run migrations as `postgres`, a
-superuser. ELVT OS PROD does not, and there is no `db reset` there.
+Every one of these passed the whole suite locally and failed on the real stack.
+They are the same bug wearing different clothes: a hand written auth row, and a
+shim that forgave something production does not.
 
-The migrations contain exactly one privilege statement, in
-`20260917090700_rls.sql`:
+**`auth.identities.email` is GENERATED ALWAYS.** The shim had it as ordinary
+text, the seed wrote to it, and `supabase db reset` failed with SQLSTATE 428C9.
 
-```sql
-revoke all on public.<table> from anon
-```
+**`auth.users.confirmed_at` is GENERATED ALWAYS.** Absent from the shim
+entirely. Found while fixing the first; nothing had written to it yet.
 
-It is scoped to tables in `public` and to the `anon` role. Nothing in any of
-the eight migrations touches the `auth` schema, and there is no
-`ALTER DEFAULT PRIVILEGES` or role change anywhere in them. Applying all eight
-over a stand-in auth schema leaves its grants byte identical and
-`supabase_auth_admin` still able to read `auth.users`.
+**`auth.users` token columns are nullable with no default.** The shim defaulted
+`confirmation_token`, `recovery_token`, `email_change_token_new`,
+`email_change_token_current` and `email_change` to empty string. The seed left
+them NULL, which the shim silently turned into `''` and production kept as
+NULL. GoTrue scans those columns into Go strings, NULL is not a string, so
+**every user lookup returned a 500**: no sign in, no admin list users, no seed.
+The suite reported 75 passed throughout.
 
-That narrows the risk without removing it. The stand-in models two auth tables;
-the real schema has roughly fifteen, and a broader `REVOKE` than intended would
-show up on one of the others first.
+The fix is not a fourth patch. `supabase/seed.sql` no longer writes auth rows at
+all. `scripts/seed-auth.ts` creates every account through GoTrue's admin API, so
+no column can be wrong because GoTrue writes them. The plain Postgres verifier,
+which has no GoTrue, gets its accounts from `tests/sql/test_accounts.sql`, which
+is clearly marked as a stand-in and loses to the real thing in any disagreement.
 
-Two things follow:
+Three guards, each shown to fail when the bug is put back:
 
-- `npm run auth:diagnose` walks every auth table as `supabase_auth_admin` and
-  names any it cannot read. Run it before and after applying migrations to a
-  cloud project.
-- `tests/e2e/auth-grant.spec.ts` asserts a real password grant succeeds, and
-  distinguishes a 500 (schema or grants broken) from a 400 (account wrong). A
-  migration that breaks login fails the run rather than surfacing days later.
+- `scripts/verify-migrations.sh` refuses a build where any account has a NULL
+  token column, naming the count.
+- `tests/sql/shim_conformance.sql` asserts those columns have no default, so
+  the mask cannot be reinstated.
+- `scripts/seed-auth.ts` lists the accounts back and signs the coach in after
+  seeding. A seed that leaves GoTrue unable to read its own rows fails.
 
-On production, run the diagnose script against a staging copy before
-`supabase db push`. A revoke that breaks GoTrue locally breaks it there too,
-and there the recovery is not a reset.
+## The privilege question, which was a false lead
+
+The `REVOKE` in `20260917090700_rls.sql` was suspected of breaking GoTrue and
+was **not** responsible. The GoTrue log named the real cause, quoted above.
+
+The audit still stands and is worth keeping: the migrations contain exactly one
+privilege statement, `revoke all on public.<table> from anon`, scoped to tables
+in `public` and to the `anon` role. Nothing in the eight migrations touches the
+`auth` schema, and there is no `ALTER DEFAULT PRIVILEGES` or role change in any
+of them. Applying all eight over a stand-in auth schema leaves its grants byte
+identical.
+
+The genuine risk that remains is unchanged: local and the verifier run
+migrations as `postgres`, a superuser. ELVT OS PROD does not, and there is no
+reset there. Run `npm run auth:diagnose` against a staging copy before any
+`supabase db push`.
 
 ## Known, not fixed
 

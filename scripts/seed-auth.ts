@@ -189,33 +189,69 @@ async function main() {
     console.log(`  ${person.role.padEnd(6)} ${person.email}`);
   }
 
-  // Prove the coach can actually sign in, here, rather than finding out from a
-  // browser later. This is the check that was missing.
+  // -------------------------------------------------------------------------
+  // Verify, rather than assume.
+  //
+  // A seed that leaves GoTrue unable to read its own rows is not a successful
+  // seed. Both of these read a user row, which is exactly the operation that
+  // returned 500 for every account when one token column was NULL, so between
+  // them they catch that whole class before anyone opens a browser.
+  // -------------------------------------------------------------------------
+
+  const { data: listed, error: verifyList } = await admin.auth.admin.listUsers({
+    page: 1,
+    perPage: 200,
+  });
+
+  if (verifyList) {
+    bail(
+      `Accounts were created, but listing them back failed: ${verifyList.message}`,
+      schemaHint(verifyList.message),
+    );
+  }
+
+  const seededEmails = new Set(PEOPLE.map((p) => p.email.toLowerCase()));
+  const found = listed.users.filter((u) =>
+    seededEmails.has(u.email?.toLowerCase() ?? ""),
+  );
+
+  if (found.length !== PEOPLE.length) {
+    bail(
+      `Created ${PEOPLE.length} accounts but only ${found.length} read back.`,
+      "GoTrue accepted the writes and cannot return them, which means the rows are not readable.",
+    );
+  }
+
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (anon) {
-    const client = createClient(URL, anon, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    });
-    const coach = PEOPLE[0];
-    const { data, error } = await client.auth.signInWithPassword({
+  if (!anon) {
+    bail(
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY is not set, so sign in cannot be verified.",
+      "Set it in .env.local from `supabase status`. A seed that cannot prove sign in works is not finished.",
+    );
+  }
+
+  const client = createClient(URL, anon, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const coach = PEOPLE[0];
+  const { data: session, error: signInError } =
+    await client.auth.signInWithPassword({
       email: coach.email,
       password: coach.password,
     });
 
-    if (error || !data.session) {
-      bail(
-        [
-          `Seeded ${PEOPLE.length} accounts, but ${coach.email} cannot sign in.`,
-          `GoTrue said: ${error?.message ?? "no session returned"}`,
-          "",
-          "The accounts were created through the admin API, so this is not a",
-          "seed shape problem. Check SEED_COACH_PASSWORD in .env.local.",
-        ].join("\n"),
-      );
-    }
-    console.log("");
-    console.log(`Sign in verified for ${coach.email}.`);
+  if (signInError || !session.session) {
+    const message = signInError?.message ?? "no session returned";
+    bail(
+      `Seeded ${PEOPLE.length} accounts, but ${coach.email} cannot sign in.\nGoTrue said: ${message}`,
+      schemaHint(message) ??
+        "The accounts came from the admin API, so this is not a row shape problem. Check SEED_COACH_PASSWORD in .env.local.",
+    );
   }
+
+  console.log("");
+  console.log(`  Listed back:   ${found.length} of ${PEOPLE.length} accounts`);
+  console.log(`  Sign in:       verified for ${coach.email}`);
 
   console.log(`\nSeeded ${PEOPLE.length} accounts through GoTrue.`);
 }

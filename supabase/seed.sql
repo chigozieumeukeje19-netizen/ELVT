@@ -15,81 +15,25 @@
 begin;
 
 -- ---------------------------------------------------------------------------
--- Accounts
+-- NO AUTH ROWS ARE WRITTEN HERE.
 --
--- NO PASSWORDS ARE SET HERE, on purpose.
+-- This file writes public schema rows only. Every auth user is created through
+-- GoTrue's admin API in scripts/seed-auth.ts, which then writes the matching
+-- profile and links the client by slug.
 --
--- Hand crafting an auth.users row means guessing at everything GoTrue expects,
--- and a row that looks right can still be refused at sign in with no way to
--- tell which field was wrong. So these rows exist only so the plain Postgres
--- verifier has profiles and clients to run the RLS checks against.
+-- That is not a preference. Hand writing an auth.users row has now broken sign
+-- in twice, both times because a column had to hold something this file did not
+-- know to give it:
 --
--- On a real stack, scripts/seed-auth.ts deletes these and recreates the same
--- people through GoTrue's own admin API, which is the only way to get a row
--- GoTrue is guaranteed to accept. `npm run db:reset` runs both in order.
--- The password comes from the environment there, so it has one source.
+--   auth.identities.email is GENERATED ALWAYS, so naming it at all fails.
+--   auth.users.confirmation_token and the other token columns are NULL here
+--   but GoTrue scans them into Go strings, which cannot take NULL, so every
+--   single user lookup returned a 500 and nobody could sign in.
+--
+-- Both were invisible locally because the stand-in schema was more forgiving
+-- than the real one. There is no way to be sure the third column is not
+-- waiting, so the seed stops guessing and lets GoTrue write its own rows.
 -- ---------------------------------------------------------------------------
-
-create temporary table seed_people (
-  user_id uuid not null default gen_random_uuid(),
-  email text not null,
-  role text not null,
-  display_name text not null
-) on commit drop;
-
-insert into seed_people (email, role, display_name) values
-  ('coach@elvt.test', 'coach', 'Darren'),
-  ('nadia.brookes@elvt.test',   'client', 'Nadia Brookes'),
-  ('theo.vance@elvt.test',      'client', 'Theo Vance'),
-  ('marcus.oyelaran@elvt.test', 'client', 'Marcus Oyelaran'),
-  ('priya.raghavan@elvt.test',  'client', 'Priya Raghavan'),
-  ('elena.marsh@elvt.test',     'client', 'Elena Marsh'),
-  ('jonah.petrakis@elvt.test',  'client', 'Jonah Petrakis'),
-  ('aisha.nkemdirim@elvt.test', 'client', 'Aisha Nkemdirim'),
-  ('caleb-whitlock@elvt.test',  'client', 'Caleb Whitlock');
-
-insert into auth.users (
-  id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
-  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-)
-select
-  p.user_id,
-  '00000000-0000-0000-0000-000000000000',
-  'authenticated',
-  'authenticated',
-  p.email,
-  -- Left null deliberately. See the note above: GoTrue sets this.
-  null,
-  now(),
-  jsonb_build_object('provider', 'email', 'providers', jsonb_build_array('email')),
-  jsonb_build_object('display_name', p.display_name),
-  now(),
-  now()
-from seed_people p;
-
--- auth.identities.email is GENERATED ALWAYS from identity_data, so it is not
--- in the column list: naming it fails with SQLSTATE 428C9. The email reaches
--- the column by being inside identity_data, which is how GoTrue itself writes
--- these rows.
-insert into auth.identities (
-  provider_id, user_id, identity_data, provider, last_sign_in_at
-)
-select
-  p.user_id::text,
-  p.user_id,
-  jsonb_build_object(
-    'sub', p.user_id::text,
-    'email', p.email,
-    'email_verified', true,
-    'phone_verified', false
-  ),
-  'email',
-  now()
-from seed_people p;
-
-insert into public.profiles (id, role, display_name, email, timezone)
-select p.user_id, p.role, p.display_name, p.email, 'America/New_York'
-from seed_people p;
 
 -- ---------------------------------------------------------------------------
 -- The eight synthetic clients
@@ -205,21 +149,22 @@ insert into seed_clients values
    'Steps. He trains fine and then sits down for eleven hours.',
    '{"tone":"direct","directness":"medium","reminder_time":"07:30","preferred_channel":"app"}'::jsonb);
 
+-- profile_id is left null. scripts/seed-auth.ts fills it in by slug after
+-- GoTrue has created the accounts.
 insert into public.clients (
-  profile_id, slug, first_name, last_name, sex, dob, height_cm, start_weight,
+  slug, first_name, last_name, sex, dob, height_cm, start_weight,
   goal_weight, units, status, program_start_date, program_length_weeks,
   primary_goal, goal_statement, occupation, location, timezone, calorie_target,
   communication_prefs, flag_config, feature_flags, one_thing
 )
 select
-  pr.id, sc.slug, sc.first_name, sc.last_name, sc.sex, sc.dob, sc.height_cm,
+  sc.slug, sc.first_name, sc.last_name, sc.sex, sc.dob, sc.height_cm,
   sc.start_weight, sc.goal_weight, sc.units, 'active',
   date_trunc('week', current_date)::date, sc.program_length_weeks,
   sc.primary_goal, sc.goal_statement, sc.occupation, sc.location,
   'America/New_York', sc.calorie_target,
   sc.comms, sc.flag_config, sc.feature_flags, sc.one_thing
-from seed_clients sc
-join public.profiles pr on lower(pr.email) = lower(sc.email);
+from seed_clients sc;
 
 -- Approved Blueprints. Everything downstream generates from these, so a client
 -- without one is a client the portal cannot act on.

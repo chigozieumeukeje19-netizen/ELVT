@@ -41,21 +41,46 @@ echo "=============================================================="
   from pg_namespace where nspname in ('auth','public','extensions') order by nspname;"
 
 echo "=============================================================="
-echo "3. Can supabase_auth_admin read each auth table?"
-echo "    This is the one that names the broken table."
+echo "3. Does supabase_auth_admin hold SELECT on each auth table?"
+echo "    Checked by asking the catalog, not by switching role: the"
+echo "    connecting user is usually not a member of that role, and a"
+echo "    failed SET ROLE looks exactly like a broken grant."
 echo "=============================================================="
 "${PSQL[@]}" -t -A -c "
-  select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
-  where n.nspname = 'auth' and c.relkind = 'r' order by 1;" |
-while read -r table; do
-  [ -z "$table" ] && continue
-  if out=$(psql "$ELVT_DB_URL" -X -q -t -A \
-      -c "set local role supabase_auth_admin; select count(*) from auth.\"$table\";" 2>&1); then
-    printf '  ok      auth.%-28s %s rows\n' "$table" "$out"
-  else
-    printf '  FAILED  auth.%-28s %s\n' "$table" "$(echo "$out" | head -1)"
-  fi
-done
+  select case when has_table_privilege('supabase_auth_admin', c.oid, 'SELECT')
+              then '  ok      auth.' || c.relname
+              else '  MISSING auth.' || c.relname || '  (no SELECT for supabase_auth_admin)'
+         end
+  from pg_class c join pg_namespace n on n.oid = c.relnamespace
+  where n.nspname = 'auth' and c.relkind = 'r'
+  order by c.relname;" 2>&1
+
+echo "=============================================================="
+echo "3b. Columns GoTrue reads as strings that are NULL"
+echo "     A NULL here makes every user lookup fail with a 500,"
+echo "     because Go cannot scan NULL into a string."
+echo "=============================================================="
+"${PSQL[@]}" -t -A -c "
+  select '  ' || email || ' :: ' ||
+         concat_ws(', ',
+           case when confirmation_token is null then 'confirmation_token' end,
+           case when recovery_token is null then 'recovery_token' end,
+           case when email_change_token_new is null then 'email_change_token_new' end,
+           case when email_change_token_current is null then 'email_change_token_current' end,
+           case when email_change is null then 'email_change' end
+         ) || ' IS NULL'
+  from auth.users
+  where confirmation_token is null or recovery_token is null
+     or email_change_token_new is null or email_change_token_current is null
+     or email_change is null
+  order by email;" 2>&1
+"${PSQL[@]}" -t -A -c "
+  select case when count(*) = 0 then '  none. Every token column holds a string.'
+              else '  ' || count(*) || ' users above will 500 on any lookup.' end
+  from auth.users
+  where confirmation_token is null or recovery_token is null
+     or email_change_token_new is null or email_change_token_current is null
+     or email_change is null;" 2>&1
 
 echo "=============================================================="
 echo "4. Does supabase_auth_admin still hold its grants?"
@@ -86,6 +111,7 @@ curl -s -X POST "$URL/auth/v1/token?grant_type=password" \
   -d "{\"email\":\"${SEED_COACH_EMAIL:-coach@elvt.test}\",\"password\":\"${SEED_COACH_PASSWORD:-ElvtCoach2026}\"}"
 echo
 echo
-echo "If section 3 shows a FAILED line, that table is the answer."
-echo "If section 3 is all ok and section 6 still fails, the problem is not"
-echo "database privileges and the GoTrue container log will name it."
+echo "Section 3 names a missing grant. Section 3b names a NULL column, which"
+echo "is the more common cause and produces the same 500. If both are clean"
+echo "and section 6 still fails, the GoTrue container log has the reason:"
+echo "  docker logs \$(docker ps --format '{{.Names}}' | grep -i auth) --tail 50"

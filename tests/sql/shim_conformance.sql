@@ -80,6 +80,23 @@ begin
     'the three Data API roles exist'
   );
 
+  -- The token columns GoTrue scans into Go strings. Production declares them
+  -- nullable with no default; the shim used to default them to empty string,
+  -- and that single kindness hid a seed writing NULLs. Every user lookup then
+  -- returned a 500 and nobody could sign in, while the whole suite passed.
+  perform pg_temp.assert(
+    (select count(*) = 0
+       from pg_attribute a
+       join pg_class c on c.oid = a.attrelid
+       join pg_namespace n on n.oid = c.relnamespace
+      where n.nspname = 'auth' and c.relname = 'users'
+        and a.attname in ('confirmation_token', 'recovery_token',
+                          'email_change_token_new', 'email_change_token_current',
+                          'email_change')
+        and a.atthasdef),
+    'auth.users token columns have no default, as in production'
+  );
+
   -- pgcrypto lives in the extensions schema on Supabase, and the seed hashes
   -- passwords with it. A shim without it would fail at seed time rather than
   -- silently, but the assertion keeps the reason legible.

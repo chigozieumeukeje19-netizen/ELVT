@@ -45,6 +45,12 @@ alter default privileges in schema public
 
 -- Shaped to match the real GoTrue table closely enough that the same seed file
 -- runs here and against Supabase unchanged.
+-- The token columns below are nullable with NO DEFAULT, which is how the real
+-- schema declares them. They used to default to empty string here, and that one
+-- difference hid a seed that left them NULL: GoTrue scans them into Go strings,
+-- NULL is not a string, and every user lookup returned a 500. Do not add
+-- defaults back. A stand-in that is kinder than production is how that bug
+-- survived a whole test suite.
 create table if not exists auth.users (
   instance_id uuid default '00000000-0000-0000-0000-000000000000',
   id uuid primary key default gen_random_uuid(),
@@ -60,12 +66,12 @@ create table if not exists auth.users (
     least(email_confirmed_at, phone_confirmed_at)
   ) stored,
   invited_at timestamptz,
-  confirmation_token varchar(255) default '',
+  confirmation_token varchar(255),
   confirmation_sent_at timestamptz,
-  recovery_token varchar(255) default '',
+  recovery_token varchar(255),
   recovery_sent_at timestamptz,
-  email_change_token_new varchar(255) default '',
-  email_change varchar(255) default '',
+  email_change_token_new varchar(255),
+  email_change varchar(255),
   email_change_sent_at timestamptz,
   last_sign_in_at timestamptz,
   raw_app_meta_data jsonb not null default '{}'::jsonb,
@@ -74,7 +80,7 @@ create table if not exists auth.users (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   phone text unique,
-  email_change_token_current varchar(255) default '',
+  email_change_token_current varchar(255),
   email_change_confirm_status smallint default 0,
   is_sso_user boolean not null default false,
   is_anonymous boolean not null default false

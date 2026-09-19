@@ -46,6 +46,33 @@ if [ "${WITH_SEED:-1}" = "1" ]; then
   echo
   echo "Applying seed"
   psql_db "$DB" -q -f "$ROOT/supabase/seed.sql" >/dev/null
+  # The real seed writes no auth rows; GoTrue does that. The verifier has no
+  # GoTrue, so it gets its accounts from a fixture instead.
+  echo "Applying verifier accounts"
+  psql_db "$DB" -q -f "$ROOT/tests/sql/test_accounts.sql" >/dev/null
+  echo "Checking no account would break a GoTrue lookup:"
+  psql_db "$DB" -t -c "
+    select case when count(*) = 0
+                then 'none, every token column holds a string'
+                else count(*) || ' USERS WITH A NULL TOKEN COLUMN' end
+    from auth.users
+    where confirmation_token is null or recovery_token is null
+       or email_change_token_new is null or email_change_token_current is null
+       or email_change is null;"
+  psql_db "$DB" -t -c "
+    do \$\$
+    begin
+      if exists (
+        select 1 from auth.users
+        where confirmation_token is null or recovery_token is null
+           or email_change_token_new is null or email_change_token_current is null
+           or email_change is null
+      ) then
+        raise exception 'An account has a NULL token column. GoTrue scans these into Go strings, so every user lookup would return a 500.';
+      end if;
+    end
+    \$\$;" >/dev/null
+
   echo "Clients seeded:"
   psql_db "$DB" -t -c "select count(*) from public.clients;"
   echo "Profiles by role:"
