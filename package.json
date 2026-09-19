@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run design:audit && vitest run",
     "test:watch": "vitest",
-    "test:e2e": "bash scripts/e2e-preflight.sh && npm run build && playwright test",
+    "test:e2e": "bash scripts/e2e-preflight.sh && npm run export:fixture && npm run build && playwright test",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset && npm run db:seed:auth",
@@ -30,7 +30,8 @@
     "reminders:dispatch": "tsx scripts/dispatch-reminders.ts",
     "db:api-rls": "bash scripts/api-rls-check.sh",
     "export:fixture": "tsx scripts/build-export-fixture.ts",
-    "loop:walk": "VERIFY_DB=elvt_loop bash scripts/verify-migrations.sh > /dev/null && LOOP_DB=elvt_loop tsx scripts/loop-walk.ts"
+    "loop:walk": "VERIFY_DB=elvt_loop bash scripts/verify-migrations.sh > /dev/null && LOOP_DB=elvt_loop tsx scripts/loop-walk.ts",
+    "test:integration": "bash scripts/integration.sh"
   },
   "repository": {
     "type": "git",

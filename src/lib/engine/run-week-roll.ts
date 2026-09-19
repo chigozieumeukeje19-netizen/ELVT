@@ -10,6 +10,8 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { buildDailyForm, buildWeeklyForm } from "@/lib/checkin/generate";
+import { profileFrom } from "@/lib/checkin/profile";
 import { addDays } from "./clock";
 import {
   planWeekRoll,
@@ -35,7 +37,7 @@ export type RollResult = {
  * path. The unique indexes behind these keys are the backstop: two schedulers
  * racing would have one of them fail rather than both succeed.
  */
-async function applyPlan(
+export async function applyPlan(
   supabase: SupabaseClient,
   clientId: string,
   plan: RollPlan,
@@ -74,13 +76,23 @@ async function applyPlan(
         // One form row per client per kind holds the questions; the submission
         // rows carry the dates. The unique index on (form_id, for_date) is what
         // makes a second run a no-op rather than a duplicate.
-        const { data: form } = await supabase
+        const { data: existing } = await supabase
           .from("checkin_forms")
           .select("id")
           .eq("client_id", clientId)
           .eq("kind", kind)
           .maybeSingle();
 
+        // A client with no form row yet gets one built from the bank.
+        //
+        // This used to `break` here, silently. Nothing but the coach's own
+        // Check-ins screen ever creates these rows, so a client who had not
+        // been through that screen received no check-in ever, the roll
+        // reported the write as applied, and nobody found out. Check-in
+        // delivery is on the spec's "fully automated, no touch" list, and a
+        // job that quietly declines to deliver is the worst kind of failure
+        // this project has.
+        const form = existing ?? (await createForm(supabase, clientId, kind));
         if (!form) break;
 
         if (write.kind === "weekly_form") {
@@ -138,6 +150,62 @@ async function applyPlan(
 }
 
 /**
+ * Makes the missing check-in form, from the same bank the Check-ins screen
+ * uses, so the two cannot disagree about what a daily or a weekly asks.
+ *
+ * Returns null only when the client row itself cannot be read, which is a real
+ * fault and not something to paper over with an empty form.
+ */
+async function createForm(
+  supabase: SupabaseClient,
+  clientId: string,
+  kind: "daily" | "weekly",
+): Promise<{ id: string } | null> {
+  const { data: client } = await supabase
+    .from("clients")
+    .select("primary_goal, flag_config, feature_flags")
+    .eq("id", clientId)
+    .maybeSingle();
+
+  if (!client) return null;
+
+  const profile = profileFrom(client);
+  const questions =
+    kind === "daily"
+      ? buildDailyForm(profile).map((question) => question.key)
+      : buildWeeklyForm(profile).questions.map((question) => question.key);
+
+  const { data, error } = await supabase
+    .from("checkin_forms")
+    .insert({
+      client_id: clientId,
+      kind,
+      questions,
+      schedule:
+        kind === "daily"
+          ? { days: [0, 1, 2, 3, 4, 5, 6], time: "20:00" }
+          : { days: [0], time: "18:00" },
+      auto_send: kind === "daily",
+    })
+    .select("id")
+    .maybeSingle();
+
+  // Another runner may have created it in between. Read it back rather than
+  // treating the collision as a failure.
+  if (error) {
+    const { data: raced } = await supabase
+      .from("checkin_forms")
+      .select("id")
+      .eq("client_id", clientId)
+      .eq("kind", kind)
+      .maybeSingle();
+    return raced ?? null;
+  }
+
+  return data;
+}
+
+/**
  * Gathers one client's week into the shape planWeekRoll reads.
  *
  * The keys already written are read back here rather than assumed, so a run
@@ -181,9 +249,14 @@ export async function buildRollInput(
 
   const [{ data: days }, { data: logs }, { data: completions }, { data: runLogs }, { data: config }] =
     await Promise.all([
+      // client_id on every one of these. This job runs with the service role,
+      // which bypasses RLS, so a missing filter is not caught by a policy: it
+      // silently returns the whole roster. This query had none, and every
+      // client's adherence was being counted against every client's sessions.
       supabase
         .from("program_days")
         .select("date, is_rest, sessions(kind, status)")
+        .eq("client_id", client.id)
         .gte("date", open.startsOn)
         .lte("date", weekEnd),
       supabase
@@ -198,10 +271,15 @@ export async function buildRollInput(
         .eq("client_id", client.id)
         .gte("date", open.startsOn)
         .lte("date", weekEnd),
+      // Same missing filter, and two more faults besides: created_at is when
+      // the row was written rather than the day the run was for, and with no
+      // upper bound it swept in everything logged after the week as well.
       supabase
         .from("run_logs")
-        .select("distance, created_at")
-        .gte("created_at", open.startsOn),
+        .select("distance, logged_for_date")
+        .eq("client_id", client.id)
+        .gte("logged_for_date", open.startsOn)
+        .lte("logged_for_date", weekEnd),
       supabase
         .from("scoring_config")
         .select("weights, client_id")

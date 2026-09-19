@@ -5,6 +5,7 @@ import { ReviewThread, type ThreadMessage } from "@/components/checkin/ReviewThr
 import { SubmissionList, type SubmissionRow } from "@/components/checkin/SubmissionList";
 import { humanize } from "@/components/Field";
 import { currentProfile, isStaff } from "@/lib/auth";
+import { resolveQuestions } from "@/lib/checkin/bank";
 import type { BankQuestion } from "@/lib/checkin/bank";
 import { supabaseServer } from "@/lib/supabase/server";
 import { regenerateFormsAction, reviewSubmissionAction } from "./actions";
@@ -83,7 +84,7 @@ export default async function CheckinsPage({
   });
 
   const weeklyForm = (forms ?? []).find((form) => form.kind === "weekly" || form.kind === "week1");
-  const weeklyQuestions = ((weeklyForm?.questions ?? []) as BankQuestion[]).filter(
+  const weeklyQuestions = resolveQuestions(weeklyForm?.questions).filter(
     (question) => question.type === "scale" || question.type === "metric" || question.type === "number",
   );
 

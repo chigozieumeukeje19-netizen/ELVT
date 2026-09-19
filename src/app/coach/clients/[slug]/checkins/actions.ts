@@ -156,9 +156,17 @@ export async function regenerateFormsAction(formData: FormData) {
     isFirstWeek: weekNumber === 1,
   });
 
+  // Keys, not whole question objects. Three writers put rows in this column
+  // and this was the only one storing objects, which is how two shapes came to
+  // exist and how the Monday card came to render an empty check-in for anyone
+  // whose form came from the other two.
   for (const [kind, questions, spineVariable] of [
-    ["daily", daily, null],
-    [weekNumber === 1 ? "week1" : "weekly", weekly.questions, weekly.spineVariable],
+    ["daily", daily.map((question) => question.key), null],
+    [
+      weekNumber === 1 ? "week1" : "weekly",
+      weekly.questions.map((question) => question.key),
+      weekly.spineVariable,
+    ],
   ] as const) {
     const { data: existing } = await supabase
       .from("checkin_forms")

@@ -360,7 +360,12 @@ insert into public.checkin_forms (client_id, kind, questions, schedule, auto_sen
 select
   c.id,
   'daily',
-  jsonb_build_array('daily_session', 'daily_sleep', 'daily_energy', 'daily_steps'),
+  -- The keys src/lib/checkin/bank.ts uses. They were 'daily_session',
+  -- 'daily_sleep' and so on, which belong to the question_bank table and match
+  -- nothing in the module every screen actually renders from, so all eight
+  -- seeded clients had check-in forms whose questions resolved to nothing.
+  -- tests/unit/checkin-bank.test.ts holds these against the bank now.
+  jsonb_build_array('session_done', 'sleep_hours', 'energy', 'steps'),
   jsonb_build_object('days', jsonb_build_array(0, 1, 2, 3, 4, 5, 6),
                      'time', coalesce(c.communication_prefs ->> 'reminder_time', '20:00')),
   true
@@ -370,8 +375,8 @@ insert into public.checkin_forms (client_id, kind, questions, schedule, auto_sen
 select
   c.id,
   'weekly',
-  jsonb_build_array('weekly_weight', 'weekly_adherence', 'weekly_win',
-                    'weekly_struggle', 'weekly_one_thing'),
+  jsonb_build_array('fasted_weight', 'adherence', 'biggest_win',
+                    'biggest_struggle', 'the_one_thing'),
   jsonb_build_object('days', jsonb_build_array(0), 'time', '18:00'),
   false,
   null

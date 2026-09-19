@@ -171,3 +171,49 @@ top strip is facts already being read on other tabs, and the tab bar is a list
 of seven links.
 
 What it needs from Darren is only the decision to spend an item on it.
+
+---
+
+## 7. A reminder has no lateness cutoff
+
+**Item:** 25 found it; it belongs to 16
+**Status:** a product decision, not a blocker
+
+`planReminders` sends anything whose time has come round today and has not
+already gone out. There is no upper bound, so a dispatcher that was down all
+morning delivers "Here is today." at four in the afternoon, and one that was
+down all day delivers it at 23:50.
+
+Catching up is deliberate and stated in item 16: "a tick that has been down all
+morning catches up without five separate pings." What is not stated is how late
+is too late. The message dispatcher does have a cutoff and holds anything hours
+old rather than waking a client with yesterday's nudge; the reminder planner has
+nothing equivalent.
+
+**Not changed, because it changes when clients get messages,** which is Darren's
+call rather than mine. The fix is one filter in `planReminders` and a constant
+beside `DIGEST_WINDOW_MINUTES`.
+
+The question is just the number. Two hours would mean a 07:00 reminder is dead
+by 09:00; four would carry it to lunchtime.
+
+---
+
+## 8. `question_bank` is seeded and nothing reads it
+
+**Item:** 25
+**Status:** dead weight, safe to leave, worth a decision
+
+The seed fills a `question_bank` table with about twenty questions. Nothing in
+`src/` queries it. Every screen that renders a check-in reads
+`src/lib/checkin/bank.ts` instead, which holds the same questions under
+different keys.
+
+That divergence caused a real defect, now fixed: the seed wrote its own table's
+keys into `checkin_forms.questions`, so all eight synthetic clients had check-in
+forms whose questions resolved to nothing on every screen.
+`tests/unit/checkin-bank.test.ts` now holds the seed's keys against the module.
+
+The table is harmless where it is, but it is a second source of truth sitting
+next to the first. Either the Builder's question bank screen should read it, or
+it should go.

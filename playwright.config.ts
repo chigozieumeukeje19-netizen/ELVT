@@ -69,6 +69,11 @@ function installedChromium(): string | undefined {
 export default defineConfig({
   testDir: "./tests/e2e",
 
+  // Checked before a single test starts. A missing setup file used to throw
+  // ENOENT out of ten separate tests, eat the maxFailures budget and take 334
+  // unrelated tests down with it.
+  globalSetup: "./tests/e2e/global-setup.ts",
+
   // A local page render is fast or broken. These are sized so a hang costs
   // seconds: 27 screens at the old 60 second ceiling was 22 minutes of a suite
   // telling nobody anything.

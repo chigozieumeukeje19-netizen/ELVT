@@ -19,7 +19,7 @@ export type NightlyResult = {
 
 const WINDOW_DAYS = 14;
 
-async function buildInput(
+export async function buildTriggerInput(
   supabase: SupabaseClient,
   instant: Date,
   client: { id: string; slug: string; first_name: string; last_name: string | null; timezone: string },
@@ -133,7 +133,7 @@ export async function runNightly(
   const results: NightlyResult[] = [];
 
   for (const client of clients ?? []) {
-    const built = await buildInput(supabase, instant, client);
+    const built = await buildTriggerInput(supabase, instant, client);
 
     if (!built) {
       results.push({

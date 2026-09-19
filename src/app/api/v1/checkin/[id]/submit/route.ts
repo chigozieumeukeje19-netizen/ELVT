@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { apiError, handlerWithParams, jsonBody, notFound } from "@/lib/api/context";
 import { localDate } from "@/lib/engine/clock";
+import { resolveQuestions } from "@/lib/checkin/bank";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,9 @@ export const POST = handlerWithParams<{ id: string }>(async ({ clientId, db }, r
 
   // Metric answers become rows. The question declares which column it writes,
   // and only the columns on daily_logs are writable this way.
-  const questions = (form.questions ?? []) as { key: string; type?: string; metric?: string }[];
+  // Resolved against the bank, because the column holds keys as often as
+  // objects and a metric answer cannot be routed without the type.
+  const questions = resolveQuestions(form.questions);
   const METRICS = ["weight", "steps", "sleep_hours", "water", "energy", "mood"];
   const metricWrites: Record<string, number> = {};
 

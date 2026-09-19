@@ -7,14 +7,17 @@ import {
   type ProposedChange,
   type ReviewCard,
 } from "./review-card";
+import { resolveQuestions } from "@/lib/checkin/bank";
 import type { WeekAdherence } from "@/lib/engine/scoring";
 
 /**
  * Turns the queue's monday_review rows into cards.
  *
- * The week roll wrote the numbers into the row's detail when it froze the week,
- * so this reads them rather than recomputing. Recomputing here would mean the
- * card and the snapshot could disagree, and the snapshot is the record.
+ * The score, the focus and the weight line come out of the queue row's detail,
+ * which the week roll wrote when it froze the week. The adherence fractions
+ * come off program_weeks, because the card shows "3 of 7" and the detail only
+ * carries percentages. Neither is recomputed: the snapshot is the record, and
+ * a card that recomputed could disagree with it.
  *
  * The proposed changes are plan_changes rows in draft, which is where the
  * weekly review drafter puts them. A card with none is the normal case: nothing
@@ -77,7 +80,11 @@ export async function loadReviewCards(
       : submission?.checkin_forms;
 
     const spineVariable = (form?.spine_variable ?? null) as string | null;
-    const questions = ((form?.questions ?? []) as { key: string; text: string; produces?: string[] }[]);
+    // Either shape. The column holds keys from the seed and the week roll and
+    // whole objects from older rows written by the Check-ins screen, and this
+    // read assumed objects, so a client whose form came from either of the
+    // other two writers got a card with an empty check-in.
+    const questions = resolveQuestions(form?.questions);
     const answers = (submission?.answers ?? {}) as Record<string, unknown>;
 
     const checkin: CheckinAnswer[] = questions

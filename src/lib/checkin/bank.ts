@@ -478,3 +478,40 @@ export const ALL_QUESTIONS: BankQuestion[] = [
   ...FIT_SECTION,
   ...BANK,
 ];
+
+/**
+ * The questions a stored form actually asks.
+ *
+ * `checkin_forms.questions` holds two different shapes. The seed and the week
+ * roll write an array of keys; the coach's Check-ins screen wrote whole
+ * question objects. Three readers assumed objects, so a client whose form came
+ * from the seed or from the roll got a Monday card with an empty check-in and
+ * a submit route that could not route a metric answer. Nothing reported it.
+ *
+ * Keys are the shape that survives, because the bank is already the single
+ * source of a question's text and type, and a frozen copy of the wording drifts
+ * from the bank the first time a question is reworded. This accepts both so
+ * rows written before that decision still open, and resolves either to the
+ * bank.
+ *
+ * A key the bank does not know is dropped rather than rendered raw: an
+ * unrecognised key on a screen is a question nobody can answer.
+ */
+export function resolveQuestions(stored: unknown): BankQuestion[] {
+  if (!Array.isArray(stored)) return [];
+
+  const byKey = new Map(ALL_QUESTIONS.map((question) => [question.key, question]));
+
+  return stored
+    .map((entry) => {
+      if (typeof entry === "string") return byKey.get(entry) ?? null;
+      if (entry && typeof entry === "object" && "key" in entry) {
+        const key = String((entry as { key: unknown }).key);
+        // The bank's copy wins over the frozen one, so a reworded question
+        // reads the same everywhere.
+        return byKey.get(key) ?? (entry as BankQuestion);
+      }
+      return null;
+    })
+    .filter((question): question is BankQuestion => question !== null);
+}

@@ -11,7 +11,9 @@ import { expect, test, type Page } from "@playwright/test";
  * these went wrong in a v1 app at least once.
  *
  * The file under test is the real generator's output, built by
- * npm run export:fixture.
+ * npm run export:fixture, which test:e2e runs for you. tests/e2e/global-setup
+ * aborts the whole run when it is missing rather than letting this file throw
+ * ten ENOENTs and take the budget with it.
  */
 
 const FIXTURE = path.resolve(__dirname, "fixtures/client-app.html");
@@ -34,8 +36,20 @@ async function serveApp(page: Page, html: string) {
   await page.goto(FIXTURE_URL, { waitUntil: "domcontentloaded" });
 }
 
+function fixtureHtml(): string {
+  try {
+    return readFileSync(FIXTURE, "utf8");
+  } catch {
+    // The global setup should have caught this. If it somehow did not, say
+    // what to run rather than printing a path and an errno.
+    throw new Error(
+      `The client app fixture is missing. Generate it with: npm run export:fixture (${FIXTURE})`,
+    );
+  }
+}
+
 async function openApp(page: Page) {
-  await serveApp(page, readFileSync(FIXTURE, "utf8"));
+  await serveApp(page, fixtureHtml());
   await expect(page.locator('[data-card="goal"]')).toBeVisible();
 }
 
@@ -188,7 +202,7 @@ test.describe("the generated client app", () => {
   test("one broken card does not take the page with it", async ({ page }) => {
     await serveApp(
       page,
-      readFileSync(FIXTURE, "utf8").replace(
+      fixtureHtml().replace(
         "function cardNutrition() {",
         "function cardNutrition() { throw new Error('broken');",
       ),
