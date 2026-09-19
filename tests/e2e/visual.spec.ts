@@ -98,6 +98,8 @@ const SCREENS = [
   "race-week",
   "race-no-goal",
   "race-empty",
+  "client-overview",
+  "client-overview-new",
 ] as const;
 
 /**
@@ -1290,5 +1292,117 @@ test.describe("race mode on a phone", () => {
       const box = await line.boundingBox();
       expect(box!.width).toBeLessThanOrEqual(PHONE.width);
     }
+  });
+});
+
+/**
+ * The client detail Overview.
+ *
+ * The screen the roster has been linking to since the roster existed. What is
+ * worth asserting is the hierarchy: one number at hero size and nothing
+ * competing with it, the tabs actually going somewhere, and every empty state
+ * saying what will appear rather than showing a blank.
+ */
+test.describe("client overview", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("has exactly one number at hero size", async ({ page }) => {
+    // DESIGN.md Part 2: one number at 56px per screen. Six equal tiles across
+    // the top is hard fail 9, and these six are not equals anyway.
+    await openScreen(page, "client-overview");
+
+    const heroes = await page.locator("main *").evaluateAll((nodes) =>
+      nodes.filter((node) => Math.round(parseFloat(getComputedStyle(node).fontSize)) >= 48).length,
+    );
+    expect(heroes).toBe(1);
+    await expect(page.getByTestId("elvt-score")).toHaveText("78");
+  });
+
+  test("shows the six numbers the coach reads", async ({ page }) => {
+    await openScreen(page, "client-overview");
+    const keys = await page
+      .getByTestId("overview-tile")
+      .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-tile")));
+    expect(keys).toEqual(["weight", "training", "run", "calories", "steps", "recovery"]);
+  });
+
+  test("links every tab to a route that exists", async ({ page }) => {
+    await openScreen(page, "client-overview");
+    const tabs = page.getByTestId("client-tab");
+    expect(await tabs.count()).toBe(8);
+
+    for (const href of await tabs.evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("href")),
+    )) {
+      expect(href).toMatch(/^\/coach\/clients\/ekaterina(\/[a-z]+)?$/);
+    }
+    await expect(page.locator('[data-testid="client-tab"][data-active="true"]')).toHaveCount(1);
+  });
+
+  test("hides the race tab when there is no race", async ({ page }) => {
+    await openScreen(page, "client-overview-new");
+    await expect(page.getByTestId("client-tab")).toHaveCount(7);
+    expect(
+      await page.getByTestId("client-tab").evaluateAll((nodes) =>
+        nodes.map((node) => node.getAttribute("data-tab")),
+      ),
+    ).not.toContain("race");
+  });
+
+  test("colours nothing but the banded numbers", async ({ page }) => {
+    // The weight row is neutral on purpose: up is not good or bad without
+    // knowing the goal.
+    await openScreen(page, "client-overview");
+    const bands = await page
+      .getByTestId("overview-tile")
+      .evaluateAll((nodes) =>
+        nodes.map((node) => [node.getAttribute("data-tile"), node.getAttribute("data-band")]),
+      );
+    expect(bands.find(([key]) => key === "weight")![1]).toBe("none");
+    expect(bands.find(([key]) => key === "steps")![1]).toBe("flag");
+  });
+
+  test("says what will appear on a client with nothing yet", async ({ page }) => {
+    await openScreen(page, "client-overview-new");
+
+    await expect(page.getByTestId("elvt-score")).toHaveText("\u00B7");
+    await expect(page.getByTestId("one-thing")).toContainText("intake");
+    await expect(page.getByTestId("flags")).toContainText("None on file");
+    await expect(page.getByTestId("last-checkin")).toContainText("check-in day");
+    await expect(page.getByTestId("touchpoints")).toContainText("two a week");
+    await expect(page.getByTestId("upcoming")).toContainText("six weeks");
+  });
+
+  test("keeps the top strip readable with the longest real name", async ({ page }) => {
+    await openScreen(page, "client-overview");
+    await expect(page.getByTestId("client-name")).toContainText("Vasilyeva-Whitcombe");
+    await expect(page.getByTestId("client-facts")).toContainText("Day 32 of 84");
+    await expect(page.getByTestId("phase-chip")).toHaveText("Build");
+    await expect(page.getByTestId("race-line")).toContainText("Portland Half");
+  });
+
+  test("marks the coach notes private", async ({ page }) => {
+    await openScreen(page, "client-overview");
+    await expect(page.getByTestId("coach-notes")).toContainText("never sees");
+  });
+});
+
+test.describe("client overview on a phone", () => {
+  test.use({ viewport: PHONE });
+
+  test("keeps the tabs on screen at 390", async ({ page }) => {
+    await openScreen(page, "client-overview");
+    await expect(page.getByTestId("client-tabs")).toBeVisible();
+
+    for (const tab of await page.getByTestId("client-tab").all()) {
+      const box = await tab.boundingBox();
+      expect(box!.x + box!.width).toBeLessThanOrEqual(PHONE.width);
+    }
+  });
+
+  test("keeps the hero number and its label on one line at 390", async ({ page }) => {
+    await openScreen(page, "client-overview");
+    const score = await page.getByTestId("elvt-score").boundingBox();
+    expect(score!.x + score!.width).toBeLessThanOrEqual(PHONE.width);
   });
 });

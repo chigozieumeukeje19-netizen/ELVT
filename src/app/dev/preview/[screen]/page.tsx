@@ -56,6 +56,33 @@ import {
   PREVIEW_COMPOSER_VALUES,
   PREVIEW_THREADS,
 } from "@/lib/design/preview-messages";
+import { ClientTabs } from "@/components/client/ClientTabs";
+import { CoachNotesPreview } from "@/components/client/CoachNotesPreview";
+import {
+  Flags,
+  LastCheckin,
+  OneThing,
+  ScoreAndTiles,
+  TopStrip,
+  Touchpoints,
+  Upcoming,
+  tilesFrom,
+  weightTile,
+} from "@/components/client/Overview";
+import { tabsFor } from "@/lib/client/overview";
+import {
+  PREVIEW_AGE,
+  PREVIEW_CHECKIN,
+  PREVIEW_CLIENT,
+  PREVIEW_FLAGS,
+  PREVIEW_PHASE,
+  PREVIEW_POSITION,
+  PREVIEW_RACE_LINE,
+  PREVIEW_TILES_ADHERENCE,
+  PREVIEW_TILES_EMPTY,
+  PREVIEW_TOUCHPOINTS,
+  PREVIEW_UPCOMING,
+} from "@/lib/design/preview-client";
 import { RacePanel } from "@/components/race/RacePanel";
 import {
   PREVIEW_MILEAGE,
@@ -212,6 +239,8 @@ const SCREENS = [
   "race-week",
   "race-no-goal",
   "race-empty",
+  "client-overview",
+  "client-overview-new",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -801,6 +830,51 @@ function PhotoCompareScreen({ weeks }: { weeks: typeof PREVIEW_PHOTO_WEEKS }) {
 }
 
 /**
+ * The client detail Overview.
+ *
+ * Two screens: a client mid block with everything on file, and one on day one
+ * with nothing logged yet, which is where every empty state has to say what
+ * will appear and when.
+ */
+function ClientOverviewScreen({ empty }: { empty?: boolean }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <TopStrip
+          name={PREVIEW_CLIENT.name}
+          age={empty ? null : PREVIEW_AGE}
+          sex={PREVIEW_CLIENT.sex}
+          goalStatement={PREVIEW_CLIENT.goalStatement}
+          programName={empty ? null : PREVIEW_CLIENT.programName}
+          position={empty ? null : PREVIEW_POSITION}
+          phase={empty ? null : PREVIEW_PHASE}
+          raceLine={empty ? null : PREVIEW_RACE_LINE}
+          startDate={PREVIEW_CLIENT.startDate}
+        />
+
+        <ClientTabs slug="ekaterina" tabs={tabsFor(!empty)} current="overview" />
+
+        <ScoreAndTiles
+          score={empty ? null : PREVIEW_CLIENT.score}
+          focus={empty ? null : "steps"}
+          tiles={tilesFrom(
+            empty ? PREVIEW_TILES_EMPTY : PREVIEW_TILES_ADHERENCE,
+            weightTile(empty ? null : 174.6, empty ? null : -0.8, PREVIEW_CLIENT.units),
+          )}
+        />
+
+        <OneThing text={empty ? null : PREVIEW_CLIENT.oneThing} />
+        <Flags flags={empty ? [] : PREVIEW_FLAGS} />
+        <LastCheckin summary={empty ? null : PREVIEW_CHECKIN} slug="ekaterina" />
+        <Touchpoints lines={empty ? [] : PREVIEW_TOUCHPOINTS} />
+        <Upcoming events={empty ? [] : PREVIEW_UPCOMING} />
+        <CoachNotesPreview notes={empty ? null : PREVIEW_CLIENT.coachNotes} />
+      </main>
+    </Shell>
+  );
+}
+
+/**
  * Race mode at a fixed date, so the countdown is the same number every run.
  * The date is what moves between these screens; nothing else does.
  */
@@ -1066,5 +1140,9 @@ export default async function PreviewPage({
       return <RaceScreen viewedDate={PREVIEW_VIEWED_TAPER} race={PREVIEW_RACE_NO_GOAL} noPace />;
     case "race-empty":
       return <RaceEmptyScreen />;
+    case "client-overview":
+      return <ClientOverviewScreen />;
+    case "client-overview-new":
+      return <ClientOverviewScreen empty />;
   }
 }
