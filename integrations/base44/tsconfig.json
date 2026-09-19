@@ -1,0 +1,9 @@
+{
+  "//": "These are Deno functions to paste into Base44, not portal code. The portal's tsconfig excludes this directory: each file is a standalone script with no imports, so to one compiler they redeclare each other, and Deno's globals are not in the portal's lib. What matters about them is checked by tests/unit/base44.test.ts.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["esnext", "dom"],
+    "strict": true,
+    "noEmit": true
+  }
+}
