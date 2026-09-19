@@ -18,6 +18,11 @@ import {
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
 import { ComposerPreview } from "@/components/messages/ComposerPreview";
+import { ReminderSettings } from "@/components/reminders/ReminderSettings";
+import {
+  PREVIEW_REMINDERS,
+  PREVIEW_REMINDERS_SPARSE,
+} from "@/lib/design/preview-reminders";
 import { ThreadList } from "@/components/messages/ThreadView";
 import {
   PREVIEW_COMPOSER_THIN,
@@ -149,6 +154,8 @@ const SCREENS = [
   "messages-empty",
   "composer",
   "composer-thin",
+  "reminders",
+  "reminders-sparse",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -651,6 +658,21 @@ function ComposerScreen({ values }: { values: Record<string, string | number> })
   );
 }
 
+function RemindersScreen({ settings }: { settings: typeof PREVIEW_REMINDERS }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <ScreenHeader
+          label="Settings"
+          title="Reminders"
+          note="Ekaterina Vasilyeva-Whitcombe, their time"
+        />
+        <ReminderSettings settings={settings} readOnly />
+      </main>
+    </Shell>
+  );
+}
+
 export default async function PreviewPage({
   params,
 }: {
@@ -772,5 +794,9 @@ export default async function PreviewPage({
       return <ComposerScreen values={PREVIEW_COMPOSER_VALUES} />;
     case "composer-thin":
       return <ComposerScreen values={PREVIEW_COMPOSER_THIN} />;
+    case "reminders":
+      return <RemindersScreen settings={PREVIEW_REMINDERS} />;
+    case "reminders-sparse":
+      return <RemindersScreen settings={PREVIEW_REMINDERS_SPARSE} />;
   }
 }

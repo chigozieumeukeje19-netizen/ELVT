@@ -108,6 +108,9 @@ const NAMED: Record<string, string> = {
   star_rating: "Star rating",
   multiple_choice: "Multiple choice",
   yes_no: "Yes or no",
+  morning_plan: "Morning plan",
+  evening_reflection: "Evening reflection",
+  weigh_in: "Weigh in",
 };
 
 export function humanize(value: string): string {

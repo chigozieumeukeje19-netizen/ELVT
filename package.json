@@ -26,7 +26,8 @@
     "auth:diagnose": "bash scripts/auth-diagnose.sh",
     "week:roll": "tsx scripts/week-roll.ts",
     "nightly": "tsx scripts/nightly.ts",
-    "messages:dispatch": "tsx scripts/dispatch-messages.ts"
+    "messages:dispatch": "tsx scripts/dispatch-messages.ts",
+    "reminders:dispatch": "tsx scripts/dispatch-reminders.ts"
   },
   "repository": {
     "type": "git",

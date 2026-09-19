@@ -79,6 +79,8 @@ const SCREENS = [
   "messages-empty",
   "composer",
   "composer-thin",
+  "reminders",
+  "reminders-sparse",
 ] as const;
 
 /**
@@ -888,5 +890,46 @@ test.describe("messages", () => {
   test("the empty inbox says what starts a thread", async ({ page }) => {
     await openScreen(page, "messages-empty");
     await expect(page.getByTestId("threads-empty")).toContainText("answer in it");
+  });
+});
+
+/**
+ * Reminder settings.
+ *
+ * The rule the screen exists to make visible is the digest one. A coach who
+ * sets four things for 07:00 should see that they will arrive as one message
+ * while they are setting it up, not discover it from what the client receives.
+ */
+test.describe("reminders", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("marks the reminders that will go out together", async ({ page }) => {
+    await openScreen(page, "reminders");
+    expect(await page.getByTestId("grouped").count()).toBeGreaterThan(1);
+  });
+
+  test("states the digest rule on the screen", async ({ page }) => {
+    await openScreen(page, "reminders");
+    await expect(page.locator("text=one message")).toBeVisible();
+  });
+
+  test("says what each reminder actually says to the client", async ({ page }) => {
+    await openScreen(page, "reminders");
+    for (const text of await page
+      .getByTestId("reminder-row")
+      .locator("td")
+      .first()
+      .allInnerTexts()) {
+      expect(text.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  test("shows the ones that are off rather than hiding them", async ({ page }) => {
+    // A coach looking for a run reminder that is not arriving needs to see the
+    // row saying it is off, not an absence.
+    await openScreen(page, "reminders-sparse");
+    const rows = page.getByTestId("reminder-row");
+    await expect(rows).toHaveCount(10);
+    await expect(rows.filter({ hasText: "Run" }).first()).toContainText("No");
   });
 });
