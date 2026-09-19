@@ -44,6 +44,10 @@ export const SKIPPED_PATHS = [
   "scripts/design-audit.ts",
   "tests/unit/design-audit.test.ts",
   "tests/fixtures/",
+  // A generated client app, not portal source. It is deliberately the cream
+  // client theme, it is gitignored, and it is rebuilt by
+  // npm run export:fixture. The generator that produces it is still scanned.
+  "tests/e2e/fixtures/",
 ];
 
 export const RULES: Rule[] = [
@@ -358,9 +362,16 @@ export const RULES: Rule[] = [
     tell: 0,
     title: "The client app cream theme imported into the portal",
     severity: "high",
-    pattern: /client-export-theme/,
+    // The exporter's own theme module counts as a leak too, since the whole
+    // point is that neither reaches a portal screen.
+    pattern: /client-export-theme|@\/lib\/export\/theme/,
     extensions: [".ts", ".tsx", ".css"],
-    exempt: ["src/styles/client-export-theme.css"],
+    exempt: [
+      "src/styles/client-export-theme.css",
+      "src/lib/export/",
+      // The test that enforces this rule has to name the thing it enforces.
+      "tests/",
+    ],
     fix: "The cream theme is exempt for the client apps only. No portal screen may import it. The PWA exporter inlines it into its own document.",
   },
   {

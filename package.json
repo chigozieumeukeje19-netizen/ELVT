@@ -28,7 +28,8 @@
     "nightly": "tsx scripts/nightly.ts",
     "messages:dispatch": "tsx scripts/dispatch-messages.ts",
     "reminders:dispatch": "tsx scripts/dispatch-reminders.ts",
-    "db:api-rls": "bash scripts/api-rls-check.sh"
+    "db:api-rls": "bash scripts/api-rls-check.sh",
+    "export:fixture": "tsx scripts/build-export-fixture.ts"
   },
   "repository": {
     "type": "git",
