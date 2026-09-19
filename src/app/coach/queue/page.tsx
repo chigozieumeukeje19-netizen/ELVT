@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
+import { MondayCard } from "@/components/queue/MondayCard";
 import { QueueLanes, laneFor, type QueueRow } from "@/components/queue/QueueLanes";
+import { loadReviewCards } from "@/lib/queue/load-cards";
 import { currentProfile, isStaff } from "@/lib/auth";
 import { supabaseServer } from "@/lib/supabase/server";
+import { acceptAllAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +45,11 @@ export default async function QueuePage() {
 
   const items = (data ?? []) as unknown as QueueItem[];
 
+  // The Monday cards come out of the queue rows the week roll wrote, assembled
+  // into the shape the card reads. They are shown above the lanes rather than
+  // inside one: a review is not a decision about today, it is the whole week.
+  const cards = await loadReviewCards(supabase, items.map((item) => item.id));
+
   const rows: QueueRow[] = items.map((item) => ({
     id: item.id,
     lane: laneFor(item.kind, item.severity),
@@ -59,14 +67,34 @@ export default async function QueuePage() {
 
   return (
     <main className="px-5 py-4">
-      <p className="elvt-label">Queue</p>
+      {/*
+        The count is still the first thing the eye hits, per DESIGN.md, but it
+        sits beside its label rather than above it. Stacked, this header cost
+        135px before the first review card started, which pushed the card past
+        the fold and broke the rule about seeing the top edge of the next one.
+      */}
+      <div className="flex items-baseline gap-3">
+        <h1 className="elvt-num text-hero" data-testid="queue-count">
+          {items.length}
+        </h1>
+        <div>
+          <p className="elvt-label">Queue</p>
+          <p className="text-txt-mute">
+            {items.length === 1 ? "item open" : "items open"}
+          </p>
+        </div>
+      </div>
 
-      <h1 className="elvt-num mt-1 text-hero" data-testid="queue-count">
-        {items.length}
-      </h1>
-      <p className="text-txt-mute">
-        {items.length === 1 ? "item open" : "items open"}
-      </p>
+      {cards.length > 0 ? (
+        <section className="mt-5">
+          <h2 className="elvt-label">Monday reviews</h2>
+          <div className="mt-2 flex flex-col gap-4">
+            {cards.map((card) => (
+              <MondayCard key={card.clientId} card={card} action={acceptAllAction} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {items.length === 0 ? (
         <p className="mt-5 max-w-[60ch] text-txt-mute" data-testid="queue-empty">
@@ -75,7 +103,7 @@ export default async function QueuePage() {
           Monday morning.
         </p>
       ) : (
-        <QueueLanes rows={rows} />
+        <QueueLanes rows={rows.filter((row) => row.kind !== "monday_review")} />
       )}
     </main>
   );

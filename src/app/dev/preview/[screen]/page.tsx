@@ -17,6 +17,8 @@ import {
   STRESS_EXERCISES,
   STRESS_ROSTER,
 } from "@/lib/design/preview-fixtures";
+import { MondayCard } from "@/components/queue/MondayCard";
+import { PREVIEW_CARD, PREVIEW_CARDS, PREVIEW_CARD_QUIET } from "@/lib/design/preview-monday";
 import { QueueLanes } from "@/components/queue/QueueLanes";
 import { PREVIEW_QUEUE_ONE_LANE, PREVIEW_QUEUE_ROWS } from "@/lib/design/preview-queue";
 import { CompareView } from "@/components/checkin/CompareView";
@@ -132,6 +134,9 @@ const SCREENS = [
   "queue-lanes",
   "queue-lanes-one",
   "queue-lanes-empty",
+  "monday-card",
+  "monday-card-quiet",
+  "monday-cards",
 ] as const;
 
 type Screen = (typeof SCREENS)[number];
@@ -565,12 +570,42 @@ function QueueLaneScreen({ rows }: { rows: typeof PREVIEW_QUEUE_ROWS }) {
   return (
     <Shell>
       <main className="px-5 py-4">
-        <p className="elvt-label">Queue</p>
-        <h1 className="elvt-num mt-1 text-hero" data-testid="queue-count">
-          {rows.length}
-        </h1>
-        <p className="text-txt-mute">{rows.length === 1 ? "item open" : "items open"}</p>
+        <div className="flex items-baseline gap-3">
+          <h1 className="elvt-num text-hero" data-testid="queue-count">
+            {rows.length}
+          </h1>
+          <div>
+            <p className="elvt-label">Queue</p>
+            <p className="text-txt-mute">{rows.length === 1 ? "item open" : "items open"}</p>
+          </div>
+        </div>
         <QueueLanes rows={rows} />
+      </main>
+    </Shell>
+  );
+}
+
+function MondayScreen({ cards }: { cards: typeof PREVIEW_CARDS }) {
+  return (
+    <Shell>
+      <main className="px-5 py-4">
+        <div className="flex items-baseline gap-3">
+          <h1 className="elvt-num text-hero" data-testid="queue-count">
+            {cards.length}
+          </h1>
+          <div>
+            <p className="elvt-label">Queue</p>
+            <p className="text-txt-mute">
+              {cards.length === 1 ? "review waiting" : "reviews waiting"}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-col gap-4">
+          {cards.map((card) => (
+            <MondayCard key={card.clientId} card={card} readOnly />
+          ))}
+        </div>
       </main>
     </Shell>
   );
@@ -683,5 +718,11 @@ export default async function PreviewPage({
       return <QueueLaneScreen rows={PREVIEW_QUEUE_ONE_LANE} />;
     case "queue-lanes-empty":
       return <QueueLaneScreen rows={[]} />;
+    case "monday-card":
+      return <MondayScreen cards={[PREVIEW_CARD]} />;
+    case "monday-card-quiet":
+      return <MondayScreen cards={[PREVIEW_CARD_QUIET]} />;
+    case "monday-cards":
+      return <MondayScreen cards={PREVIEW_CARDS} />;
   }
 }

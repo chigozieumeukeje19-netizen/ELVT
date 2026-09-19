@@ -72,6 +72,9 @@ const SCREENS = [
   "queue-lanes",
   "queue-lanes-one",
   "queue-lanes-empty",
+  "monday-card",
+  "monday-card-quiet",
+  "monday-cards",
 ] as const;
 
 /**
@@ -715,5 +718,103 @@ test.describe("queue lanes", () => {
       .locator('[data-lane="same_day"] [data-testid="lane-item"]')
       .first();
     await expect(first).toContainText("Back discomfort");
+  });
+});
+
+/**
+ * The Monday card, which is the screen the whole product is for.
+ *
+ * The target is two minutes a client and fifteen for eight of them, and these
+ * check the layout decisions that target rests on: everything needed is on one
+ * card, the spine question is at the top of the check-in, each change is its
+ * own decision, and DESIGN.md's rule that one card plus the top edge of the
+ * next is visible so it is obvious the list continues.
+ */
+test.describe("the Monday card", () => {
+  test.use({ viewport: DESKTOP });
+
+  test("shows one card and the top edge of the next", async ({ page }) => {
+    await openScreen(page, "monday-cards");
+    const cards = page.getByTestId("monday-card");
+    expect(await cards.count()).toBe(3);
+
+    const first = await cards.nth(0).boundingBox();
+    const second = await cards.nth(1).boundingBox();
+    expect(first).not.toBeNull();
+    expect(second).not.toBeNull();
+
+    // The first card fits, and the second starts before the fold.
+    expect(first!.y + first!.height).toBeLessThanOrEqual(900);
+    expect(second!.y).toBeLessThan(900);
+  });
+
+  test("pins the spine question to the top of what they said", async ({ page }) => {
+    await openScreen(page, "monday-card");
+    const answers = page.getByTestId("checkin-answer");
+    const spine = await answers.evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("data-spine") === "true"),
+    );
+    expect(spine.indexOf(true)).toBe(0);
+  });
+
+  test("gives every proposed change its own accept, edit and reject", async ({ page }) => {
+    await openScreen(page, "monday-cards");
+    // Read only in the preview, so the decision is shown as a word. What
+    // matters is that a decision belongs to a line rather than to the card: a
+    // coach who has to take all three or none will take all three.
+    const lines = page.getByTestId("change-line");
+    expect(await lines.count()).toBeGreaterThan(3);
+    for (const decision of await lines.evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("data-decision")),
+    )) {
+      expect(["pending", "accept", "edit", "reject"]).toContain(decision);
+    }
+  });
+
+  test("carries the whole decision on the card, with nothing to open", async ({ page }) => {
+    await openScreen(page, "monday-card");
+    const card = page.getByTestId("monday-card").first();
+    for (const part of ["card-score", "card-weight", "card-adherence", "card-checkin", "card-changes", "card-message"]) {
+      await expect(card.getByTestId(part), part).toBeVisible();
+    }
+  });
+
+  test("says nothing changes rather than showing an empty diff", async ({ page }) => {
+    await openScreen(page, "monday-card-quiet");
+    await expect(page.getByTestId("no-changes")).toContainText("two weeks running");
+    // A quiet week still gets a message, because silence is not a review.
+    await expect(page.getByTestId("card-message")).toBeVisible();
+  });
+
+  test("colors a category with nothing planned as nothing, not as a failure", async ({ page }) => {
+    await openScreen(page, "monday-card-quiet");
+    const recovery = page.getByTestId("adherence-line").filter({ hasText: "Recovery" });
+    await expect(recovery).toContainText("none planned");
+    // No percentage and no color where nothing was asked of them.
+    await expect(recovery.locator(".text-flag")).toHaveCount(0);
+  });
+
+  test("puts the flagged card above the quiet one", async ({ page }) => {
+    await openScreen(page, "monday-cards");
+    const severities = await page
+      .getByTestId("monday-card")
+      .evaluateAll((nodes) => nodes.map((node) => Number(node.getAttribute("data-severity"))));
+    for (let i = 1; i < severities.length; i += 1) {
+      expect(severities[i]).toBeLessThanOrEqual(severities[i - 1]);
+    }
+  });
+
+  test("the drafted message follows the voice rules", async ({ page }) => {
+    for (const screen of ["monday-card", "monday-card-quiet"]) {
+      await openScreen(page, screen);
+      const text = await page.getByTestId("card-message").innerText();
+      const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+
+      expect(lines.length, screen).toBeGreaterThanOrEqual(2);
+      expect(lines.length, screen).toBeLessThanOrEqual(5);
+      expect(text, screen).toContain("?");
+      expect(text, screen).toMatch(/\d/);
+      expect(text, screen).not.toMatch(/\s[-–—]\s/);
+    }
   });
 });
