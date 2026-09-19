@@ -13,7 +13,7 @@ import type {
  * pass. A number at the end of the run makes that impossible to miss.
  */
 
-const AUTH_FILES = ["auth.spec.ts", "exchange.spec.ts"];
+const AUTH_FILES = ["auth.spec.ts", "auth-grant.spec.ts", "exchange.spec.ts"];
 
 export default class AuthCoverageReporter implements Reporter {
   private ran = 0;

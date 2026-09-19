@@ -65,9 +65,47 @@ const PEOPLE: Person[] = [
   })),
 ];
 
-function bail(message: string): never {
-  console.error(`\n${message}\n`);
+/**
+ * Stops the run and says so unmistakably.
+ *
+ * A seed that did not seed has to be an error. This printed a single line once
+ * and the reset around it still read like it had worked, which meant nine
+ * accounts with no password looked like a successful setup.
+ */
+function bail(message: string, hint?: string): never {
+  const rule = "=".repeat(70);
+  console.error("");
+  console.error(rule);
+  console.error("SEED FAILED. No accounts were created.");
+  console.error(rule);
+  console.error("");
+  console.error(message);
+  if (hint) {
+    console.error("");
+    console.error(hint);
+  }
+  console.error("");
+  console.error(rule);
+  console.error("");
   process.exit(1);
+}
+
+/**
+ * GoTrue reporting a database error means it cannot read its own schema, which
+ * is a different problem from anything about these accounts and needs saying
+ * plainly rather than being reported as a seed failure.
+ */
+function schemaHint(message: string): string | undefined {
+  if (!/database error/i.test(message)) return undefined;
+  return [
+    "GoTrue could not read its own schema. This is not an account problem.",
+    "Something has taken away the access its database role needs.",
+    "",
+    "  npm run auth:diagnose",
+    "",
+    "Section 3 of that output names the auth table its role can no longer",
+    "read. Until that is fixed, no account can be created or signed in.",
+  ].join("\n");
 }
 
 async function main() {
@@ -92,7 +130,9 @@ async function main() {
     page: 1,
     perPage: 200,
   });
-  if (listError) bail(`Could not list users: ${listError.message}`);
+  if (listError) {
+    bail(`Could not list users: ${listError.message}`, schemaHint(listError.message));
+  }
 
   const byEmail = new Map(
     existing.users.map((user) => [user.email?.toLowerCase(), user.id]),
@@ -105,7 +145,9 @@ async function main() {
     // on delete, so the client rows survive this and get relinked below.
     if (previous) {
       const { error } = await admin.auth.admin.deleteUser(previous);
-      if (error) bail(`Could not remove ${person.email}: ${error.message}`);
+      if (error) {
+        bail(`Could not remove ${person.email}: ${error.message}`, schemaHint(error.message));
+      }
     }
 
     const { data: created, error } = await admin.auth.admin.createUser({
@@ -116,7 +158,8 @@ async function main() {
     });
 
     if (error || !created.user) {
-      bail(`Could not create ${person.email}: ${error?.message ?? "no user returned"}`);
+      const message = error?.message ?? "no user returned";
+      bail(`Could not create ${person.email}: ${message}`, schemaHint(message));
     }
 
     const { error: profileError } = await admin.from("profiles").upsert(

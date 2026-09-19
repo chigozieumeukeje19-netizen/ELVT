@@ -22,7 +22,8 @@
     "test:e2e:only": "playwright test",
     "e2e:preflight": "bash scripts/e2e-preflight.sh",
     "db:seed:auth": "tsx scripts/seed-auth.ts",
-    "auth:smoke": "bash scripts/auth-smoke.sh"
+    "auth:smoke": "bash scripts/auth-smoke.sh",
+    "auth:diagnose": "bash scripts/auth-diagnose.sh"
   },
   "repository": {
     "type": "git",

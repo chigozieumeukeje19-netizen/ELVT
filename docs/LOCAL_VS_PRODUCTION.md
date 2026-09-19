@@ -45,6 +45,41 @@ is the only way to get rows GoTrue is guaranteed to accept. The password comes
 from the environment in that script, so SEED_COACH_PASSWORD is the one source
 of truth; the SQL used to carry its own copy that could drift.
 
+## The privilege risk, which is a production risk
+
+Local and the plain Postgres verifier both run migrations as `postgres`, a
+superuser. ELVT OS PROD does not, and there is no `db reset` there.
+
+The migrations contain exactly one privilege statement, in
+`20260917090700_rls.sql`:
+
+```sql
+revoke all on public.<table> from anon
+```
+
+It is scoped to tables in `public` and to the `anon` role. Nothing in any of
+the eight migrations touches the `auth` schema, and there is no
+`ALTER DEFAULT PRIVILEGES` or role change anywhere in them. Applying all eight
+over a stand-in auth schema leaves its grants byte identical and
+`supabase_auth_admin` still able to read `auth.users`.
+
+That narrows the risk without removing it. The stand-in models two auth tables;
+the real schema has roughly fifteen, and a broader `REVOKE` than intended would
+show up on one of the others first.
+
+Two things follow:
+
+- `npm run auth:diagnose` walks every auth table as `supabase_auth_admin` and
+  names any it cannot read. Run it before and after applying migrations to a
+  cloud project.
+- `tests/e2e/auth-grant.spec.ts` asserts a real password grant succeeds, and
+  distinguishes a 500 (schema or grants broken) from a 400 (account wrong). A
+  migration that breaks login fails the run rather than surfacing days later.
+
+On production, run the diagnose script against a staging copy before
+`supabase db push`. A revoke that breaks GoTrue locally breaks it there too,
+and there the recovery is not a reset.
+
 ## Known, not fixed
 
 Nothing in the codebase depends on these yet. Each one would pass locally and

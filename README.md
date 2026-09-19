@@ -58,6 +58,11 @@ written auth.users row can be refused at sign in with no way to tell which
 field was wrong. That is exactly what happened once: the seeded coach could
 not sign in and the page could only say the credentials did not match.
 
+If sign in fails with a database error rather than a credentials error,
+GoTrue cannot read its own schema. Run `npm run auth:diagnose`: it walks every
+table in the auth schema as GoTrue's own database role and names any it cannot
+read.
+
 `npm run auth:smoke` calls GoTrue's token endpoint directly and prints what is
 in auth.users, the identities, the client links and the answer. Run it before
 blaming the app: if it passes and the browser still fails, the problem is the
