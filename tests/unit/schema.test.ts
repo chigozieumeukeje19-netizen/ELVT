@@ -1,7 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { requireDatabase } from "../helpers/db";
 
 const root = path.resolve(__dirname, "../..");
 
@@ -18,16 +19,13 @@ function run(script: string): string {
   });
 }
 
-const hasPsql = (() => {
-  try {
-    execFileSync("psql", ["--version"], { stdio: "ignore" });
-    return true;
-  } catch {
-    return false;
-  }
-})();
 
-describe.skipIf(!hasPsql)("schema", () => {
+
+describe("schema", () => {
+  // Fails loudly rather than skipping. These are the tests that would have
+  // caught the generated column, so a quiet skip is the worst outcome.
+  beforeAll(() => requireDatabase());
+
   it("applies every migration and the seed cleanly", () => {
     const out = run("verify-migrations.sh");
     expect(out).toContain("Migrations applied cleanly.");

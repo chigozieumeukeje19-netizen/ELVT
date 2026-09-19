@@ -1,18 +1,12 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { query, requireDatabase } from "../helpers/db";
 
 const ROOT = path.resolve(__dirname, "../..");
 
-const hasPsql = (() => {
-  try {
-    execFileSync("psql", ["--version"], { stdio: "ignore" });
-    return true;
-  } catch {
-    return false;
-  }
-})();
+
 
 /**
  * Its own database. The schema suite drops and recreates elvt_verify, and
@@ -32,6 +26,18 @@ function run(script: string): string {
 /** Builds the database this file reads: shim, migrations, seed. */
 function build(): string {
   return run("verify-migrations.sh");
+}
+
+/**
+ * Which schema the conformance script graded. On a machine with the real
+ * Supabase stack this is the real auth schema, which is the whole point: the
+ * shim's claims get checked against production rather than against a copy of
+ * themselves.
+ */
+function conformanceTarget(output: string): string {
+  const match = output.match(/^TARGET_DB:\s*(\S+)$/m);
+  if (!match) throw new Error("db-conformance.sh did not name its target database");
+  return match[1];
 }
 
 /**
@@ -57,6 +63,8 @@ function insertTargets(sql: string): Map<string, string[]> {
 }
 
 describe("the seed never writes a generated column", () => {
+  beforeAll(() => requireDatabase());
+
   /**
    * This is the guard for the bug that got through: auth.identities.email is
    * GENERATED ALWAYS, the shim carried it as a plain column, the seed wrote to
@@ -67,12 +75,12 @@ describe("the seed never writes a generated column", () => {
    * columns are generated and checks the seed against the answer, so the next
    * one cannot repeat the trick.
    */
-  it.skipIf(!hasPsql)("for any generated column in auth or public", () => {
+  it("for any generated column in auth or public", () => {
     // The seed has to have actually run, or a passing check would only mean
     // the insert was never attempted.
     expect(build()).toContain("Migrations applied cleanly.");
 
-    const output = run("shim-conformance.sh");
+    const output = run("db-conformance.sh");
 
     const generated = output
       .split("\n")
@@ -107,8 +115,8 @@ describe("the seed never writes a generated column", () => {
     expect(offenders).toEqual([]);
   }, 120_000);
 
-  it.skipIf(!hasPsql)("and the shim declares them generated", () => {
-    const output = run("shim-conformance.sh");
+  it("and the shim declares them generated", () => {
+    const output = run("db-conformance.sh");
     expect(output).toContain("ok: auth.identities.email is a generated column");
     expect(output).toContain("ok: auth.users.confirmed_at is a generated column");
     expect(output).not.toContain("SHIM DIVERGENCE");
@@ -116,12 +124,17 @@ describe("the seed never writes a generated column", () => {
 });
 
 describe("every auth helper the migrations call exists in the shim", () => {
+  beforeAll(() => requireDatabase());
+
   /**
    * The migrations call into the auth schema. If the shim is missing one of
    * those functions, or has it under a different signature, the policies pass
    * here and fail on the real stack. Same class as the generated column.
    */
-  it.skipIf(!hasPsql)("with no missing function", () => {
+  it("with no missing function", () => {
+    build();
+    const target = conformanceTarget(run("db-conformance.sh"));
+
     const migrations = execFileSync(
       "bash",
       ["-lc", `cat ${path.join(ROOT, "supabase/migrations")}/*.sql`],
@@ -138,29 +151,15 @@ describe("every auth helper the migrations call exists in the shim", () => {
       .toBeGreaterThan(0);
     expect(called).toContain("uid");
 
-    const query = (sql: string) =>
-      execFileSync(
-        "psql",
-        [
-          "-h", process.env.PGHOST ?? "127.0.0.1",
-          "-p", process.env.PGPORT ?? "5433",
-          "-U", process.env.PGUSER ?? "postgres",
-          "-d", DB,
-          "-t", "-A", "-c", sql,
-        ],
-        { encoding: "utf8" },
-      )
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean);
-
     const functions = query(
+      target,
       "select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'auth'",
     );
 
     // `references auth.users (id)` looks like a call to the pattern above but
     // is a table, so anything that is a real table is not a missing function.
     const tables = query(
+      target,
       "select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'auth'",
     );
 

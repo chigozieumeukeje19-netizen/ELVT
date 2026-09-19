@@ -28,6 +28,40 @@ export async function supabaseIsUp(): Promise<boolean> {
   }
 }
 
+/**
+ * Supabase running but the keys not filled in is its own failure, and it looks
+ * nothing like the cause. Without this the suite reports "Invalid API key" or
+ * an unexplained redirect, and the real answer is a blank line in .env.local.
+ *
+ * Returns the missing variable names, empty when everything is present.
+ */
+export function missingAuthEnv(): string[] {
+  return [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_JWT_SECRET",
+    "PORTAL_API_KEY",
+  ].filter((name) => !process.env[name]?.trim());
+}
+
+export const ENV_HELP = (missing: string[]) =>
+  [
+    "",
+    "Supabase is running, but these are not set:",
+    "",
+    ...missing.map((name) => `  ${name}`),
+    "",
+    "The auth tests sign in for real, so they need the project keys. Print",
+    "them with:",
+    "",
+    "  supabase status",
+    "",
+    "and put them in .env.local. Start from .env.example, which lists every",
+    "one and says how to generate the two secrets of your own.",
+    "",
+  ].join("\n");
+
 export function adminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;

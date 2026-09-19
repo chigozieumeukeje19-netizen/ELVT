@@ -16,6 +16,18 @@ asserts the ones that are fixed, and `tests/unit/shim-conformance.test.ts`
 cross checks the seed against the database's own list of generated columns, so
 the next one cannot repeat the trick.
 
+## How the check runs
+
+`scripts/db-conformance.sh` grades the assumptions in this file. When a real
+Supabase auth schema is reachable it runs against **that**, not against the
+shim, and prints `SOURCE: real auth schema`. On a machine with no Supabase it
+falls back to the shim and says so.
+
+That choice is the whole point. A shim graded against its own copy of the
+answer is what let `auth.identities.email` through. Graded against production,
+the same assertions become a statement about the real schema that fails the
+moment it stops being true.
+
 ## Fixed
 
 | Divergence | Was | Now |

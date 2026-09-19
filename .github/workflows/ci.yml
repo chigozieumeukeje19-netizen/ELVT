@@ -54,9 +54,9 @@ jobs:
       - name: Unit tests, schema and RLS
         run: npm test
         env:
-          PGHOST: 127.0.0.1
-          PGPORT: 5433
-          PGUSER: postgres
+          # CI has a plain Postgres service, not a Supabase stack, so it sets
+          # the one connection override. Everywhere else the default is right.
+          ELVT_DB_URL: postgresql://postgres@127.0.0.1:5433/postgres
 
       - name: Build
         run: npm run build

@@ -9,16 +9,17 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run design:audit && vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run build && playwright test",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
-    "db:seed": "tsx scripts/seed.ts",
-    "db:setup": "npm run db:reset && npm run db:seed",
+    "db:seed": "bash scripts/seed.sh",
     "exercises:import": "tsx scripts/import-exercises.ts",
     "design:audit": "tsx scripts/design-audit.ts",
     "test:unit": "vitest run",
-    "db:conformance": "bash scripts/shim-conformance.sh"
+    "db:conformance": "bash scripts/db-conformance.sh",
+    "db:verify": "bash scripts/verify-migrations.sh",
+    "test:e2e:only": "playwright test"
   },
   "repository": {
     "type": "git",

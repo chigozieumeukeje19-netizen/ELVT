@@ -32,7 +32,9 @@ export default defineConfig({
     ? undefined
     : [
         {
-          command: "npm run start",
+          // Guarded so a missing build says what to do instead of failing as a
+          // raw Next error inside a webServer timeout.
+          command: `bash scripts/e2e-server.sh ${PORT}`,
           url: baseURL,
           reuseExistingServer: true,
           timeout: 120_000,
@@ -46,7 +48,7 @@ export default defineConfig({
         {
           // Same production build, no flag. Stands in for a deployed
           // environment so the gate is tested, not trusted.
-          command: `npx next start -p ${UNFLAGGED_PORT}`,
+          command: `bash scripts/e2e-server.sh ${UNFLAGGED_PORT}`,
           url: `${UNFLAGGED_URL}/login`,
           reuseExistingServer: true,
           timeout: 120_000,

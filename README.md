@@ -32,23 +32,45 @@ Magic links sent locally do not leave the machine; read them in Inbucket at
 
 ```bash
 npm run typecheck
-npm test              # unit, plus schema and RLS against Postgres
-npm run test:e2e      # Playwright
+npm test              # design audit, unit, schema and RLS
+npm run test:e2e      # builds, then Playwright
 ```
 
-`scripts/shim-conformance.sh` asserts the local stand-in matches the real
-Supabase schema where it matters. Read `docs/LOCAL_VS_PRODUCTION.md` before
-trusting a local pass: it lists every known place the stand-in is looser than
-production, including the ones not yet fixed.
+`npm run test:e2e` builds first. A stale build serving old code is its own
+class of wrong answer, and it has cost this project a debugging round already.
+Use `npm run test:e2e:only` to skip the build while iterating.
 
-The schema and RLS tests run against any Postgres, not just the Supabase stack.
-Point them at one with `PGHOST`, `PGPORT` and `PGUSER`; they default to
-`127.0.0.1:5433`. `scripts/verify-migrations.sh` applies every migration and the
-seed to a throwaway database, and `scripts/rls-check.sh` runs the policy
-assertions against it.
+### Database connection
 
-The Playwright tests that need Supabase Auth skip with a clear reason when it is
-not running, so `npm run test:e2e` is still useful without the full stack.
+Everything that talks to Postgres reads one setting, `ELVT_DB_URL`. It defaults
+to the local Supabase stack:
+
+```
+postgresql://postgres:postgres@127.0.0.1:54322/postgres
+```
+
+So on a machine with Supabase running, nothing needs setting. Confirm the port
+with `supabase status` if a connection is refused.
+
+On a machine with no Supabase and only a plain Postgres, point it at that
+server:
+
+```bash
+export ELVT_DB_URL='postgresql://postgres@127.0.0.1:5433/postgres'
+```
+
+The schema and RLS scripts create a throwaway database on whatever server the
+setting names, so they never touch the one Supabase is using.
+
+```bash
+npm run db:verify       # migrations and seed against a throwaway database
+npm run db:conformance  # checks the local stand-in against the real schema
+```
+
+`db:conformance` runs against the **real** auth schema when one is reachable,
+and only falls back to the shim when there is none. It prints which it used.
+Checking the shim against a copy of itself is how a generated column got past
+the whole suite once; checking it against production is the point.
 
 ## Environments
 

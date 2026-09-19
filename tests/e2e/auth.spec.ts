@@ -3,17 +3,21 @@ import {
   CLIENT_EMAIL,
   COACH_EMAIL,
   COACH_PASSWORD,
+  ENV_HELP,
   SKIP_REASON,
   magicLinkFor,
+  missingAuthEnv,
   supabaseIsUp,
 } from "./helpers";
 
 test.beforeAll(async () => {
   const up = await supabaseIsUp();
-  test.skip(
-    !up,
-    SKIP_REASON,
-  );
+  test.skip(!up, SKIP_REASON);
+
+  // Reached only when Supabase is up. A missing key here is a real failure,
+  // not a reason to skip, because the stack is there and the test could run.
+  const missing = missingAuthEnv();
+  if (missing.length > 0) throw new Error(ENV_HELP(missing));
 });
 
 test.describe("coach", () => {
