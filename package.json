@@ -17,7 +17,8 @@
     "db:setup": "npm run db:reset && npm run db:seed",
     "exercises:import": "tsx scripts/import-exercises.ts",
     "design:audit": "tsx scripts/design-audit.ts",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "db:conformance": "bash scripts/shim-conformance.sh"
   },
   "repository": {
     "type": "git",

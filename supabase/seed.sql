@@ -62,13 +62,23 @@ select
   now()
 from seed_people p;
 
-insert into auth.identities (provider_id, user_id, identity_data, provider, email, last_sign_in_at)
+-- auth.identities.email is GENERATED ALWAYS from identity_data, so it is not
+-- in the column list: naming it fails with SQLSTATE 428C9. The email reaches
+-- the column by being inside identity_data, which is how GoTrue itself writes
+-- these rows.
+insert into auth.identities (
+  provider_id, user_id, identity_data, provider, last_sign_in_at
+)
 select
   p.user_id::text,
   p.user_id,
-  jsonb_build_object('sub', p.user_id::text, 'email', p.email, 'email_verified', true),
+  jsonb_build_object(
+    'sub', p.user_id::text,
+    'email', p.email,
+    'email_verified', true,
+    'phone_verified', false
+  ),
   'email',
-  p.email,
   now()
 from seed_people p;
 

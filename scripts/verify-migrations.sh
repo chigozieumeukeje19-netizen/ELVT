@@ -20,6 +20,9 @@ psql_root -c "create database $DB;" >/dev/null
 echo "Applying Supabase shim"
 psql_db -f "$ROOT/tests/sql/supabase_shim.sql" >/dev/null
 
+echo "Checking the shim against the real schema"
+psql_db -f "$ROOT/tests/sql/shim_conformance.sql" >/dev/null
+
 for f in "$ROOT"/supabase/migrations/*.sql; do
   echo "Applying $(basename "$f")"
   psql_db -f "$f" >/dev/null

@@ -36,6 +36,11 @@ npm test              # unit, plus schema and RLS against Postgres
 npm run test:e2e      # Playwright
 ```
 
+`scripts/shim-conformance.sh` asserts the local stand-in matches the real
+Supabase schema where it matters. Read `docs/LOCAL_VS_PRODUCTION.md` before
+trusting a local pass: it lists every known place the stand-in is looser than
+production, including the ones not yet fixed.
+
 The schema and RLS tests run against any Postgres, not just the Supabase stack.
 Point them at one with `PGHOST`, `PGPORT` and `PGUSER`; they default to
 `127.0.0.1:5433`. `scripts/verify-migrations.sh` applies every migration and the
