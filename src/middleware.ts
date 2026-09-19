@@ -6,10 +6,15 @@ import { NextResponse, type NextRequest } from "next/server";
  *
  * Refreshes the Supabase session on every request, then gates by
  * profiles.role: /coach is staff only, /client is the client area, and a signed
- * in user who lands on the wrong side is redirected to their own home rather
- * than shown an error.
+ * in user on the wrong side goes to their own home rather than an error.
  *
  * This is a convenience layer, not the security boundary. RLS is the boundary.
+ *
+ * The cookie handling below is the canonical Supabase shape and it matters.
+ * A previous version forwarded a Headers snapshot taken before the refresh, so
+ * a rotated token never reached the page: the browser got the new cookie, the
+ * render that produced the page did not, and every screen behind a refreshed
+ * session read as signed out.
  */
 
 const COACH_PREFIX = "/coach";
@@ -18,12 +23,7 @@ const COACH_HOME = "/coach/queue";
 const CLIENT_HOME = "/client/today";
 
 export async function middleware(request: NextRequest) {
-  // The coach shell needs the path to mark the active nav item, and a layout
-  // cannot read it directly.
-  const withPath = new Headers(request.headers);
-  withPath.set("x-pathname", request.nextUrl.pathname);
-
-  let response = NextResponse.next({ request: { headers: withPath } });
+  let response = NextResponse.next({ request });
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -35,10 +35,13 @@ export async function middleware(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(toSet) {
+        // Update the request first, so the downstream render sees the token
+        // that was just issued, then mirror onto the response so the browser
+        // stores it.
         for (const { name, value } of toSet) {
           request.cookies.set(name, value);
         }
-        response = NextResponse.next({ request: { headers: withPath } });
+        response = NextResponse.next({ request });
         for (const { name, value, options } of toSet) {
           response.cookies.set(name, value, options);
         }
@@ -46,6 +49,8 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  // getUser revalidates against the auth server rather than trusting the
+  // cookie, which is the only check worth gating on.
   const {
     data: { user },
   } = await supabase.auth.getUser();

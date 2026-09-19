@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { Sidebar } from "@/components/Sidebar";
 
 /**
@@ -6,16 +5,10 @@ import { Sidebar } from "@/components/Sidebar";
  * No top bar: every screen states its own subject in its first line, and a
  * second chrome band would cost rows the roster needs.
  */
-export default async function CoachLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const pathname = (await headers()).get("x-pathname") ?? "/coach/queue";
-
+export default function CoachLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-ink">
-      <Sidebar current={pathname} />
+      <Sidebar />
       <div className="pl-rail lg:pl-sidebar">{children}</div>
     </div>
   );

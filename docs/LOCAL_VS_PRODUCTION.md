@@ -37,6 +37,14 @@ moment it stops being true.
 | `pgcrypto` | Created by the foundation migration | Installed by the shim before migrations, as Supabase does, so the migration's `if not exists` is the no-op it is in production |
 | `auth.jwt()` | Absent | Present, so a policy reaching for the claims object is exercised locally |
 
+**Seeded accounts are created twice, on purpose.** `supabase/seed.sql` writes
+auth.users rows with no password so the plain Postgres verifier has profiles
+and clients to check RLS against. On a real stack `scripts/seed-auth.ts` then
+deletes those and recreates the same people through GoTrue's admin API, which
+is the only way to get rows GoTrue is guaranteed to accept. The password comes
+from the environment in that script, so SEED_COACH_PASSWORD is the one source
+of truth; the SQL used to carry its own copy that could drift.
+
 ## Known, not fixed
 
 Nothing in the codebase depends on these yet. Each one would pass locally and

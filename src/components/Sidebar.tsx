@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   BuilderIcon,
   CalendarIcon,
@@ -37,9 +40,13 @@ export function Sidebar({
   current,
   queueCount,
 }: {
-  current: string;
+  /** Overrides the live path. Only the preview routes pass this. */
+  current?: string;
   queueCount?: number;
 }) {
+  const pathname = usePathname();
+  const active = current ?? pathname;
+
   return (
     <nav
       aria-label="Portal"
@@ -62,15 +69,15 @@ export function Sidebar({
 
       <ul className="mt-2">
         {NAV.map(({ href, label, Icon }) => {
-          const active = current === href || current.startsWith(`${href}/`);
+          const isActive = active === href || active.startsWith(`${href}/`);
           return (
             <li key={href}>
               <Link
                 href={href}
-                aria-current={active ? "page" : undefined}
+                aria-current={isActive ? "page" : undefined}
                 className={[
                   "flex h-row items-center justify-center gap-3 text-body lg:justify-start lg:px-4",
-                  active ? "bg-panel-2 text-txt" : "text-txt-mute",
+                  isActive ? "bg-panel-2 text-txt" : "text-txt-mute",
                 ].join(" ")}
               >
                 <Icon />

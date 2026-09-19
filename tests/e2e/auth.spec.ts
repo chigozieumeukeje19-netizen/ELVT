@@ -4,10 +4,10 @@ import {
   CLIENT_EMAIL_2,
   CLIENT_NAME,
   COACH_EMAIL,
-  COACH_PASSWORD,
   clearMailbox,
-  magicLinkFromMailbox,
+  requestMagicLink,
   requireAuthStack,
+  signInAsCoach,
 } from "./helpers";
 
 test.beforeAll(async () => {
@@ -16,11 +16,7 @@ test.beforeAll(async () => {
 
 test.describe("coach", () => {
   test("signs in with email and password and lands on the queue", async ({ page }) => {
-    await page.goto("/login");
-
-    await page.getByLabel("Email").fill(COACH_EMAIL);
-    await page.getByLabel("Password").fill(COACH_PASSWORD);
-    await page.getByRole("button", { name: "Sign in" }).click();
+    await signInAsCoach(page);
 
     await expect(page).toHaveURL(/\/coach\/queue/);
     await expect(page.getByTestId("queue-count")).toBeVisible();
@@ -37,10 +33,7 @@ test.describe("coach", () => {
   });
 
   test("cannot reach the client area", async ({ page }) => {
-    await page.goto("/login");
-    await page.getByLabel("Email").fill(COACH_EMAIL);
-    await page.getByLabel("Password").fill(COACH_PASSWORD);
-    await page.getByRole("button", { name: "Sign in" }).click();
+    await signInAsCoach(page);
     await expect(page).toHaveURL(/\/coach\/queue/);
 
     await page.goto("/client/today");
@@ -48,10 +41,7 @@ test.describe("coach", () => {
   });
 
   test("sees the whole roster", async ({ page }) => {
-    await page.goto("/login");
-    await page.getByLabel("Email").fill(COACH_EMAIL);
-    await page.getByLabel("Password").fill(COACH_PASSWORD);
-    await page.getByRole("button", { name: "Sign in" }).click();
+    await signInAsCoach(page);
     await expect(page).toHaveURL(/\/coach\/queue/);
 
     await page.goto("/coach/clients");
@@ -74,14 +64,7 @@ test.describe("client", () => {
   test("signs in with a magic link and sees only their own program", async ({ page }) => {
     await clearMailbox();
 
-    await page.goto("/client/login");
-    await page.getByLabel("Email").fill(CLIENT_EMAIL);
-    await page.getByRole("button", { name: "Send my link" }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Check your email",
-    );
-
-    const link = await magicLinkFromMailbox(CLIENT_EMAIL);
+    const link = await requestMagicLink(page, CLIENT_EMAIL);
     await page.goto(link);
 
     await expect(page).toHaveURL(/\/client\/today/);
@@ -91,14 +74,7 @@ test.describe("client", () => {
   test("cannot reach the coach area", async ({ page }) => {
     // A different client, so the two magic link requests cannot trip GoTrue's
     // per address frequency limit when these run in parallel.
-    await page.goto("/client/login");
-    await page.getByLabel("Email").fill(CLIENT_EMAIL_2);
-    await page.getByRole("button", { name: "Send my link" }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Check your email",
-    );
-
-    const link = await magicLinkFromMailbox(CLIENT_EMAIL_2);
+    const link = await requestMagicLink(page, CLIENT_EMAIL_2);
     await page.goto(link);
     await expect(page).toHaveURL(/\/client\/today/);
 

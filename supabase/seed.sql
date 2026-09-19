@@ -17,32 +17,36 @@ begin;
 -- ---------------------------------------------------------------------------
 -- Accounts
 --
--- Passwords are bcrypt hashed the same way GoTrue does it, so these rows work
--- whether the database was built by `supabase db reset` or by the plain
--- Postgres verifier. The coach password is a local test credential and is
--- meaningless outside a throwaway database.
+-- NO PASSWORDS ARE SET HERE, on purpose.
+--
+-- Hand crafting an auth.users row means guessing at everything GoTrue expects,
+-- and a row that looks right can still be refused at sign in with no way to
+-- tell which field was wrong. So these rows exist only so the plain Postgres
+-- verifier has profiles and clients to run the RLS checks against.
+--
+-- On a real stack, scripts/seed-auth.ts deletes these and recreates the same
+-- people through GoTrue's own admin API, which is the only way to get a row
+-- GoTrue is guaranteed to accept. `npm run db:reset` runs both in order.
+-- The password comes from the environment there, so it has one source.
 -- ---------------------------------------------------------------------------
 
 create temporary table seed_people (
   user_id uuid not null default gen_random_uuid(),
   email text not null,
   role text not null,
-  display_name text not null,
-  password text
+  display_name text not null
 ) on commit drop;
 
-insert into seed_people (email, role, display_name, password) values
-  ('coach@elvt.test', 'coach', 'Darren', 'ElvtCoach2026'),
-  -- Clients sign in with a magic link in the gym. They still get a password
-  -- here so an end to end test can sign one in without a mail round trip.
-  ('nadia.brookes@elvt.test',   'client', 'Nadia Brookes',   'ElvtClient2026'),
-  ('theo.vance@elvt.test',      'client', 'Theo Vance',      'ElvtClient2026'),
-  ('marcus.oyelaran@elvt.test', 'client', 'Marcus Oyelaran', 'ElvtClient2026'),
-  ('priya.raghavan@elvt.test',  'client', 'Priya Raghavan',  'ElvtClient2026'),
-  ('elena.marsh@elvt.test',     'client', 'Elena Marsh',     'ElvtClient2026'),
-  ('jonah.petrakis@elvt.test',  'client', 'Jonah Petrakis',  'ElvtClient2026'),
-  ('aisha.nkemdirim@elvt.test', 'client', 'Aisha Nkemdirim', 'ElvtClient2026'),
-  ('caleb-whitlock@elvt.test',  'client', 'Caleb Whitlock',  'ElvtClient2026');
+insert into seed_people (email, role, display_name) values
+  ('coach@elvt.test', 'coach', 'Darren'),
+  ('nadia.brookes@elvt.test',   'client', 'Nadia Brookes'),
+  ('theo.vance@elvt.test',      'client', 'Theo Vance'),
+  ('marcus.oyelaran@elvt.test', 'client', 'Marcus Oyelaran'),
+  ('priya.raghavan@elvt.test',  'client', 'Priya Raghavan'),
+  ('elena.marsh@elvt.test',     'client', 'Elena Marsh'),
+  ('jonah.petrakis@elvt.test',  'client', 'Jonah Petrakis'),
+  ('aisha.nkemdirim@elvt.test', 'client', 'Aisha Nkemdirim'),
+  ('caleb-whitlock@elvt.test',  'client', 'Caleb Whitlock');
 
 insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
@@ -54,7 +58,8 @@ select
   'authenticated',
   'authenticated',
   p.email,
-  extensions.crypt(p.password, extensions.gen_salt('bf')),
+  -- Left null deliberately. See the note above: GoTrue sets this.
+  null,
   now(),
   jsonb_build_object('provider', 'email', 'providers', jsonb_build_array('email')),
   jsonb_build_object('display_name', p.display_name),

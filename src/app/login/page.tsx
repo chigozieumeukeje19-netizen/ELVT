@@ -24,7 +24,13 @@ function CoachLoginForm() {
     });
 
     if (signInError) {
-      setError("That email and password did not match.");
+      // The real reason, not a single catch all string.
+      //
+      // Every error used to collapse into "that email and password did not
+      // match", so a seeded account that GoTrue refused for some entirely
+      // different reason looked identical to a typo. This is an internal tool
+      // and the coach is the only person who sees this screen.
+      setError(signInError.message);
       setBusy(false);
       return;
     }

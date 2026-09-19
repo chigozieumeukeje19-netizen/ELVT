@@ -22,12 +22,18 @@ export default function ClientLoginPage() {
     const { error: linkError } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/client/today`,
+        // No query string. GoTrue matches redirect_to against its allow list,
+        // and a bare path is one less thing for that match to get wrong. The
+        // callback sends clients to Today by default.
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
     if (linkError) {
-      setError("We could not send that link. Check the email and try again.");
+      // Say what actually went wrong. A rejected redirect, a rate limit and an
+      // unknown address all used to read the same, which made the failure
+      // impossible to act on.
+      setError(linkError.message);
       setBusy(false);
       return;
     }

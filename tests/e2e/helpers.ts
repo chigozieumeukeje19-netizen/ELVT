@@ -187,3 +187,60 @@ export async function magicLinkFromMailbox(
     `No email arrived for ${email} at ${MAILBOX_URL} within ${timeoutMs}ms.`,
   );
 }
+
+// ---------------------------------------------------------------------------
+// Sign in helpers
+//
+// These exist because the first real run reported "the page stayed at /login"
+// when what had actually happened was GoTrue refusing the credentials and the
+// page saying so. The assertion never looked at the error. These do, and they
+// fail with what the server said.
+// ---------------------------------------------------------------------------
+
+import type { Page } from "@playwright/test";
+
+/** Throws with the visible error text if the form reported one. */
+async function failOnVisibleError(page: Page, what: string): Promise<void> {
+  const alert = page.getByRole("alert");
+  if ((await alert.count()) === 0) return;
+  const text = (await alert.first().textContent())?.trim();
+  if (text) {
+    throw new Error(`${what} was refused. The page shows: ${text}`);
+  }
+}
+
+export async function signInAsCoach(page: Page): Promise<void> {
+  await page.goto("/login");
+  await page.getByLabel("Email").fill(COACH_EMAIL);
+  await page.getByLabel("Password").fill(COACH_PASSWORD);
+  await page.getByRole("button", { name: "Sign in" }).click();
+
+  // Whichever happens first: the queue, or an error worth reading.
+  await Promise.race([
+    page.waitForURL(/\/coach\/queue/, { timeout: 10_000 }),
+    page.getByRole("alert").waitFor({ state: "visible", timeout: 10_000 }),
+  ]).catch(() => undefined);
+
+  await failOnVisibleError(page, `Coach sign in as ${COACH_EMAIL}`);
+}
+
+/** Requests a magic link through the real form and returns the link. */
+export async function requestMagicLink(
+  page: Page,
+  email: string,
+): Promise<string> {
+  await page.goto("/client/login");
+  await page.getByLabel("Email").fill(email);
+  await page.getByRole("button", { name: "Send my link" }).click();
+
+  await Promise.race([
+    page
+      .getByRole("heading", { name: "Check your email" })
+      .waitFor({ state: "visible", timeout: 10_000 }),
+    page.getByRole("alert").waitFor({ state: "visible", timeout: 10_000 }),
+  ]).catch(() => undefined);
+
+  await failOnVisibleError(page, `Magic link for ${email}`);
+
+  return magicLinkFromMailbox(email);
+}

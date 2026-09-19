@@ -46,10 +46,22 @@ actually accepted, rather than only that they are non blank.
 ### Then run it
 
 ```bash
-supabase db reset              # migrations, then the seed
+npm run db:reset               # migrations, seed, then the accounts
+npm run auth:smoke             # proves the coach can actually sign in
 npm run test:e2e               # preflight, build, then Playwright
 npm test                       # design audit, unit, schema and RLS
 ```
+
+Use `npm run db:reset`, not `supabase db reset` on its own. The accounts are
+created in a second step, through GoTrue's own admin API, because a hand
+written auth.users row can be refused at sign in with no way to tell which
+field was wrong. That is exactly what happened once: the seeded coach could
+not sign in and the page could only say the credentials did not match.
+
+`npm run auth:smoke` calls GoTrue's token endpoint directly and prints what is
+in auth.users, the identities, the client links and the answer. Run it before
+blaming the app: if it passes and the browser still fails, the problem is the
+app, not the seed.
 
 Sign in as the coach with `coach@elvt.test` and the password in
 `.env.example`. Magic links sent locally never leave the machine; read them in
