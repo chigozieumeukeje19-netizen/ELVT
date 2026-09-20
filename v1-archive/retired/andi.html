@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="var(--bg)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ELVT COACH — Andi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--panel:#FFFFFF;--panel2:#F4F0E9;--line:#E4DFD6;--gold:#8A6F34;--gold-dim:#A58A4E;--gold-soft:rgba(138,111,52,.09);--txt:#111111;--mut:#6E6A64;--mut2:#9A958D;--ok:#2F7D4F;--warn:#A8641F;--bad:#A33F36;--r:12px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:Inter,-apple-system,system-ui,sans-serif;
+font-size:15px;line-height:1.5;padding-bottom:80px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:.01em}
+button{font-family:inherit;color:inherit;border:none;background:none;cursor:pointer;font-size:inherit}
+input{font-family:inherit}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px}
+.topbar{position:sticky;top:0;z-index:60;background:rgba(250,247,242,.94);backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.tb-in{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;max-width:640px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:9px}.brand img{height:15px;width:auto;display:block}.brand small{font-size:9px;letter-spacing:.2em;color:var(--mut);font-weight:600;text-transform:uppercase}
+.brand small{display:block;font-family:Inter,sans-serif;font-size:9px;letter-spacing:.3em;color:var(--mut2);font-weight:500;margin-top:-3px}
+.streak{display:flex;align-items:center;gap:6px;background:var(--gold-soft);border:1px solid rgba(201,163,79,.28);
+padding:6px 11px;border-radius:100px;font-size:13px;font-weight:600;color:var(--gold)}
+.streak span.lbl{font-size:9px;letter-spacing:.16em;color:var(--mut);font-weight:500}
+.race{margin:14px 0 0;background:linear-gradient(140deg,#FFFBF2,var(--panel));border:1px solid rgba(138,111,52,.3);
+border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.race .l{font-size:10px;letter-spacing:.2em;color:var(--gold);font-weight:600;text-transform:uppercase}
+.race .t{font-family:'Cormorant Garamond',serif;font-size:21px;margin-top:2px}
+.race .s{font-size:12px;color:var(--mut);margin-top:1px}
+.race .n{font-family:'Cormorant Garamond',serif;font-size:38px;line-height:1;color:var(--gold);text-align:center}
+.race .n small{display:block;font-family:Inter,sans-serif;font-size:9px;letter-spacing:.16em;color:var(--mut);font-weight:500;margin-top:3px}
+.strip{display:flex;gap:6px;overflow-x:auto;padding:14px 0 4px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.wk{flex:0 0 auto;min-width:52px;padding:8px 6px;border-radius:11px;background:var(--panel);border:1px solid var(--line);text-align:center;transition:.15s}
+.wk b{display:block;font-size:14px;font-weight:600}
+.wk i{display:block;font-style:normal;font-size:8px;letter-spacing:.1em;color:var(--mut2);text-transform:uppercase;margin-top:2px}
+.wk.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.wk.on i{color:rgba(11,11,13,.65)}
+.wk.past{border-color:var(--gold-dim)}
+.days{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:1 1 0;min-width:44px;padding:9px 2px 8px;border-radius:12px;background:var(--panel);border:1px solid var(--line);text-align:center;transition:.15s}
+.day.on{border-color:var(--gold);background:#FFFBF2}
+.day .dn{font-size:9px;letter-spacing:.09em;color:var(--mut);text-transform:uppercase}
+.day .dd{font-size:14px;font-weight:600;margin-top:1px}
+.day.today .dd{color:var(--gold)}
+.day.on .dn{color:var(--gold)}
+.ring{margin:5px auto 0;display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:14px 0}
+.card.compact{padding:14px 16px}
+.card h2{margin:0 0 3px;font-size:21px}
+.eyebrow{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.sub{font-size:12.5px;color:var(--mut);margin:0}
+.goals{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap}
+.goal{flex:1 1 0;min-width:88px;display:flex;align-items:center;gap:7px;background:var(--panel2);
+border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;font-weight:500}
+.goal span{flex:0 0 auto;width:17px;height:17px;border-radius:100px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.32);color:var(--gold);font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+details.more{margin-top:12px}
+details.more>summary{list-style:none;cursor:pointer;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+color:var(--mut);font-weight:600;padding:8px 0 2px;display:flex;align-items:center;gap:6px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:'\FF0B';color:var(--gold);font-size:13px;letter-spacing:0}
+details.more[open]>summary::after{content:'\2212'}
+.jump{display:block;width:100%;margin:8px 0 0;padding:9px;border-radius:10px;background:var(--gold-soft);
+border:1px solid rgba(138,111,52,.3);color:var(--gold);font-size:12.5px;font-weight:600}
+.flag{background:#FFFBF2;border:1px solid rgba(217,139,74,.32);border-radius:11px;padding:12px 14px;margin:10px 0}
+.flag .ft{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--warn);font-weight:600;margin-bottom:4px}
+.flag p{margin:0 0 6px;font-size:13px;color:#3A3833;line-height:1.55}
+.flag p:last-child{margin-bottom:0}
+.info{background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:9px;padding:12px 14px;margin:10px 0}
+.info .ft{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:4px}
+.info p{margin:0 0 6px;font-size:13px;color:#3A3833;line-height:1.55}
+.info p:last-child{margin-bottom:0}
+.gold{color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center}
+.stat b{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);line-height:1.1}
+.stat i{display:block;font-style:normal;font-size:9px;letter-spacing:.11em;color:var(--mut);text-transform:uppercase;margin-top:3px}
+.sess-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
+.tag{font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:4px 9px;border-radius:100px;white-space:nowrap}
+.t-lift{background:rgba(201,163,79,.14);color:var(--gold);border:1px solid rgba(138,111,52,.3)}
+.t-run{background:rgba(93,184,122,.12);color:var(--ok);border:1px solid rgba(93,184,122,.28)}
+.t-rec{background:rgba(141,141,150,.12);color:var(--mut);border:1px solid var(--line)}
+.t-deload{background:rgba(74,159,208,.12);color:#4a9fd0;border:1px solid rgba(74,159,208,.3)}
+.row{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:none}
+.cb{flex:0 0 auto;width:23px;height:23px;border-radius:7px;border:1.5px solid #3a3a42;background:var(--panel2);
+display:flex;align-items:center;justify-content:center;margin-top:1px;transition:.15s}
+.cb.on{background:var(--gold);border-color:var(--gold)}
+.cb svg{opacity:0;transition:.15s}
+.cb.on svg{opacity:1}
+.rb{flex:1;min-width:0}
+.rn{font-size:14.5px;font-weight:500;line-height:1.35}
+.row.done .rn{color:var(--mut);text-decoration:line-through;text-decoration-color:var(--gold-dim)}
+.rm{font-size:11.5px;color:var(--mut);margin-top:2px}
+.rcustom{font-size:11.5px;color:var(--warn);margin-top:3px;font-style:italic}
+.acts{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.act{font-size:10.5px;letter-spacing:.05em;padding:4px 9px;border-radius:100px;border:1px solid var(--line);
+background:var(--panel2);color:var(--mut);display:inline-flex;align-items:center;gap:4px}
+.act.vid{color:var(--gold);border-color:rgba(201,163,79,.28)}
+.act.wt{color:var(--txt)}
+.act .up{color:var(--ok)}.act .dn{color:var(--bad)}.act .sm{color:var(--mut2)}
+.bar{height:7px;border-radius:100px;background:var(--line);overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:100px;transition:width .35s}
+.bar.g i{background:linear-gradient(90deg,#3d7a52,var(--ok))}
+.bar.b i{background:linear-gradient(90deg,#2f5f7a,#4a9fd0)}
+.brow{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px}
+.brow b{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--gold)}
+.brow .r{color:var(--mut);font-size:11.5px}
+.tapper{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+.tp{flex:1;min-width:62px;padding:9px 4px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);text-align:center;font-size:12.5px;font-weight:500}
+.form{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:11px}
+.form label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.form input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--txt);font-size:15px;margin-bottom:9px}
+.form input:focus{outline:none;border-color:var(--gold-dim)}
+.btn{width:100%;padding:11px;border-radius:9px;background:var(--gold);color:var(--bg);font-weight:600;font-size:14px}
+.btn.alt{background:var(--panel2);color:var(--gold);border:1px solid rgba(138,111,52,.3)}
+.glist h4,.swapg h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:16px 0 7px;font-weight:600}
+.gitem{padding:9px 0;border-top:1px solid var(--line)}
+.gtop{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.gn{font-size:13.5px;font-weight:500;flex:1}
+.gq{font-size:12px;color:var(--gold);white-space:nowrap;font-weight:500}
+.gnote{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.5}
+.recipe{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:9px}
+.recipe b{display:block;font-size:13.5px;margin-bottom:3px}
+.recipe p{margin:0 0 5px;font-size:12.5px;color:var(--mut);line-height:1.55}
+.recipe p:last-child{margin-bottom:0}
+.pw{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--line);font-size:13.5px}
+.pw:first-child{border-top:none}
+.pw .pv{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold)}
+.mask{position:fixed;inset:0;background:rgba(17,17,17,.42);backdrop-filter:blur(3px);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.modal{width:100%;max-width:640px;background:var(--panel);border:1px solid var(--line);border-radius:20px 20px 0 0;
+padding:20px 18px calc(24px + env(safe-area-inset-bottom));max-height:86vh;overflow-y:auto}
+.modal h3{margin:0 0 3px;font-size:20px}
+.modal .ms{font-size:12.5px;color:var(--mut);margin:0 0 14px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;
+padding:12px 13px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);margin-bottom:7px;font-size:14px}
+.opt.cur{border-color:var(--gold);color:var(--gold)}
+.opt small{color:var(--mut);font-size:11px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,90px);background:var(--gold);color:var(--bg);
+font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:100px;z-index:200;transition:.32s;opacity:0;white-space:nowrap}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.a2{position:fixed;inset:0;background:rgba(11,11,13,.97);z-index:300;display:none;flex-direction:column;
+align-items:center;justify-content:center;text-align:center;padding:34px}
+.a2.on{display:flex}
+.a2 h2{font-size:29px;margin:0 0 8px;color:var(--gold)}
+.a2 p{font-size:14px;color:var(--mut);max-width:340px;margin:0 0 8px;line-height:1.6}
+.a2steps{max-width:340px;width:100%;margin-top:16px;text-align:left}
+.a2steps .s{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.a2steps .s:first-child{border-top:none}
+.a2steps .s b{flex:0 0 auto;width:20px;height:20px;border-radius:100px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.32);color:var(--gold);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.a2steps .s span{font-size:13.5px;color:#3A3833;line-height:1.5}
+.helplink{display:block;width:100%;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);padding:12px 0 0;font-weight:600}
+.foot{text-align:center;font-size:10px;letter-spacing:.2em;color:var(--mut2);text-transform:uppercase;padding:20px 0 10px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="a2" id="a2">
+  <h2>Save this first</h2>
+  <p><b style="color:#3A3833">Do this before you tick anything off.</b> Your progress is stored on this device in this app. If you start logging in the browser and add it to your home screen later, the home screen version will start empty.</p>
+  <div class="a2steps" id="a2steps"></div>
+  <p style="font-size:12px;color:#5f5f68;margin-top:14px">Fifteen seconds. Then open it from your home screen every time.</p>
+  <button class="btn" style="max-width:250px;margin-top:16px" onclick="closeA2()">Done, I've added it</button>
+  <button class="btn alt" style="max-width:250px;margin-top:9px" onclick="closeA2()">Skip for now</button>
+</div>
+
+<div class="topbar"><div class="tb-in">
+  <div class="brand"><img src="data:image/png;base64,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" alt="ELVT"><small>ANDI</small></div>
+  <div class="streak"><span class="lbl">STREAK</span><span id="streakN">0</span></div>
+</div></div>
+
+<div class="wrap">
+  <div class="race">
+    <div><div class="l">Your finish line</div>
+      <div class="t">Your first 5K</div>
+      <div class="s">Sunday 11 October 2026</div></div>
+    <div class="n"><span id="cdN">&ndash;</span><small id="cdL">DAYS TO GO</small></div>
+  </div>
+
+  <div class="strip" id="weekStrip"></div>
+  <div class="days" id="dayStrip"></div>
+  <div id="jumpBar"></div>
+
+  <div class="card compact">
+    <div class="eyebrow">Athlete</div>
+    <h2>Andi</h2>
+    <p class="sub">Home training &middot; 12 weeks &middot; started Mon 20 July 2026</p>
+    <div class="goals">
+      <div class="goal"><span>1</span>A strong body</div>
+      <div class="goal"><span>2</span>Energy that lasts</div>
+      <div class="goal"><span>3</span>Eating on autopilot</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>150</b><i>Start lbs</i></div>
+      <div class="stat"><b id="pfNow">146</b><i>Now lbs</i></div>
+      <div class="stat"><b>3.1</b><i>Miles to go</i></div>
+    </div>
+    <details class="more">
+      <summary>More detail</summary>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat"><b>26</b><i>Age</i></div>
+        <div class="stat"><b>5'7"</b><i>Height</i></div>
+        <div class="stat"><b>5</b><i>Days/week</i></div>
+        <div class="stat"><b>10K</b><i>Steps</i></div>
+        <div class="stat"><b>3L</b><i>Water</i></div>
+        <div class="stat"><b>Home</b><i>Setup</i></div>
+      </div>
+      <div class="info" style="margin-top:10px">
+        <div class="ft">Why you said you're here</div>
+        <p>You are going through a big transitional phase and you do not want to lose yourself in it. You want a body that reflects the woman and the mum you want to be, and you are doing it for yourself so you can be the best mum you can be for your daughter.</p>
+        <p>Everything in this app serves that. Nothing else.</p>
+      </div>
+    </details>
+  </div>
+
+  <div id="challengeCard"></div>
+  <div id="weekSevenCard"></div>
+  <div id="weekSixCard"></div>
+  <div id="outsideCard"></div>
+  <div id="sessionCard"></div>
+  <div id="dailyCard"></div>
+  <div id="nutritionCard"></div>
+  <div id="groceryCard"></div>
+  <div id="photosCard"></div>
+  <div id="pastCard"></div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Your knee</h2>
+    <div class="flag">
+      <div class="ft">The rule</div>
+      <p>The knee routine is not a bonus. It is the thing that lets the running exist. The week you did it only a few times, your pain arrived earlier than it ever had. That is the whole argument.</p>
+    </div>
+    <div class="info">
+      <div class="ft">Why your leg day looks like this</div>
+      <p>Glute bridges, clamshells and side lying raises are not filler. Patella tracking problems are usually a hip problem wearing a knee disguise. Strengthening the glute medius changes how your kneecap sits when you run, which is why your knee feels fine lifting and only complains on runs.</p>
+      <p>Ankle weights on the clamshells and side lying work are the progression. Same movements, more of the thing that is actually fixing it.</p>
+    </div>
+    <div class="info">
+      <div class="ft">If it hurts</div>
+      <p>Stop that set, not the session. Then tell me. A single flagged set is information. A week of pushing through is a setback.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Sleep and the 2am wake up</h2>
+    <div class="info">
+      <div class="ft">What is likely happening</div>
+      <p>You train after your daughter goes down, which is the only window that works, and then you wake at 6:30. Late training keeps your core temperature and adrenaline up at exactly the hour your body wants them coming down, and a 2am waking is the classic signature of that.</p>
+      <p>We are not moving your training time. It is the thing that makes this whole program possible. Instead: magnesium glycinate before bed, box breathing at 4 in, 4 hold, 4 out, 4 hold, and lights properly down for the last thirty minutes.</p>
+      <p>Five hours at a 3 out of 10 is the lowest number in your whole check in, and it is the ceiling on your energy, your motivation and your runs. It gets attention before anything else does.</p>
+    </div>
+  </div>
+
+  <button class="helplink" onclick="openA2()">How to save this app</button>
+  <div class="foot">ELVT COACHING</div>
+</div>
+
+<div class="mask" id="mask" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   ELVT COACH - Andi Mussett
+   12 weeks. Mon 20 Jul 2026 to Sun 11 Oct 2026.
+   Finish line: her first 5K on the final Sunday.
+   Home equipment: dumbbells, bands, kettlebells, ankle
+   weights, treadmill. No calorie tracking by design.
+   ========================================================= */
+const START=new Date(2026,6,20);      // Mon 20 Jul 2026
+const RACE =new Date(2026,9,11);      // Sun 11 Oct 2026
+const KEY='elvt_andi_v2';
+const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const LIVE_FROM=3;                    // weeks 1-2 are history
+
+/* videos: existing ones carried from her live app, new loaded
+   movements individually verified by search */
+const EX={
+  floorpress:{n:'Dumbbell Floor Press',              v:'AqYFvc9t_vU',wt:1},
+  shpress   :{n:'Seated Dumbbell Shoulder Press',    v:'fuQpuu--bMI',wt:1},
+  dbrow     :{n:'Single-Arm Dumbbell Row',           v:'gfUg6qWohTk',wt:1},
+  pushup    :{n:'Push-Ups (knee-modified if needed)',v:'bt5b9x9N0KU',wt:0},
+  pikepush  :{n:'Pike Push-Ups',                     v:'pHR5yG6xBps',wt:0},
+  dips      :{n:'Tricep Dips (chair)',               v:'jDafIn0WMUw',wt:0},
+  bandpull  :{n:'Band Pull-Apart',                   v:'MxQlSph7Zug',wt:0},
+  superman  :{n:'Superman',                          v:'ATly_pW0i6g',wt:0},
+  supull    :{n:'Superman Pull-Backs',               v:'djeq-Hv9CGI',wt:0},
+  shtaps    :{n:'Plank Shoulder Taps',               v:'Ub3x9gt0UlQ',wt:0},
+  wallang   :{n:'Wall Angels',                       v:'cvx06snMQ3A',wt:0},
+  goblet    :{n:'Goblet Squat (kettlebell)',         v:'BR4tlEE_A98',wt:1},
+  dbrdl     :{n:'Dumbbell Romanian Deadlift',        v:'aa57T45iFSE',wt:1},
+  bridge    :{n:'Weighted Glute Bridge',             v:'wPM8icPu6H8',wt:1},
+  slbridge  :{n:'Single-Leg Glute Bridge',           v:'nat5dN0Kuao',wt:0},
+  bridgemar :{n:'Glute Bridge March',                v:'M8LAwv4Od2I',wt:0},
+  sideraise :{n:'Side-Lying Leg Raise (ankle weights)',v:'g9FtnmsIYgI',wt:1},
+  clam      :{n:'Clamshells (ankle weights)',        v:'kO2Me7E83DQ',wt:1},
+  goodmorn  :{n:'Bodyweight Good Morning',           v:'61zbhuRiwQg',wt:0},
+  calf      :{n:'Standing Calf Raise (holding dumbbells)',v:'KRJIKsY02nE',wt:1},
+  kbswing   :{n:'Kettlebell Swing',                  v:'1Qi0NQW89Oc',wt:1},
+  deadbug   :{n:'Dead Bug',                          v:'bxn9FBrt4-A',wt:0},
+  birddog   :{n:'Bird Dog',                          v:'ZdAHe9_HeEw',wt:0},
+  plank     :{n:'Plank',                             v:'mwlp75MS6Rg',wt:0},
+  bandwalk  :{n:'Band Lateral Walk',                 v:'q0dTGuNsBaU',wt:0},
+  kbdl      :{n:'Kettlebell Deadlift',               v:'bxRFvIOUoL8',wt:1},
+  suitcase  :{n:'Suitcase Carry',                    v:'y-hn_Ha1-RE',wt:1},
+  slrdl     :{n:'Single-Leg Romanian Deadlift',      v:'9ZWAKt6Uy0k',wt:1},
+  incwalk   :{n:'Treadmill Incline Finisher',        v:'8lPzM94jvT4',wt:0},
+  mob       :{n:'Stretch / Mobility',                v:'IlHgLYdt3kc',wt:0}
+};
+const MASTER=Object.keys(EX);
+
+const SESSIONS={
+  upper:{t:'Upper Body',sub:'Now with real load, and pulling added',ex:[
+    ['floorpress',3,'8\u201310'],['shpress',3,'10\u201312'],['dbrow',3,'10\u201312 / arm'],
+    ['pushup',3,'10\u201312'],['bandpull',3,'15'],['wallang',3,'12']]},
+  lower:{t:'Lower Body',sub:'Hip and glute focused, which is what your knee actually needs',ex:[
+    ['bandwalk',3,'10 steps each way'],['goblet',3,'10\u201312'],['kbdl',3,'10'],
+    ['bridge',3,'12\u201315'],['slrdl',3,'8 / leg'],['clam',3,'15 / side'],['calf',3,'15\u201320']]},
+  full:{t:'Full Body',sub:'Hinge, push, pull, core',ex:[
+    ['kbswing',3,'12\u201315'],['pushup',3,'10\u201312'],['dbrow',3,'10\u201312 / arm'],
+    ['goodmorn',3,'12'],['suitcase',3,'30 sec / side'],['plank',3,'30\u201345 sec']]},
+  mobility:{t:'Mobility + Walk',sub:'Active recovery, not a day off',ex:[
+    ['deadbug',3,'10 / side'],['birddog',3,'10 / side'],['plank',3,'30\u201345 sec'],
+    ['incwalk',1,'5 min, steepest you can walk without holding on']]}
+};
+const WEEKPLAN=['upper','run','lower','mobility','full','run','recovery'];
+
+/* runs build toward 3.1 miles. [tue, sat] in miles, plus style */
+const W=[
+ {b:'Base',   setMod:0,run:[1.5,1.8],style:'Easy, walk breaks whenever you want them',note:'Getting the structure in place.'},
+ {b:'Base',   setMod:0,run:[1.8,2.0],style:'Easy, walk breaks whenever you want them',note:'Consistency first. The habits are the work right now.'},
+ {b:'Load',   setMod:0,run:[1.5,1.8],style:'Run 4 min, walk 1 min, repeat',style2:1,note:'Weights come in this week, and runs switch to intervals so your knee gets a break every few minutes instead of at mile 3.'},
+ {b:'Load',   setMod:0,run:[1.8,2.0],style:'Run 4 min, walk 1 min, repeat',style2:1,note:'Second week with load. Log every weight so we can see it climb.'},
+ {b:'Load',   setMod:0,run:[2.0,2.2],style:'Run 5 min, walk 1 min, repeat',style2:1,note:'Distance creeping up. If the knee talks, back off that run and tell me.'},
+ {b:'Build',  setMod:0,run:[2.0,2.5],style:'Run 6 min, walk 1 min, repeat',style2:1,note:'Halfway. Take your photos properly this week, this is where it starts showing.'},
+ {b:'Build',  setMod:0,run:[2.2,2.5],style:'Run 8 min, walk 1 min, repeat',style2:1,note:'Intervals getting longer. Same total distance, less walking.'},
+ {b:'Build',  setMod:0,run:[2.2,2.75],style:'Run 10 min, walk 1 min, repeat',style2:1,note:'Nearly at 5K distance. Your Saturday run is the one that matters.'},
+ {b:'Deload', setMod:-1,run:[1.5,2.0],style:'Easy, all of it comfortable',note:'Planned deload. Sets come down, weight stays. You have never taken one on purpose. Take this one.'},
+ {b:'Peak',   setMod:0,run:[2.5,3.1],style:'Run 10 min, walk 1 min, repeat',style2:1,note:'Saturday is your first full 5K distance. Finish it, do not race it.'},
+ {b:'Peak',   setMod:0,run:[2.0,2.5],style:'Easy and controlled',note:'Backing off so you arrive fresh. Resist the urge to prove something this week.'},
+ {b:'5K',     setMod:0,run:[1.5,0],style:'Short and easy, legs only',note:'Race week. Nothing you do now makes you fitter, it only makes you fresher.'}
+];
+const HISTORY={
+ 1:{w:150,note:'First week. Learning the structure.'},
+ 2:{w:146,note:'5 of 5 workouts. Adherence 9/10, confidence 10/10, less bloating, and you got the job.'}
+};
+
+const HABITS=[
+ {id:'knee',     n:'Knee Routine',            meta:'Every day. This is the one that protects the running'},
+ {id:'breakfast',n:'Eat Breakfast',           meta:'Egg bites count. Skipping it is what starts the late night snacking'},
+ {id:'lunch',    n:'Eat Lunch',               meta:'Even a small one. Do not run to dinner on empty'},
+ {id:'dinner',   n:'Protein-Rich Dinner',     meta:'Chicken, salmon, shrimp, lean beef. Your favourites already'},
+ {id:'sleep',    n:'Sleep 7\u20139 Hours',    meta:'Magnesium before bed, box breathing 4-4-4-4'},
+ {id:'self',     n:'10 Minutes For Yourself', meta:'Not optional. This is the reason you started'}
+];
+const STEP_GOAL=10000, WATER_GOAL=3000;
+
+let S=load();
+function load(){const D={v:1,week:null,day:null,order:{},d:{},s:{},h:{},wt:{}};try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.v===1)return Object.assign(D,x);}catch(e){}return D;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const key=(w,d)=>w+'-'+d;
+function dstate(w,d){const k=key(w,d);if(!S.d[k])S.d[k]={c:{},cu:{},sw:{},w:{}};return S.d[k];}
+function order(w){if(!S.order[w])S.order[w]=[0,1,2,3,4,5,6];return S.order[w];}
+function dateOf(w,d){const x=new Date(START);x.setDate(x.getDate()+(w-1)*7+d);return x;}
+function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function todayIdx(){const t=new Date();t.setHours(0,0,0,0);
+  const diff=Math.floor((t-START)/86400000);if(diff<0)return{w:1,d:0};
+  const w=Math.min(12,Math.floor(diff/7)+1);return{w,d:diff%7};}
+if(S.week===null){const t=todayIdx();S.week=t.w;S.day=t.d;save();}
+
+function session(w,d){
+  const slot=order(w)[d],wk=W[w-1],kind=WEEKPLAN[slot],st=dstate(w,d);
+  if(kind==='run'){
+    const mi=slot===1?wk.run[0]:wk.run[1];
+    if(mi===0) return {title:'Rest',tag:'Rest',cls:'t-rec',note:'Nothing today. Legs up, race is tomorrow.',block:wk.b,swapped:slot!==d,
+      items:[{id:'x0',n:'Full rest',meta:'Sleep is the session'}]};
+    return {title:`Easy Run \u00b7 ${mi} miles`,tag:'Run',cls:'t-run',
+      note:wk.style+'. Conversational pace the whole way.',block:wk.b,swapped:slot!==d,
+      items:[{id:'r0',n:'Easy Run',meta:`${mi} miles \u00b7 ${wk.style}`,video:'S7DFiEvqkJQ'},
+             {id:'r1',n:'Calf raises after the run',meta:'2 sets of 20. This is your Achilles insurance'}]};
+  }
+  if(kind==='recovery' && w===12) return {title:'YOUR 5K',tag:'5K',cls:'t-run',
+    note:'Twelve weeks for this. Start slower than feels right and finish it smiling. Your daughter is going to see you do this.',
+    block:wk.b,swapped:slot!==d,
+    items:[{id:'r0',n:'5K \u00b7 3.1 miles',meta:'Go and collect it'},
+           {id:'r1',n:'Knee routine, before you start',meta:'Same as every other day. Especially today'}]};
+  if(kind==='recovery') return {title:'Recovery',tag:'Recovery',cls:'t-rec',
+    note:'Move gently, then look back at your week. Photos and weigh-in tomorrow morning.',block:wk.b,swapped:slot!==d,
+    items:[{id:'v0',n:'Walk',meta:'Easy pace, get outside'},
+           {id:'v1',ex:'mob',n:'Stretch / Mobility',meta:'Whatever feels good',video:EX.mob.v,swap:1}]};
+  const S2=SESSIONS[kind];
+  const items=[];
+  if(kind==='mobility') items.push({id:'w0',n:'30-Minute Walk',meta:'Easy pace'});
+  S2.ex.forEach((row,i)=>{
+    const [base,sets,reps]=row;
+    const id='e'+i,ek=st.sw[id]||base,e=EX[ek];
+    const n=Math.max(2,sets+wk.setMod);
+    items.push({id,ex:ek,n:e.n,meta:`${n} sets \u00d7 ${reps}${e.wt?' \u00b7 1\u20132 RIR':''}`,video:e.v,wt:e.wt,swap:1});
+  });
+  return {title:S2.t,tag:wk.b==='Deload'?'Deload':(kind==='mobility'?'Mobility':'Strength'),
+    cls:wk.b==='Deload'?'t-deload':(kind==='mobility'?'t-rec':'t-lift'),
+    note:S2.sub+'. '+wk.note,block:wk.b,swapped:slot!==d,items};
+}
+function pct(w,d){const s=session(w,d),st=dstate(w,d);
+  const all=[...s.items,...HABITS];const done=all.filter(i=>st.c[i.id]).length;
+  return{done,total:all.length,p:all.length?done/all.length:0};}
+function streak(){
+  const today=new Date();today.setHours(0,0,0,0);
+  let n=0,cur=new Date(today);
+  for(let g=0;g<120;g++){
+    const diff=Math.floor((cur-START)/86400000);if(diff<0)break;
+    const w=Math.floor(diff/7)+1,d=diff%7;
+    if(w>12||w<LIVE_FROM){cur.setDate(cur.getDate()-1);continue;}
+    const{p}=pct(w,d);
+    if(p>=1)n++;else if(!sameDay(cur,today))break;
+    cur.setDate(cur.getDate()-1);}
+  return n;}
+
+
+/* AUTO-ROLLOVER, added 14 Sep 2026.
+   S.week/S.day are persisted, so without this the app stays pinned to whatever
+   day it was first opened on and the client logs into the wrong day.
+   We only move them if they were sitting on what WAS today; if they have
+   deliberately navigated elsewhere we leave them alone. */
+let __booted=false;
+function syncToday(){
+  const t=todayIdx(), k=t.w+'-'+t.d;
+  /* On a fresh open ALWAYS land on today. S.week/S.day are persisted, so without
+     this a client who glanced at Monday on Thursday reopens on Monday forever. */
+  if(!__booted){ __booted=true; S.__today=k;
+    if(S.week!==t.w||S.day!==t.d){ S.week=t.w; S.day=t.d; save(); return true; }
+    save(); return false; }
+  /* Mid-session: only move them if they are sitting on what WAS today, so we
+     never yank someone who has deliberately navigated to another day. */
+  if(S.__today===k) return false;
+  const onOldToday = (S.week+'-'+S.day===S.__today);
+  S.__today=k;
+  if(onOldToday){ S.week=t.w; S.day=t.d; save(); return true; }
+  save(); return false;
+}
+
+function render(){syncToday();const __y=window.pageYOffset||document.documentElement.scrollTop||0;
+  document.getElementById('streakN').textContent=streak();
+  countdown();weekStrip();dayStrip();jumpBar();profileNums();
+  [challengeCard,weekSevenCard,weekSixCard,outsideCard,sessionCard,dailyCard,nutritionCard,groceryCard,photosCard,pastCard].forEach(fn=>{try{fn();}catch(e){console.error('card failed:',fn.name,e);}});
+  window.scrollTo(0,__y);}
+function countdown(){
+  const from=dateOf(S.week,S.day);from.setHours(0,0,0,0);
+  const days=Math.round((RACE-from)/86400000);
+  const n=document.getElementById('cdN'),l=document.getElementById('cdL');
+  if(days>1){n.textContent=days;l.textContent='DAYS TO GO';}
+  else if(days===1){n.textContent=1;l.textContent='DAY TO GO';}
+  else if(days===0){n.textContent='\u00b7';l.textContent='RACE DAY';}
+  else{n.textContent='\u2713';l.textContent='DONE';}}
+function latestWeight(){let last=146;
+  for(let w=1;w<=12;w++){if(S.wt[w]!=null)last=S.wt[w];else if(HISTORY[w])last=HISTORY[w].w;}return last;}
+function profileNums(){document.getElementById('pfNow').textContent=latestWeight();}
+function weekStrip(){
+  const el=document.getElementById('weekStrip');
+  el.innerHTML=W.map((w,i)=>{const n=i+1;
+    return `<button class="wk ${n===S.week?'on':''} ${n<LIVE_FROM?'past':''}" onclick="goWeek(${n})">
+      <b>${n}</b><i>${w.b.slice(0,5)}</i></button>`;}).join('');
+  const on=el.querySelector('.wk.on');if(on)el.scrollLeft=Math.max(0,on.offsetLeft-(el.clientWidth-on.offsetWidth)/2);}
+function dayStrip(){
+  const el=document.getElementById('dayStrip');const t=new Date();t.setHours(0,0,0,0);
+  el.innerHTML=[0,1,2,3,4,5,6].map(d=>{
+    const{p}=pct(S.week,d),dt=dateOf(S.week,d),R=13,C=2*Math.PI*R;
+    return `<button class="day ${d===S.day?'on':''} ${sameDay(dt,t)?'today':''}" onclick="goDay(${d})">
+      <div class="dn">${DOW[d]}</div><div class="dd">${dt.getDate()}</div>
+      <svg class="ring" width="30" height="30" viewBox="0 0 30 30">
+      <circle cx="15" cy="15" r="${R}" fill="none" stroke="var(--line)" stroke-width="2.5"/>
+      <circle cx="15" cy="15" r="${R}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"
+      stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p)}" transform="rotate(-90 15 15)"/></svg></button>`;}).join('');}
+function jumpBar(){const t=todayIdx(),off=!(t.w===S.week&&t.d===S.day);
+  document.getElementById('jumpBar').innerHTML=off
+    ?`<button class="jump" onclick="jumpToday()">\u2190 Back to today \u00b7 ${DOW[t.d]}, week ${t.w}</button>`:'';}
+function jumpToday(){const t=todayIdx();S.week=t.w;S.day=t.d;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+function prevWeight(ex){
+  for(let w=S.week-1;w>=LIVE_FROM;w--)for(let d=0;d<7;d++){
+    const s=session(w,d),hit=s.items.find(i=>i.ex===ex&&i.wt);
+    if(hit){const v=dstate(w,d).w[hit.id];if(v!=null)return v;}}
+  return null;}
+function sessionCard(){
+  const s=session(S.week,S.day),st=dstate(S.week,S.day),dt=dateOf(S.week,S.day);
+  const rows=s.items.map(i=>{
+    const done=!!st.c[i.id];let acts='';
+    if(i.video)acts+=`<a class="act vid" href="https://www.youtube.com/watch?v=${i.video}" target="_blank" rel="noopener">\u25b6 Watch form</a>`;
+    acts+=`<button class="act" onclick="editItem('${i.id}')">\u270e Customise</button>`;
+    if(i.swap)acts+=`<button class="act" onclick="swapEx('${i.id}')">\u21c4 Swap</button>`;
+    if(i.wt){const cur=st.w[i.id],prev=prevWeight(i.ex);let lbl='Log weight';
+      if(cur!=null){lbl=cur+' lbs';
+        if(prev!=null){if(cur>prev)lbl+=` <span class="up">\u25b2</span><span class="sm">(was ${prev})</span>`;
+          else if(cur<prev)lbl+=` <span class="dn">\u25bc</span><span class="sm">(was ${prev})</span>`;
+          else lbl+=` <span class="sm">\u2013 (was ${prev})</span>`;}}
+      acts+=`<button class="act wt" onclick="logWeight('${i.id}')">${lbl}</button>`;}
+    return `<div class="row ${done?'done':''}">
+      <button class="cb ${done?'on':''}" onclick="toggle('${i.id}')" aria-label="Complete ${i.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${i.n}</div>${i.meta?`<div class="rm">${i.meta}</div>`:''}
+      ${st.cu[i.id]?`<div class="rcustom">Actually did: ${esc(st.cu[i.id])}</div>`:''}
+      <div class="acts">${acts}</div></div></div>`;}).join('');
+  document.getElementById('sessionCard').innerHTML=`<div class="card">
+    <div class="sess-h"><div><div class="eyebrow">Week ${S.week} \u00b7 ${s.block}${s.swapped?' \u00b7 swapped':''}</div>
+      <h2>${s.title}</h2><p class="sub">${DOW[S.day]} ${dt.getDate()}/${dt.getMonth()+1}</p></div>
+      <span class="tag ${s.cls}">${s.tag}</span></div>
+    <div class="info" style="margin-top:12px"><p>${s.note}</p></div>${rows}
+    <button class="btn alt" style="margin-top:14px" onclick="daySwap()">\u21c4 Swap this day with another</button>
+    <p class="sub" style="margin-top:8px;font-size:11.5px">Storms, shifts, a rough night. Move the whole day rather than losing it.</p>
+  </div>`;}
+function dailyCard(){
+  const k=key(S.week,S.day),st0=dstate(S.week,S.day);
+  const stp=S.s[k]||0,wtr=S.h[k]||0;
+  const hab=HABITS.map(i=>{const done=!!st0.c[i.id];
+    return `<div class="row ${done?'done':''}">
+      <button class="cb ${done?'on':''}" onclick="toggle('${i.id}')" aria-label="${i.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${i.n}</div><div class="rm">${i.meta}</div></div></div>`;}).join('');
+  document.getElementById('dailyCard').innerHTML=`<div class="card">
+    <div class="eyebrow">Every day \u00b7 whatever else is happening</div><h2>Daily non-negotiables</h2>
+    <div style="margin-top:8px">${hab}</div>
+    <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px">
+      <div class="brow"><span style="font-weight:600">Steps</span><span class="r">you're already close</span></div>
+      <div class="brow" style="margin-top:4px"><b>${stp.toLocaleString()}</b><span class="r">of ${STEP_GOAL.toLocaleString()}</span></div>
+      <div class="bar g"><i style="width:${Math.min(100,stp/STEP_GOAL*100)}%"></i></div>
+      <div class="tapper"><button class="tp" onclick="addSteps(1000)">+1,000</button>
+      <button class="tp" onclick="addSteps(2500)">+2,500</button>
+      <button class="tp" onclick="addSteps(5000)">+5,000</button>
+      <button class="tp" onclick="setSteps()">Set</button></div></div>
+    <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px">
+      <div class="brow"><span style="font-weight:600">Water</span><span class="r">you said this needs work</span></div>
+      <div class="brow" style="margin-top:4px"><b>${(wtr/1000).toFixed(1)} L</b><span class="r">of ${(WATER_GOAL/1000).toFixed(1)} L</span></div>
+      <div class="bar b"><i style="width:${Math.min(100,wtr/WATER_GOAL*100)}%"></i></div>
+      <div class="tapper"><button class="tp" onclick="addWater(250)">+250 ml</button>
+      <button class="tp" onclick="addWater(500)">+500 ml</button>
+      <button class="tp" onclick="addWater(1000)">+1 L</button>
+      <button class="tp" onclick="addWater(-250)">\u2212250</button></div>
+      <p class="sub" style="margin-top:9px;font-size:11.5px">You said your rough run might have been down to being under hydrated. It probably was.</p>
+    </div></div>`;}
+
+/* ---------- one small challenge a week. fun, not homework. ---------- */
+const CHALLENGE=[
+ {t:'Just show up',       d:'Week one. No targets, no numbers. Get the sessions done and let the rest follow.'},
+ {t:'Own the routine',    d:'Knee routine on four separate days. That is it. Everything else is a bonus.'},
+ {t:'Add weight somewhere',d:'Find one exercise and go heavier than last week. Any exercise, any amount.'},
+ {t:'Write one number',   d:'Log the weight on ONE exercise every session. Not all of them. One. You have been going heavier for weeks and nobody has a record of it, including you.'},
+ {t:'Photos. That is it.',d:'Monday morning, front, side and back. Same spot, same light. This is the fourth week running and your pants are already looser, so there is change happening with no record of it. One job this week.'},
+ {t:'Photos, at the scale',d:'You have missed five weeks and told me why, you forget in the morning. So stop trying to remember. You already weigh yourself Monday morning. Take the photos in the same two minutes, before you put the scale away. Same action, same moment, nothing new to remember.'},
+ {t:'Photos, at night', d:'We have tried mornings three different ways and you forget every time, so we stop using mornings. Take them at NIGHT, right before you take your magnesium. That is the one thing you have not missed once in six weeks. Same room, same light, same moment. Morning is not the rule, consistency is.'},
+ {t:'Close the gap',      d:'Your longest run this week is nearly 5K. Finish it without checking your watch.'},
+ {t:'Actually deload',    d:'Sets come down and weight stays. Do less on purpose. This is harder than it sounds for you.'},
+ {t:'Your first 5K distance',d:'Saturday you cover 3.1 miles for the first time. Finish it, do not race it.'},
+ {t:'Back off on purpose',d:'Everything feels easy this week and that is the point. Resist proving something.'},
+ {t:'Go and get it',      d:'Race week. Twelve weeks of work is already in your legs.'}
+];
+function challengeCard(){
+  const c=CHALLENGE[Math.max(0,Math.min(11,S.week-1))];
+  document.getElementById('challengeCard').innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,var(--panel))">
+    <div class="eyebrow">This week's one thing</div>
+    <h2>${c.t}</h2>
+    <p class="sub" style="margin-top:6px;color:#3A3833;font-size:13.5px;line-height:1.55">${c.d}</p>
+    <p class="sub" style="margin-top:10px;font-size:11.5px">Everything else in here is the plan. This is the bit worth chasing.</p>
+  </div>`;}
+
+
+function outsideCard(){
+  const el=document.getElementById('outsideCard'); if(!el)return;
+  if(S.week!==5){el.innerHTML='';return;}
+  el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,var(--panel))">
+    <div class="eyebrow">Week 5 &middot; do this one</div>
+    <h2>Take her outside</h2>
+    <div class="info" style="margin-top:11px">
+      <p>One evening this week, take your daughter and go for a walk. Not a training walk. Not steps to hit a number. Just a walk.</p>
+      <p>Go somewhere you would not normally go. A trail, a park, the river, anywhere with something to look at. <span class="gold">Let her set the pace</span> and let her stop to look at things.</p>
+      <p>You have had a big month. New job, a learning curve, and you have been working on yourself the whole time on five hours sleep. This is the part people forget to do.</p>
+      <p>It counts as your steps. It counts as your ten minutes for yourself. And it is the thing you will actually remember from week 5.</p>
+    </div>
+  </div>`;}
+
+
+
+function weekSevenCard(){
+  const el=document.getElementById('weekSevenCard'); if(!el)return;
+  if(S.week!==7){el.innerHTML='';return;}
+  el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,var(--panel))">
+    <div class="eyebrow">Week 7 &middot; your best week yet</div>
+    <h2>Five of five, and both runs</h2>
+    <div class="info" style="margin-top:11px">
+      <p>Adherence 9. <span class="gold">Five workouts out of five and both runs</span>, which you have not managed since week 3. Lunch seven days out of seven. Sleeping 7.5 hours and sleeping well. 146 on the scale.</p>
+      <p>And the line that matters most: you said you felt comfortable rearranging your workouts around your schedule and your motivation. That is not you falling off and catching up. That is you running your own week. Nobody taught you that, you worked it out.</p></div>
+    <div class="flag">
+      <div class="ft">The photos move to night</div>
+      <p>We have now tried mornings three different ways and you have forgotten every single time. That is not a discipline problem, mornings just do not work for you. So we stop using mornings.</p>
+      <p><span class="gold">Take them at night, right before your magnesium.</span> That is the one thing you have not missed once in six weeks. Same room, same light, same moment, every time.</p>
+      <p>Morning was never the rule. Consistency is the rule, and night is where your consistency actually lives.</p></div>
+    <div class="flag">
+      <div class="ft">That stitch on Saturday</div>
+      <p>You said you felt strongest on that run and stitched badly on your right side. Worth fixing now, because a stitch on race day would ruin a run you are otherwise ready for.</p>
+      <p><span class="gold">Leave two hours between eating and running.</span> That is the most common cause and the easiest to remove.</p>
+      <p>If one arrives mid-run: slow down, press your fingers into it, and breathe deep into your belly rather than shallow into your chest. Breathe out as your LEFT foot lands, since your stitch is on the right. Do not stop, just ease off until it passes.</p></div>
+    <div class="info">
+      <div class="ft">Four weeks to your 5K</div>
+      <p>You said you feel confident about 3.1 miles. You should. You run 2.2 and 2.5 this week, and your first full 3.1 is week 10, before race day.</p>
+      <p>Four straight weeks of no knee pain and both runs done. The knee that worried you in week 2 is not the problem any more.</p></div>
+  </div>`;}
+
+function weekSixCard(){
+  const el=document.getElementById('weekSixCard'); if(!el)return;
+  if(S.week!==6){el.innerHTML='';return;}
+  el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,var(--panel))">
+    <div class="eyebrow">Week 6 &middot; where you actually are</div>
+    <h2>Halfway, and the knee is fixed</h2>
+    <div class="info" style="margin-top:11px">
+      <p><span class="gold">Four straight weeks with no knee pain on your runs.</span> In week 2 it was arriving before mile 3 and you were nervous about the 5K. That problem is gone, and the band lateral walks you called awesome are a big part of why. They build the exact muscle that controls how your kneecap tracks.</p>
+      <p>Sleep 7.5 hours, magnesium every night, five weeks running. Workouts up to 4 of 5. You are in a better place than you were a month ago on every single measure.</p></div>
+    <div class="flag">
+      <div class="ft">The photos, and why the reminders have not worked</div>
+      <p>Five weeks, and you told me exactly why: you forget in the morning. So we stop asking you to remember.</p>
+      <p><span class="gold">You already weigh yourself Monday morning.</span> Take the photos in the same two minutes, before the scale goes away. Same action, same moment. Nothing new to remember, because it is attached to something you already do.</p></div>
+    <div class="info">
+      <div class="ft">Five weeks to your 5K</div>
+      <p>11 October. You have missed one run each of the last two weeks and swapped Saturday for a walk. That is fine once, but the runs are what get you to 3.1 miles.</p>
+      <p>You run 2 and 2.5 this week, and it builds to your first full 3.1 in week 10. <span class="gold">The Tuesday run is the one to protect.</span> If a week goes wrong, lose a lift, not a run.</p></div>
+    <div class="info">
+      <div class="ft">On being spread thin</div>
+      <p>You said the weekdays are where you are stretched, and to expect slow replies. Noted, and it is not a problem.</p>
+      <p>Four workouts on a week like that is a good week. Keep doing what you did, and if something has to give, you already know which one it is.</p></div>
+  </div>`;}
+
+function nutritionCard(){
+  document.getElementById('nutritionCard').innerHTML=`<div class="card">
+    <div class="eyebrow">Fuel</div><h2>How we do food</h2>
+    <p class="sub">No calorie counting, no weighing, no tracking. Just eating enough of the right things.</p>
+    <div class="info" style="margin-top:12px"><div class="ft">The one thing to fix</div>
+      <p>You skip breakfast, lunch is inconsistent, and then you snack late at night. That is not a willpower problem, it is arithmetic. Your body spends all day owed food and collects the debt after 9pm.</p>
+      <p>Eat breakfast and lunch and the late night snacking mostly solves itself. That is why they are checkboxes now.</p></div>
+    <div class="info"><div class="ft">Your plate, every dinner</div>
+      <p>A palm of protein, a fist of carbs, a thumb of fat, and as much veg as you like. Chicken, salmon, shrimp, lean beef, rice, potatoes, soups. All food you already eat and already like.</p></div>
+    <div class="info"><div class="ft">Never a protein shake</div>
+      <p>No powders, no bars. You told me you hate the taste and I am not going to keep suggesting them. Everything below is real food.</p></div>
+    <details class="more"><summary>Recipes, snacks &amp; the egg bites</summary>${recipes()}</details>
+    <details class="more"><summary>Food swaps, build any meal</summary>${swapList()}</details>
+  </div>`;}
+function recipes(){return `
+  <div class="recipe"><b>High-Protein Egg White Bites &middot; makes 12</b>
+    <p>Your keeper. You said these are the perfect thing to reheat in the morning, so they stay exactly as they are.</p>
+    <p>2 cups egg whites &middot; 1/2 cup cottage cheese, blended smooth &middot; 1/2 cup chopped spinach &middot; 1/4 cup diced bell pepper &middot; 2 tbsp diced onion &middot; salt, pepper and garlic powder.</p>
+    <p>Blend the egg whites and cottage cheese until smooth, stir in the veg, pour into a greased muffin tin, bake at 350&deg;F for 20 to 22 minutes. Cool then refrigerate. Reheats in under a minute. Three or four bites is a solid breakfast.</p></div>
+  <div class="recipe"><b>No-cook breakfasts, zero powder</b>
+    <p><b class="gold">Cottage cheese bowl</b> with berries and a drizzle of honey. Thirty seconds.</p>
+    <p><b class="gold">Greek yogurt parfait</b> with granola and berries, layered in a jar.</p>
+    <p><b class="gold">Overnight oats</b> with milk, Greek yogurt and chia, made the night before.</p>
+    <p><b class="gold">Chia pudding</b> soaked overnight in milk, topped with fruit.</p>
+    <p><b class="gold">Hard-boiled eggs and fruit</b>. Batch boil a dozen Sunday, grab two or three each morning.</p></div>
+  <div class="recipe"><b>New for week 7 &middot; more dinners, less deciding</b>
+    <p>You said the plan is getting better, so here is more of what has been working. Dinners you can actually make on a weeknight, and three of them make enough for the next day.</p>
+    <p><b class="gold">Sheet pan sausage and veg</b> &middot; chicken sausages, whatever veg is in the drawer, potatoes cubed small. Olive oil, salt, 400F for 30 min. One tray, one wash up, two dinners. <i>Her job: shaking the tray of veg in the oil.</i></p>
+    <p><b class="gold">Crockpot chicken tacos</b> &middot; chicken breasts, a jar of salsa, taco seasoning, low for 6 hours. Shred it. Tacos night one, rice bowls night two, on a salad night three. <i>Her job: the shredding, and building her own taco.</i></p>
+    <p><b class="gold">15 minute shrimp and rice</b> &middot; frozen shrimp, microwave rice pouch, frozen stir fry veg, soy sauce and garlic. Everything hits one pan and it is done before the table is set.</p>
+    <p><b class="gold">Baked feta pasta</b> &middot; block of feta in the middle of a dish, cherry tomatoes around it, olive oil, 400F for 35 min, then stir it into pasta. Add chicken for the protein. It looks like effort and it is not.</p>
+    <p><b class="gold">Breakfast for dinner</b> &middot; eggs, turkey bacon, toast, fruit. When it is 8pm and nobody wants to cook, this counts and it always has.</p>
+    <p><b class="gold">Tuna melt on an English muffin</b> &middot; you already keep muffins for the pizzas. Tuna, a spoon of mayo, cheese on top, under the grill. Two minutes, 30g of protein.</p>
+    <p><b class="gold">Rotisserie chicken, three ways</b> &middot; buy one on a Sunday. Night one it is a dinner, night two it is a rice bowl, night three it is a wrap. Zero cooking after the first night.</p></div>
+
+  <div class="recipe"><b>Snacks that actually stop the 9pm raid</b>
+    <p>The late night snacking is arithmetic, not willpower. These are for when it happens anyway.</p>
+    <p><b class="gold">Cottage cheese with hot honey and pretzels</b> &middot; sounds odd, tastes like a dessert, 20g of protein.</p>
+    <p><b class="gold">Frozen yogurt bark</b> &middot; you already make this and liked it. Add crushed pretzels next time for the salt.</p>
+    <p><b class="gold">Protein hot chocolate</b> &middot; warm milk, cocoa powder, spoon of honey. No powder, no bar, and it signals the day is over.</p>
+    <p><b class="gold">Apple with peanut butter and dark chocolate chips</b> &middot; slice the apple, spread it, scatter them on.</p>
+    <p><b class="gold">Popcorn with parmesan</b> &middot; big volume, low effort, and it lasts longer than crisps do.</p></div>
+
+  <div class="recipe"><b>Make these WITH her &middot; new this week</b>
+    <p>Every one has a job she can do. That is the point of them.</p>
+    <p><b class="gold">Banana oat pancakes</b> &middot; 1 ripe banana, 2 eggs, half a cup of oats, cinnamon. Blend and cook like normal pancakes. <i>Her job: mashing the banana and counting the oats.</i></p>
+    <p><b class="gold">Frozen banana ice cream</b> &middot; slice 3 ripe bananas, freeze overnight, blend until creamy. Tastes like soft serve. Add peanut butter or frozen berries. <i>Her job: choosing the topping.</i></p>
+    <p><b class="gold">English muffin pizzas</b> &middot; muffin half, tomato sauce, cheese, whatever else. Grill five minutes. <i>Her job: all of the decorating. Let her make faces.</i></p>
+    <p><b class="gold">Baked oatmeal cups</b> &middot; 2 cups oats, 2 eggs, 1 cup milk, mashed banana, cinnamon, blueberries. Muffin tin, 350F, 20 min, makes 12. <i>Her job: dropping the berries in.</i> These keep all week and reheat in 30 seconds, which is the answer to your 3 out of 7 breakfast days.</p>
+    <p><b class="gold">Smoothie popsicles</b> &middot; fruit, Greek yogurt, splash of milk, blend and pour into moulds. <i>Her job: pouring, and waiting, which is the hard part.</i></p>
+    <p><b class="gold">Turkey and cheese pinwheels</b> &middot; tortilla, cream cheese, turkey, roll tight and slice. <i>Her job: the rolling.</i> Two minutes, no cooking, solves a lunch.</p>
+    <p><b class="gold">Ants on a log</b> &middot; celery, peanut butter, raisins. <i>Her job: obviously the ants.</i></p>
+    <p><b class="gold">Slow cooker shredded chicken</b> &middot; chicken breasts, jar of salsa, low for six hours, shred with two forks. <i>Her job: shredding it.</i> Three dinners in one go.</p></div>
+  <div class="recipe"><b>Snacks for you and your daughter &middot; the original five</b>
+    <p>High protein, good fats, sweetened with dates instead of sugar. Kid approved and coach approved. You said keep these, so they stay.</p>
+    <p><b class="gold">Date and peanut butter energy balls</b> &middot; dates, peanut butter, oats and chia, blended and rolled.</p>
+    <p><b class="gold">No-bake coconut bites</b> &middot; dates, shredded coconut, almond butter, a splash of coconut oil, rolled and chilled.</p>
+    <p><b class="gold">Yogurt bark</b> &middot; Greek yogurt spread thin on a tray, topped with fruit and a date syrup drizzle, frozen and broken into pieces.</p>
+    <p><b class="gold">Apple nachos</b> &middot; apple slices, almond butter drizzle, shredded coconut, a few dark chocolate chips.</p>
+    <p><b class="gold">Date roll-ups</b> &middot; tortilla, almond butter, mashed banana, date syrup, rolled and sliced into pinwheels.</p></div>
+  <div class="recipe"><b>Seven new ones &middot; week 4</b>
+    <p>Same rules. Real food, no powders, nothing that needs a recipe card at 9pm.</p>
+    <p><b class="gold">Frozen yogurt banana bites</b> &middot; slice a banana, sandwich each pair with peanut butter, dip half in melted dark chocolate, freeze on a tray. Your daughter will think this is a treat. It is basically a protein snack.</p>
+    <p><b class="gold">Whipped cottage cheese and honey</b> &middot; blend a tub of cottage cheese until it is completely smooth, top with berries and honey. Tastes like cheesecake filling. Thirty seconds, and it is the single highest protein thing on this whole list.</p>
+    <p><b class="gold">Greek yogurt cookie dough bites</b> &middot; Greek yogurt, oats, a spoon of peanut butter, a chopped date, a few chocolate chips. Roll into balls, freeze twenty minutes.</p>
+    <p><b class="gold">Date caramels</b> &middot; pit a Medjool date, stuff it with peanut butter, dip the bottom in dark chocolate, flake of salt on top, chill. Two of these kills a sugar craving stone dead.</p>
+    <p><b class="gold">Cucumber boats</b> &middot; halve a cucumber, scoop the seeds, fill with tuna or shredded chicken mixed with Greek yogurt and lemon. Savoury option for when nothing sweet appeals.</p>
+    <p><b class="gold">Cottage cheese ranch dip</b> &middot; blend cottage cheese with a ranch seasoning packet, dip peppers, cucumber and carrots. Batch it Sunday, it lasts the week.</p>
+    <p><b class="gold">Frozen grapes and watermelon cubes</b> &middot; no recipe, just freeze them. The laziest thing here and shockingly good on a hot evening.</p></div>
+  <div class="recipe"><b>Three new egg bite flavours</b>
+    <p>Same base as your keeper, 2 cups egg whites blended with 1/2 cup cottage cheese. Just change what goes in.</p>
+    <p><b class="gold">Bacon and chive</b> &middot; two rashers cooked and crumbled, a handful of chopped chives, black pepper.</p>
+    <p><b class="gold">Sun-dried tomato and feta</b> &middot; chopped sun-dried tomato, crumbled feta, a little oregano.</p>
+    <p><b class="gold">Ham, cheddar and broccoli</b> &middot; diced ham, grated cheddar, finely chopped broccoli. This is the one your daughter will actually eat.</p>
+    <p>Make two flavours in the same tin. Twelve bites, two different breakfasts, one wash up.</p></div>
+  <div class="recipe"><b>Two dinners that make tomorrow's lunch too</b>
+    <p><b class="gold">Sheet pan salmon and potatoes</b> &middot; salmon, halved baby potatoes, broccoli, olive oil, lemon. One tray, 200&deg;C, 22 minutes. Your daughter will eat the potatoes.</p>
+    <p><b class="gold">Shrimp rice bowl</b> &middot; microwave rice, frozen shrimp cooked from frozen in four minutes, whatever veg is in the fridge, soy and lime. Ten minutes on a night you have nothing left.</p></div>`;}
+
+function swapList(){return `<div class="swapg">
+  <h4>Protein, swap any for any</h4>
+  <ul><li>Chicken breast or thigh, a palm sized piece</li><li>Salmon fillet</li>
+  <li>Shrimp, a generous handful</li><li>Lean ground beef or steak, your weekly red meat</li>
+  <li>Greek yogurt, a large scoop</li><li>Cottage cheese, a large scoop</li>
+  <li>Three whole eggs, or three or four egg bites</li></ul>
+  <h4>Carbs, swap any for any</h4>
+  <ul><li>Rice, a fist</li><li>Potatoes or sweet potatoes, a fist</li>
+  <li>Oats, a fist dry</li><li>Whole grain bread, two slices</li>
+  <li>Rice cakes, three or four</li><li>Fruit, any</li></ul>
+  <h4>Fats, swap any for any</h4>
+  <ul><li>Avocado, half</li><li>Olive oil, a thumb</li>
+  <li>Natural peanut butter, a thumb</li><li>Almonds, a small handful</li><li>Cheese, a thumb</li></ul>
+  <h4>Veg, as much as you like</h4>
+  <ul><li>Broccoli, spinach, bell peppers, mixed greens, cucumber, green beans</li>
+  <li>No limit and no thinking required. Volume here is what takes the edge off the 9pm snacking.</li></ul>
+  <div class="info" style="margin-top:12px"><div class="ft">Two things not on any list</div>
+    <p>Olives and most beans, because you told me you do not like them. And no powders or bars, ever.</p></div>
+</div>`;}
+
+const GROCERY=[
+ {h:'Protein',items:[
+  ['Chicken breast or thigh','1.5 kg','Your favourite, and the easiest thing to batch cook Sunday.'],
+  ['Salmon fillets','4','Sheet pan dinner twice a week.'],
+  ['Raw shrimp, frozen','500g','Cooks from frozen in four minutes. Fastest dinner you own.'],
+  ['Lean ground beef or steak','500g','Your weekly red meat, as you already do it.'],
+  ['Eggs','2 dozen','A dozen hard boiled Sunday for snacks.'],
+  ['Egg whites, carton','2 cartons','For the egg bites. The carton saves you separating twelve eggs.'],
+  ['Cottage cheese','2 tubs','One goes into the egg bites, one is a thirty second snack.'],
+  ['Greek yogurt','1 large tub','Parfaits, yogurt bark, overnight oats.']]},
+ {h:'Carbs',items:[
+  ['Rolled oats','1 kg','Overnight oats and the energy balls.'],
+  ['Rice or microwave rice pouches','6',''],
+  ['Baby potatoes and sweet potatoes','1.5 kg total',''],
+  ['Whole grain bread','1 loaf',''],['Rice cakes','1 pack',''],
+  ['Bananas and apples','7 and 6','Apple nachos and the date roll-ups.'],
+  ['Berries, fresh or frozen','1 kg','Parfaits, bark, cottage cheese bowls.']]},
+ {h:'Fats and snack ingredients',items:[
+  ['Medjool dates','400g','The sweetener behind every kid snack on your list. Buy more than you think you need.'],
+  ['Natural peanut butter','1 jar',''],
+  ['Almond butter','1 jar','Coconut bites, apple nachos, roll-ups.'],
+  ['Chia seeds','200g','Pudding, overnight oats, energy balls.'],
+  ['Shredded coconut','1 bag',''],['Avocados','3',''],
+  ['Olive oil','1 bottle',''],['Almonds','200g',''],
+  ['Dark chocolate chips','1 small bag','Apple nachos, date caramels, banana bites.'],
+  ['Grapes and watermelon','as you like','Freeze them. Easiest snack on the list.'],
+  ['Cucumbers, peppers, carrots','plenty','Cucumber boats and the ranch dip.'],
+  ['Ranch seasoning packet','1','Turns cottage cheese into a dip your daughter will eat.'],
+  ['Tinned tuna','4 tins','Cucumber boats, two minutes.'],
+  ['Feta, sun-dried tomatoes, bacon, ham, cheddar','small amounts','The three new egg bite flavours.']]},
+ {h:'Veg, minimal chopping',items:[
+  ['Bagged spinach','1 large','Egg bites and everything else.'],
+  ['Broccoli florets, pre-cut','2 bags','Straight onto the sheet pan.'],
+  ['Bell peppers','3','Egg bites.'],['Onion','1 small bag',''],
+  ['Mixed greens, cucumber, green beans','as you like','No limit on any of these.'],
+  ['Frozen mixed veg','1 kg','No prep, no waste.']]},
+ {h:'The gut work',items:[
+  ['Kimchi or sauerkraut','1 jar','Already in your routine and it is clearly working.'],
+  ['Probiotic','ongoing','You are on most days. Daily is better.'],
+  ['Herbal tea','1 box','For the wind down, and it takes the edge off the 9pm snack urge.']]}
+];
+const PREP=[
+ ['Sunday, 40 minutes','Double batch of egg white bites. Hard boil a dozen eggs. Cook and portion the chicken. Roll a batch of energy balls with your daughter. That is breakfast, lunch and snacks handled, and breakfast is the habit we are actually building.'],
+ ['Any night, 3 minutes','Overnight oats in a jar for the morning. Takes less time than deciding what to eat does.']
+];
+function groceryCard(){
+  const body=GROCERY.map(g=>`<h4>${g.h}</h4>${g.items.map(([n,q,note])=>
+    `<div class="gitem"><div class="gtop"><span class="gn">${n}</span><span class="gq">${q}</span></div>${note?`<div class="gnote">${note}</div>`:''}</div>`).join('')}`).join('');
+  const prep=PREP.map(([w,t])=>`<div class="recipe"><b>${w}</b><p>${t}</p></div>`).join('');
+  document.getElementById('groceryCard').innerHTML=`<div class="card">
+    <div class="eyebrow">One week \u00b7 one shop</div><h2>Grocery list</h2>
+    <p class="sub">Built to remove the thinking, which is the thing you said you wanted most.</p>
+    <div class="info" style="margin-top:11px"><p>Nothing here needs weighing or counting. Buy it, prep it Sunday, and the decisions are already made when you are tired.</p></div>
+    <details class="more"><summary>Full list</summary><div class="glist">${body}</div></details>
+    <details class="more"><summary>Prep schedule</summary><div style="margin-top:8px">${prep}</div></details></div>`;}
+function photosCard(){
+  const el=document.getElementById('photosCard');
+  if(S.day!==0){el.innerHTML='';return;}
+  const cur=S.wt[S.week];
+  el.innerHTML=`<div class="card">
+    <div class="eyebrow">Monday \u00b7 Week ${S.week}</div><h2>Weigh-in &amp; photos</h2>
+    <p class="sub">First thing, after the bathroom, before you eat or drink. Then send the photos straight to me.</p>
+    <button class="btn alt" style="margin-top:12px" onclick="logMorningWeight()">${cur!=null?'Weight: '+cur+' lbs, tap to change':'Log this morning\u2019s weight'}</button>
+    <div class="info" style="margin-top:12px"><p>You told me progress photos are one of the two things that motivate you. They are also the only thing that shows what the scale cannot. Ninety seconds, same spot, same light.</p></div></div>`;}
+function pastCard(){
+  let rows='';
+  for(let w=1;w<S.week;w++){
+    if(w<LIVE_FROM&&HISTORY[w]){
+      rows+=`<div class="pw"><div><b>Week ${w}</b><div class="rm">${HISTORY[w].note}</div></div>
+        <div class="pv">${HISTORY[w].w} lbs</div></div>`;continue;}
+    let tot=0,dn=0;for(let d=0;d<7;d++){const p=pct(w,d);tot+=p.total;dn+=p.done;}
+    const pc=tot?Math.round(dn/tot*100):0;
+    rows+=`<div class="pw"><div><b>Week ${w}</b><div class="rm">${W[w-1].b} \u00b7 ${pc}% complete</div></div>
+      <div class="pv">${S.wt[w]!=null?S.wt[w]+' lbs':pc+'%'}</div></div>`;}
+  document.getElementById('pastCard').innerHTML=rows
+    ?`<div class="card"><div class="eyebrow">History</div><h2>Past Weeks</h2>
+      <p class="sub">Nothing is ever lost. Every week stays here.</p><div style="margin-top:10px">${rows}</div></div>`:'';}
+
+function goWeek(n){S.week=n;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+function goDay(d){S.day=d;save();render();}
+function toggle(id){const st=dstate(S.week,S.day);
+  if(st.c[id])delete st.c[id];else st.c[id]=1;save();
+  const p=pct(S.week,S.day);render();
+  if(p.p>=1){toast('Day complete. Proud of you.');confetti();}}
+function addSteps(v){const k=key(S.week,S.day);S.s[k]=Math.max(0,(S.s[k]||0)+v);save();render();if(S.s[k]>=STEP_GOAL)toast('10K done.');}
+function addWater(v){const k=key(S.week,S.day);S.h[k]=Math.max(0,(S.h[k]||0)+v);save();render();}
+function esc(s){return String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+function openModal(h){document.getElementById('modal').innerHTML=h;document.getElementById('mask').classList.add('on');}
+function closeModal(){document.getElementById('mask').classList.remove('on');}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2100);}
+function editItem(id){const st=dstate(S.week,S.day),s=session(S.week,S.day);
+  const it=[...s.items,...HABITS].find(i=>i.id===id);
+  openModal(`<h3>Customise</h3><p class="ms">${it.n}. Type what you actually did.</p>
+    <div class="form"><label>What you did</label>
+    <input id="cuIn" value="${esc(st.cu[id]||'')}" placeholder="e.g. swapped the run for the treadmill, storms">
+    <button class="btn" onclick="saveCustom('${id}')">Save</button>
+    <button class="btn alt" style="margin-top:8px" onclick="clearCustom('${id}')">Clear</button></div>`);
+  setTimeout(()=>document.getElementById('cuIn').focus(),60);}
+function saveCustom(id){const v=document.getElementById('cuIn').value.trim(),st=dstate(S.week,S.day);
+  if(v)st.cu[id]=v;else delete st.cu[id];save();closeModal();render();}
+function clearCustom(id){delete dstate(S.week,S.day).cu[id];save();closeModal();render();}
+function swapEx(id){const s=session(S.week,S.day),it=s.items.find(i=>i.id===id);
+  const opts=MASTER.map(k=>`<button class="opt ${k===it.ex?'cur':''}" onclick="doSwap('${id}','${k}')"><span>${EX[k].n}</span></button>`).join('');
+  openModal(`<h3>Swap exercise</h3><p class="ms">Replacing ${it.n} for today. Everything here is knee friendly.</p>${opts}
+    <button class="btn alt" style="margin-top:8px" onclick="doSwap('${id}','')">Reset to original</button>`);}
+function doSwap(id,k){const st=dstate(S.week,S.day);if(k)st.sw[id]=k;else delete st.sw[id];save();closeModal();render();}
+function logWeight(id){const st=dstate(S.week,S.day);
+  openModal(`<h3>Log weight</h3><p class="ms">What you actually used, in pounds.</p>
+    <div class="form"><label>Weight (lbs)</label>
+    <input id="wIn" type="number" inputmode="decimal" step="2.5" value="${st.w[id]!=null?st.w[id]:''}" placeholder="e.g. 20">
+    <button class="btn" onclick="saveWeight('${id}')">Save</button></div>`);
+  setTimeout(()=>document.getElementById('wIn').focus(),60);}
+function saveWeight(id){const v=parseFloat(document.getElementById('wIn').value),st=dstate(S.week,S.day);
+  if(!isNaN(v))st.w[id]=v;else delete st.w[id];save();closeModal();render();}
+function logMorningWeight(){
+  openModal(`<h3>Morning weight</h3><p class="ms">Week ${S.week}. After the bathroom, before eating or drinking.</p>
+    <div class="form"><label>Weight (lbs)</label>
+    <input id="mwIn" type="number" inputmode="decimal" step="0.1" value="${S.wt[S.week]!=null?S.wt[S.week]:''}" placeholder="e.g. 145.6">
+    <button class="btn" onclick="saveMorningWeight()">Save</button></div>`);
+  setTimeout(()=>document.getElementById('mwIn').focus(),60);}
+function saveMorningWeight(){const v=parseFloat(document.getElementById('mwIn').value);
+  if(!isNaN(v))S.wt[S.week]=v;save();closeModal();render();toast('Logged.');}
+function setSteps(){const k=key(S.week,S.day);
+  openModal(`<h3>Set steps</h3><p class="ms">Straight from your phone.</p>
+    <div class="form"><label>Steps today</label>
+    <input id="sIn" type="number" inputmode="numeric" value="${S.s[k]||''}" placeholder="e.g. 9200">
+    <button class="btn" onclick="saveSteps()">Save</button></div>`);
+  setTimeout(()=>document.getElementById('sIn').focus(),60);}
+function saveSteps(){const v=parseInt(document.getElementById('sIn').value,10),k=key(S.week,S.day);
+  S.s[k]=isNaN(v)?0:Math.max(0,v);save();closeModal();render();}
+function daySwap(){
+  const opts=[0,1,2,3,4,5,6].filter(d=>d!==S.day).map(d=>{
+    const s=session(S.week,d),dt=dateOf(S.week,d);
+    return `<button class="opt" onclick="doDaySwap(${d})"><span>${DOW[d]} ${dt.getDate()}/${dt.getMonth()+1}</span><small>${s.title}</small></button>`;}).join('');
+  openModal(`<h3>Swap with another day</h3><p class="ms">Move the whole day rather than losing it.</p>${opts}`);}
+function doDaySwap(d){const o=order(S.week),t=o[S.day];o[S.day]=o[d];o[d]=t;save();closeModal();render();toast('Days swapped.');}
+function confetti(){
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=document.createElement('canvas');
+  c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:150';
+  c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);
+  const x=c.getContext('2d'),cols=['#8A6F34','#C9A34F','#111111'];
+  const P=Array.from({length:70},()=>({x:Math.random()*c.width,y:-20-Math.random()*140,
+    r:3+Math.random()*4,vy:2.4+Math.random()*3.2,vx:-1.4+Math.random()*2.8,
+    a:Math.random()*6.28,va:-.14+Math.random()*.28,c:cols[(Math.random()*3)|0]}));
+  let f=0;(function loop(){x.clearRect(0,0,c.width,c.height);
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va;x.save();x.translate(p.x,p.y);x.rotate(p.a);
+      x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);x.restore();});
+    if(++f<150)requestAnimationFrame(loop);else c.remove();})();}
+function a2Steps(){
+  const ua=navigator.userAgent||'';
+  const iOS=/iPad|iPhone|iPod/.test(ua)||(/Mac/.test(ua)&&navigator.maxTouchPoints>1);
+  const android=/Android/.test(ua);let steps;
+  if(iOS)steps=['Tap the Share button at the bottom of Safari, the square with the arrow pointing up.',
+    'Scroll down and tap <b style="color:var(--gold)">Add to Home Screen</b>.','Tap Add in the top right.',
+    'Open ELVT COACH from your home screen from now on, not from Safari.'];
+  else if(android)steps=['Tap the three dots in the top right of Chrome.',
+    'Tap <b style="color:var(--gold)">Add to Home screen</b> (or Install app).','Tap Add or Install to confirm.',
+    'Open ELVT COACH from your home screen from now on, not from Chrome.'];
+  else steps=['Open this link on your phone, that is where you will actually use it.',
+    'iPhone: Share, then Add to Home Screen. Android: three dots, then Add to Home screen.',
+    'Open it from the home screen icon from then on.'];
+  document.getElementById('a2steps').innerHTML=steps.map((t,i)=>`<div class="s"><b>${i+1}</b><span>${t}</span></div>`).join('');}
+function openA2(){a2Steps();document.getElementById('a2').classList.add('on');window.scrollTo({top:0});}
+function closeA2(){document.getElementById('a2').classList.remove('on');try{localStorage.setItem(KEY+'_a2','1')}catch(e){}}
+if(!localStorage.getItem(KEY+'_a2')&&!(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)){openA2();}
+render();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncToday())render();});
+window.addEventListener('focus',()=>{if(syncToday())render();});
+setInterval(()=>{if(syncToday())render();},60000);
+</script>
+</body>
+</html>

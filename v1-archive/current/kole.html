@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAF7F2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ELVT COACH, Kole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--panel:#FFFFFF;--panel2:#F4F0E9;--line:#E4DFD6;--gold:#8A6F34;--gold-dim:#A58A4E;--gold-soft:rgba(138,111,52,.09);--txt:#111111;--mut:#6E6A64;--mut2:#9A958D;--ok:#2F7D4F;--warn:#A8641F;--bad:#A33F36;--r:12px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:Inter,-apple-system,system-ui,sans-serif;
+font-size:15px;line-height:1.5;padding-bottom:80px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:.01em}
+button{font-family:inherit;color:inherit;border:none;background:none;cursor:pointer;font-size:inherit}
+input{font-family:inherit}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px}
+.topbar{position:sticky;top:0;z-index:60;background:rgba(250,247,242,.94);backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.tb-in{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;max-width:640px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:9px}.brand img{height:15px;width:auto;display:block}.brand small{font-size:9px;letter-spacing:.2em;color:var(--mut);font-weight:600;text-transform:uppercase}
+.brand small{display:block;font-family:Inter,sans-serif;font-size:9px;letter-spacing:.3em;color:var(--mut2);font-weight:500;margin-top:-3px}
+.streak{display:flex;align-items:center;gap:6px;background:var(--gold-soft);border:1px solid rgba(201,163,79,.28);
+padding:6px 11px;border-radius:100px;font-size:13px;font-weight:600;color:var(--gold)}
+.streak span.lbl{font-size:9px;letter-spacing:.16em;color:var(--mut);font-weight:500}
+.race{margin:14px 0 0;background:linear-gradient(140deg,#FFFBF2,var(--panel));border:1px solid rgba(138,111,52,.3);
+border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.race .l{font-size:10px;letter-spacing:.2em;color:var(--gold);font-weight:600;text-transform:uppercase}
+.race .t{font-family:'Cormorant Garamond',serif;font-size:21px;margin-top:2px}
+.race .s{font-size:12px;color:var(--mut);margin-top:1px}
+.race .n{font-family:'Cormorant Garamond',serif;font-size:38px;line-height:1;color:var(--gold);text-align:center}
+.race .n small{display:block;font-family:Inter,sans-serif;font-size:9px;letter-spacing:.16em;color:var(--mut);font-weight:500;margin-top:3px}
+.strip{display:flex;gap:6px;overflow-x:auto;padding:14px 0 4px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.wk{flex:0 0 auto;min-width:52px;padding:8px 6px;border-radius:11px;background:var(--panel);border:1px solid var(--line);text-align:center;transition:.15s}
+.wk b{display:block;font-size:14px;font-weight:600}
+.wk i{display:block;font-style:normal;font-size:8px;letter-spacing:.1em;color:var(--mut2);text-transform:uppercase;margin-top:2px}
+.wk.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.wk.on i{color:rgba(11,11,13,.65)}
+.days{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:1 1 0;min-width:44px;padding:9px 2px 8px;border-radius:12px;background:var(--panel);border:1px solid var(--line);text-align:center;transition:.15s}
+.day.on{border-color:var(--gold);background:#FFFBF2}
+.day .dn{font-size:9px;letter-spacing:.09em;color:var(--mut);text-transform:uppercase}
+.day .dd{font-size:14px;font-weight:600;margin-top:1px}
+.day.today .dd{color:var(--gold)}
+.day.on .dn{color:var(--gold)}
+.ring{margin:5px auto 0;display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:14px 0}
+.card.compact{padding:14px 16px}
+.card h2{margin:0 0 3px;font-size:21px}
+.eyebrow{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.sub{font-size:12.5px;color:var(--mut);margin:0}
+.goals{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap}
+.goal{flex:1 1 0;min-width:88px;display:flex;align-items:center;gap:7px;background:var(--panel2);
+border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;font-weight:500}
+.goal span{flex:0 0 auto;width:17px;height:17px;border-radius:100px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.32);color:var(--gold);font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+details.more{margin-top:12px}
+details.more>summary{list-style:none;cursor:pointer;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+color:var(--mut);font-weight:600;padding:8px 0 2px;display:flex;align-items:center;gap:6px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:'\FF0B';color:var(--gold);font-size:13px;letter-spacing:0}
+details.more[open]>summary::after{content:'\2212'}
+.jump{display:block;width:100%;margin:8px 0 0;padding:9px;border-radius:10px;background:var(--gold-soft);
+border:1px solid rgba(138,111,52,.3);color:var(--gold);font-size:12.5px;font-weight:600}
+.flag{background:#FFFBF2;border:1px solid rgba(217,139,74,.32);border-radius:11px;padding:12px 14px;margin:10px 0}
+.flag .ft{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--warn);font-weight:600;margin-bottom:4px}
+.flag p{margin:0 0 6px;font-size:13px;color:#3A3833;line-height:1.55}
+.flag p:last-child{margin-bottom:0}
+.info{background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:9px;padding:12px 14px;margin:10px 0}
+.info .ft{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:4px}
+.info p{margin:0 0 6px;font-size:13px;color:#3A3833;line-height:1.55}
+.info p:last-child{margin-bottom:0}
+.gold{color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center}
+.stat b{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);line-height:1.1}
+.stat i{display:block;font-style:normal;font-size:9px;letter-spacing:.11em;color:var(--mut);text-transform:uppercase;margin-top:3px}
+.sess-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
+.tag{font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:4px 9px;border-radius:100px;white-space:nowrap}
+.t-lift{background:rgba(201,163,79,.14);color:var(--gold);border:1px solid rgba(138,111,52,.3)}
+.t-run{background:rgba(93,184,122,.12);color:var(--ok);border:1px solid rgba(93,184,122,.28)}
+.t-rec{background:rgba(141,141,150,.12);color:var(--mut);border:1px solid var(--line)}
+.t-deload{background:rgba(74,159,208,.12);color:#4a9fd0;border:1px solid rgba(74,159,208,.3)}
+.row{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:none}
+.cb{flex:0 0 auto;width:23px;height:23px;border-radius:7px;border:1.5px solid #3a3a42;background:var(--panel2);
+display:flex;align-items:center;justify-content:center;margin-top:1px;transition:.15s}
+.cb.on{background:var(--gold);border-color:var(--gold)}
+.cb svg{opacity:0;transition:.15s}
+.cb.on svg{opacity:1}
+.rb{flex:1;min-width:0}
+.rn{font-size:14.5px;font-weight:500;line-height:1.35}
+.row.done .rn{color:var(--mut);text-decoration:line-through;text-decoration-color:var(--gold-dim)}
+.rm{font-size:11.5px;color:var(--mut);margin-top:2px}
+.rcustom{font-size:11.5px;color:var(--warn);margin-top:3px;font-style:italic}
+.acts{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.act{font-size:10.5px;letter-spacing:.05em;padding:4px 9px;border-radius:100px;border:1px solid var(--line);
+background:var(--panel2);color:var(--mut);display:inline-flex;align-items:center;gap:4px}
+.act.vid{color:var(--gold);border-color:rgba(201,163,79,.28)}
+.act.wt{color:var(--txt)}
+.act .up{color:var(--ok)}.act .dn{color:var(--bad)}.act .sm{color:var(--mut2)}
+.bar{height:7px;border-radius:100px;background:var(--line);overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:100px;transition:width .35s}
+.bar.g i{background:linear-gradient(90deg,#3d7a52,var(--ok))}
+.bar.b i{background:linear-gradient(90deg,#2f5f7a,#4a9fd0)}
+.brow{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px}
+.brow b{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--gold)}
+.brow .r{color:var(--mut);font-size:11.5px}
+.tapper{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+.tp{flex:1;min-width:62px;padding:9px 4px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);text-align:center;font-size:12.5px;font-weight:500}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.met{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 6px;text-align:center}
+.met b{display:block;font-family:'Cormorant Garamond',serif;font-size:23px;line-height:1.05;color:var(--gold)}
+.met b.lo{color:var(--bad)} .met b.mid{color:var(--warn)} .met b.hi{color:var(--ok)}
+.met i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.11em;color:var(--mut);text-transform:uppercase;margin-top:3px}
+.met small{display:block;font-size:9.5px;color:var(--mut2);margin-top:2px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:34px;margin-top:10px}
+.spark div{flex:1;background:var(--gold-dim);border-radius:2px 2px 0 0;min-height:2px}
+.spark div.lo{background:var(--bad)} .spark div.hi{background:var(--ok)} .spark div.none{background:var(--line)}
+.macros{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}
+.mac{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 5px;text-align:center}
+.mac b{display:block;font-family:'Cormorant Garamond',serif;font-size:17px;line-height:1.15}
+.mac i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;margin-top:2px}
+.mac .tgt{font-size:9.5px;color:var(--mut2);margin-top:1px}
+.mac.over b{color:var(--warn)}
+.xrow{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.xdel{font-size:16px;color:var(--mut2);padding:0 5px}
+.form{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:11px}
+.form label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.form input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--txt);font-size:15px;margin-bottom:9px}
+.form input:focus{outline:none;border-color:var(--gold-dim)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.btn{width:100%;padding:11px;border-radius:9px;background:var(--gold);color:var(--bg);font-weight:600;font-size:14px}
+.btn.alt{background:var(--panel2);color:var(--gold);border:1px solid rgba(138,111,52,.3)}
+.pill{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warn);
+border:1px solid rgba(217,139,74,.35);border-radius:100px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+.glist h4,.swapg h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:16px 0 7px;font-weight:600}
+.gitem{padding:9px 0;border-top:1px solid var(--line)}
+.gtop{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.gn{font-size:13.5px;font-weight:500;flex:1}
+.gq{font-size:12px;color:var(--gold);white-space:nowrap;font-weight:500}
+.gnote{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.5}
+.swapg ul{margin:0;padding-left:17px}
+.swapg li{font-size:13px;color:#3A3833;margin-bottom:4px;line-height:1.5}
+.recipe{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:9px}
+.recipe b{display:block;font-size:13.5px;margin-bottom:3px}
+.recipe p{margin:0 0 5px;font-size:12.5px;color:var(--mut);line-height:1.55}
+.recipe p:last-child{margin-bottom:0}
+.pw{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--line);font-size:13.5px}
+.pw:first-child{border-top:none}
+.pw .pv{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold)}
+.mask{position:fixed;inset:0;background:rgba(17,17,17,.42);backdrop-filter:blur(3px);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.modal{width:100%;max-width:640px;background:var(--panel);border:1px solid var(--line);border-radius:20px 20px 0 0;
+padding:20px 18px calc(24px + env(safe-area-inset-bottom));max-height:86vh;overflow-y:auto}
+.modal h3{margin:0 0 3px;font-size:20px}
+.modal .ms{font-size:12.5px;color:var(--mut);margin:0 0 14px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;
+padding:12px 13px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);margin-bottom:7px;font-size:14px}
+.opt.cur{border-color:var(--gold);color:var(--gold)}
+.opt small{color:var(--mut);font-size:11px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,90px);background:var(--gold);color:var(--bg);
+font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:100px;z-index:200;transition:.32s;opacity:0;white-space:nowrap}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.a2{position:fixed;inset:0;background:rgba(11,11,13,.97);z-index:300;display:none;flex-direction:column;
+align-items:center;justify-content:center;text-align:center;padding:34px}
+.a2.on{display:flex}
+.a2 h2{font-size:29px;margin:0 0 8px;color:var(--gold)}
+.a2 p{font-size:14px;color:var(--mut);max-width:340px;margin:0 0 8px;line-height:1.6}
+.a2steps{max-width:340px;width:100%;margin-top:16px;text-align:left}
+.a2steps .s{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.a2steps .s:first-child{border-top:none}
+.a2steps .s b{flex:0 0 auto;width:20px;height:20px;border-radius:100px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.32);color:var(--gold);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.a2steps .s span{font-size:13.5px;color:#3A3833;line-height:1.5}
+.helplink{display:block;width:100%;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);padding:12px 0 0;font-weight:600}
+.foot{text-align:center;font-size:10px;letter-spacing:.2em;color:var(--mut2);text-transform:uppercase;padding:20px 0 10px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="a2" id="a2">
+  <h2>Save this first</h2>
+  <p><b style="color:#3A3833">Do this before you tick anything off.</b> Your progress is stored on this device in this app. If you start logging in the browser and add it to your home screen later, the home screen version will start empty.</p>
+  <div class="a2steps" id="a2steps"></div>
+  <p style="font-size:12px;color:#5f5f68;margin-top:14px">Fifteen seconds. Then open it from your home screen every time.</p>
+  <button class="btn" style="max-width:250px;margin-top:16px" onclick="closeA2()">Done, I've added it</button>
+  <button class="btn alt" style="max-width:250px;margin-top:9px" onclick="closeA2()">Skip for now</button>
+</div>
+
+<div class="topbar"><div class="tb-in">
+  <div class="brand"><img src="data:image/png;base64,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" alt="ELVT"><small>KOLE</small></div>
+  <div class="streak"><span class="lbl">STREAK</span><span id="streakN">0</span></div>
+</div></div>
+
+<div class="wrap">
+  <div class="race">
+    <div><div class="l">Program</div>
+      <div class="t">12 Weeks &middot; Finish Line</div>
+      <div class="s">Sunday 25 October 2026</div></div>
+    <div class="n"><span id="cdN">-</span><small id="cdL">DAYS LEFT</small></div>
+  </div>
+
+  <div class="strip" id="weekStrip"></div>
+  <div class="days" id="dayStrip"></div>
+  <div id="jumpBar"></div>
+
+  <div class="card compact">
+    <div class="eyebrow">Athlete</div>
+    <h2>Kole</h2>
+    <p class="sub">Leaning out &middot; 12 weeks &middot; started Mon 3 August 2026</p>
+    <div class="goals">
+      <div class="goal"><span>1</span>Lean out</div>
+      <div class="goal"><span>2</span>Build muscle</div>
+      <div class="goal"><span>3</span>Real stamina</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>146</b><i>Start lbs</i></div>
+      <div class="stat"><b id="pfNow">142</b><i>Now lbs</i></div>
+      <div class="stat"><b>30</b><i>Already lost</i></div>
+    </div>
+    <details class="more">
+      <summary>More detail</summary>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat"><b>38</b><i>Age</i></div>
+        <div class="stat"><b>5'8"</b><i>Height</i></div>
+        <div class="stat"><b>2,350</b><i>kcal/day</i></div>
+        <div class="stat"><b>180g</b><i>Protein</i></div>
+        <div class="stat"><b>5</b><i>Lift days</i></div>
+        <div class="stat"><b>8K</b><i>Steps</i></div>
+      </div>
+      <div class="info" style="margin-top:10px">
+        <div class="ft">Where you're starting from</div>
+        <p>You lost 30 pounds on your own before you ever spoke to me. You are not someone who needs teaching how to work hard. This next phase is about structure, so the effort you already know how to give actually compounds instead of resetting.</p>
+        <p>Intermediate in the gym. Running twice a week and building it. Both of those are fine, and the plan treats them differently.</p>
+      </div>
+      <div class="info">
+        <div class="ft">Current protocol</div>
+        <p>Testosterone (prescribed). Noted for training context, generally supports recovery and muscle building capacity. No programming changes needed, just good to have on file.</p>
+      </div>
+    </details>
+  </div>
+
+  <div id="sessionCard"></div>
+  <div id="metricsCard"></div>
+  <div id="rebuildCard"></div>
+  <div id="huelCard"></div>
+  <div id="retaCard"></div>
+  <div id="nutritionCard"></div>
+  <div id="groceryCard"></div>
+  <div id="dailyCard"></div>
+  <div id="photosCard"></div>
+  <div id="pastCard"></div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>On the days it feels like too much</h2>
+    <div class="info">
+      <div class="ft">Read this one on a bad day</div>
+      <p>You told me straight that depression affects your consistency. So here is the plan for those days, decided now while you are thinking clearly, rather than at 9pm when you are not.</p>
+      <p><span class="gold">The floor is one thing, not zero.</span> If the full session is not happening, do the first exercise only and tick it. If the gym is not happening, walk. If nothing is happening, hit your protein and go to bed. A 20 percent day keeps the streak and the identity alive. A zero day starts a story about yourself that is much harder to stop.</p>
+      <p>Missing one day is a day. Missing three is a pattern, and that is when you message me, not after you have written the week off.</p>
+    </div>
+    <div class="info">
+      <div class="ft">What actually measures progress here</div>
+      <p>You are leaning out while holding onto the muscle. The scale should come down, slowly, somewhere around half a pound to a pound a week. Faster than that and you are losing more than fat.</p>
+      <p>The real evidence is the weight log on every exercise going up week over week, and the Monday photos. Those two things will show change months before the scale bothers to.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Your running</h2>
+    <div class="info">
+      <div class="ft">You are running properly now</div>
+      <p>Week 1 was walk-run intervals. You handled them, said you were learning to pace, and had zero shin, knee or ankle discomfort. So from here it is continuous running, no walk breaks.</p>
+      <p><span class="gold">Three runs a week.</span> Tuesday and Sunday as before, plus a shorter one on Friday after your upper session. Sunday is your longest.</p>
+      <p>Time builds from an hour a week to nearly two by week 12, and week 7 drops back on purpose alongside your deload.</p>
+    </div>
+    <div class="info">
+      <div class="ft">The only rule that matters</div>
+      <p>Every one of these is an easy run. If you cannot hold a full sentence out loud, you are going too fast, and pace is irrelevant. Easy running is what builds the engine. Hard running just makes you tired.</p>
+      <p>You said you want to figure out how to run. This is how. Volume at an easy pace, not speed.</p>
+    </div>
+  </div>
+
+  <button class="helplink" onclick="openA2()">How to save this app</button>
+  <div class="foot">ELVT COACHING</div>
+</div>
+
+<div class="mask" id="mask" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================
+   ELVT COACH - Kole Braxton
+   12 weeks. Mon 3 Aug 2026 to Sun 25 Oct 2026.
+   Leaning out. Full gym. Zero-cook nutrition only.
+   ========================================================== */
+const START=new Date(2026,7,3);    // Mon 3 Aug 2026
+const END  =new Date(2026,9,25);   // Sun 25 Oct 2026
+const KEY='elvt_kole_v2';
+const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+const EX={
+  bench   :{n:'Barbell Bench Press',            v:'rT7DgCr-3pg',wt:1},
+  shpress :{n:'Seated DB Shoulder Press',       v:'fuQpuu--bMI',wt:1},
+  incdb   :{n:'Incline DB Press',               v:'awEEyL5zGvU',wt:1},
+  clatr   :{n:'Cable Lateral Raise',            v:'djTVHrWCvw8',wt:1},
+  tripd   :{n:'Cable Tricep Pushdown',          v:'_iSX_125XUg',wt:1},
+  ohtri   :{n:'Overhead Rope Tricep Extension', v:'GzmlxvSFE7A',wt:1},
+  latpd   :{n:'Lat Pulldown',                   v:'j9jtjL8FhPI',wt:1},
+  csrow   :{n:'Chest-Supported DB Row (incline bench)',v:'Nx0TzjgsI-0',wt:1},
+  scrow   :{n:'Seated Cable Row',               v:'7BkgqzC6WsM',wt:1},
+  fpull   :{n:'Face Pull',                      v:'0Po47vvj9g4',wt:1},
+  curl    :{n:'Seated DB Bicep Curl',           v:'uj001FhllVU',wt:1},
+  hammer  :{n:'Hammer Curl',                    v:'zC3nLlEvin4',wt:1},
+  squat   :{n:'Barbell Back Squat',             v:'f-KL4VNN96E',wt:1},
+  rdl     :{n:'Romanian Deadlift',              v:'xgusDooVfKU',wt:1},
+  legpr   :{n:'Leg Press',                      v:'K5n2vg3oZa4',wt:1},
+  legcurl :{n:'Leg Curl',                       v:'3gZm9wGTsEo',wt:1},
+  calf    :{n:'Standing Calf Raise',            v:'SorIB5_zO9A',wt:1},
+  incbb   :{n:'Incline Barbell Press',          v:'2jFFCy8JBU8',wt:1},
+  pullup  :{n:'Pull-Up (or Assisted)',          v:'vw5Xmu5CIew',wt:1},
+  dips    :{n:'Dips',                           v:'YSkEs0lyZl4',wt:1},
+  rdelt   :{n:'Rear Delt Fly',                  v:'6yMdhi2DVao',wt:1},
+  ezcurl  :{n:'EZ Bar Curl',                    v:'SDFZBaJcTsU',wt:1},
+  ctri    :{n:'Cable Tricep Extension',         v:'R4ZQl70YtvY',wt:1},
+  wplank  :{n:'Weighted Plank',                 v:'LDK-UG8XZfM',wt:0},
+  stretch :{n:'Stretch',                        v:'IlHgLYdt3kc',wt:0},
+  wuUpper :{n:'Warm-Up \u00b7 Upper Body',        v:'k9MY1ijAvGo',wt:0},
+  wuLower :{n:'Warm-Up \u00b7 Lower Body',        v:'QLkLKfL_7F0',wt:0},
+  wuFull  :{n:'Warm-Up \u00b7 Full Body',         v:'3qyWpJ34dWw',wt:0}
+};
+const MASTER=Object.keys(EX);
+
+const SESSIONS={
+  push:{t:'Push',sub:'Chest, shoulders, triceps',ex:[
+    ['bench',4,'8-10'],['incdb',4,'10-12'],['shpress',4,'10-12'],
+    ['dips',3,'10-12'],['clatr',4,'12-15'],['tripd',3,'12-15'],
+    ['ohtri',3,'12-15']]},
+  pull:{t:'Pull',sub:'Back and biceps',ex:[
+    ['latpd',4,'10-12'],['csrow',4,'10-12'],['scrow',4,'10-12'],
+    ['rdelt',3,'15'],['fpull',3,'15'],['curl',3,'12-15'],
+    ['hammer',3,'12-15']]},
+  legs:{t:'Legs',sub:'The session that moves the needle most',ex:[
+    ['squat',4,'8-10'],['rdl',4,'10-12'],['legpr',4,'10-12'],
+    ['legcurl',3,'12-15'],['calf',4,'15'],['wplank',3,'45 sec']]},
+  upper:{t:'Upper',sub:'Full upper body, second exposure',ex:[
+    ['incbb',4,'10-12'],['pullup',4,'8-10'],['shpress',3,'12-15'],
+    ['scrow',4,'12-15'],['latpd',3,'12-15'],['dips',3,'10-12'],
+    ['clatr',3,'15']]},
+  accessory:{t:'Accessory',sub:'Arms, delts, core. The fun one',ex:[
+    ['clatr',4,'15'],['rdelt',4,'15'],['ezcurl',4,'12-15'],
+    ['ctri',4,'12-15'],['hammer',3,'12-15'],['ohtri',3,'12-15'],
+    ['wplank',3,'45 sec']]}
+};
+/* Mon push, Tue run, Wed pull, Thu legs, Fri upper + run, Sat accessory, Sun long run */
+/* TWO runs, Tue and Sun. The Friday run came off when the goal changed to
+   building on 6 Sep: running competes for the recovery the lifts now need.
+   He ran on Friday in week 6 because this flag was still true. That was the
+   app's fault, not his. */
+const WEEKPLAN=['push','run','pull','legs','upper','accessory','run'];
+const RUN_ON_FRI=false;
+
+/* run progression: [rounds, jog min, walk min] */
+const W=[
+ {b:'Base',  setMod:0,run:[20,15,25],note:'Week one. Learn the movements, log every weight, and let the running feel easy.'},
+ {b:'Base',  setMod:0,run:[20,15,25],note:'Same as last week on purpose. Repeating it is how you find out you got stronger.'},
+ {b:'Base',  setMod:0,run:[25,15,30],note:'Jog blocks get a minute longer. Walks stay the same.'},
+ {b:'Build', setMod:0,run:[25,18,32],note:'Every logged weight should be creeping up now. That is the whole game.'},
+ {b:'Build', setMod:0,run:[28,18,35],note:'Halfway to halfway. Take your photos properly this Monday.'},
+ {b:'Build', setMod:0,run:[30,20,38],note:'Six weeks in. Look at your week 1 photos, not the scale.'},
+ {b:'Build', setMod:0,run:[30,20,38],note:'Full week. The deload that was pencilled in here is gone, you already had three quiet weeks.'},
+ {b:'Push',  setMod:0,run:[32,20,40],note:'Every logged weight should be creeping up now. That is the whole game.'},
+ {b:'Push',  setMod:0,run:[34,22,42],note:'Runs are getting longer. Keep them easy, they are not the session that matters now.'},
+ {b:'Deload',setMod:-1,run:[24,16,30],note:'Heaviest block. Form before ego on every single set.'},
+ {b:'Peak',  setMod:0,run:[38,25,48],note:'Second to last. Everything you built is on the bar now.'},
+ {b:'Finish',setMod:0,run:[40,25,50],note:'Final week. Thirty minutes of running, no walk breaks. Then we look at all of it together.'}
+];
+
+const HUEL={
+  bottle:{lbl:'bottle', m:[400,35,29,17]},
+  powder:{lbl:'2 scoops', m:[400,40,24,18]}
+};
+/* each Huel line can be switched between the bottle and the powder, because he uses
+   whichever suits the shift. Calories are 400 either way, only the macros shift. */
+const MEALS=[
+ {n:'Huel #1',                         huel:1},
+ {n:'Staple Meal (delivery service)',  m:[700,50,95,13]},
+ {n:'Huel #2',                         huel:1},
+ {n:'Carb Top-Up',                     m:[450,10,96,2], pick:1},
+ {n:'Huel #3',                         huel:1}
+];
+function huelKind(i){const st=nstate(S.week,S.day); return (st.hk&&st.hk[i])||'bottle';}
+function toggleHuel(i){const st=nstate(S.week,S.day); if(!st.hk)st.hk={};
+  st.hk[i]=huelKind(i)==='bottle'?'powder':'bottle'; save(); render();}
+function mealsToday(){
+  const t=topupFor(S.week,S.day);
+  const resolve=(m,i)=>m.huel?{n:m.n+' \u00b7 '+HUEL[huelKind(i)].lbl,m:HUEL[huelKind(i)].m.slice(),huel:1,hi:i}:m;
+  /* the top-up slot is what absorbs the weekly calorie change. scale whatever he picked
+     to this week's target so the day actually adds up to CAL_K. */
+  const want=topupTarget(S.week);
+  const scaleTo=(mm)=>{const f=want/mm[0];
+    return [want,Math.round(mm[1]*f),Math.round(mm[2]*f),Math.round(mm[3]*f)];};
+  return MEALS.map((m,i)=>m.pick
+    ?{n:t?t.n:'Carb Top-Up',m:scaleTo(t?t.m:m.m),pick:1,chosen:!!t}
+    :resolve(m,i));
+}
+const CAL_K=[2350,2350,2250,2250,2350,2500,2500,2550,2550,2600,2600,2600];
+// three Huels and the staple meal are fixed at 1,900. the carb top-up absorbs the weekly change.
+const FIXED_K=1900;
+function topupTarget(w){return CAL_K[Math.max(0,Math.min(11,w-1))]-FIXED_K;}
+function targetFor(w){const sv=S.week;S.week=w;const M=mealsToday();S.week=sv;
+  const t=[0,0,0,0];M.forEach(m=>m.m.forEach((v,i)=>t[i]+=v));return t;}
+const HABITS=[
+ {id:'vits',   n:'Take Vitamins',        meta:'First thing. Before anything else happens'},
+ {id:'shot',   n:'Weekly Shot',          meta:'Wednesdays. Tick it when it is done', wed:1},
+ {id:'reta',   n:'Retatrutide, 7 units',  meta:'Tuesdays and Fridays. Subcutaneous, stomach, rotate the spot', tf:1},
+ {id:'protein',n:'Hit Protein',          meta:'180g. The number that protects the muscle while you lean out'},
+ {id:'cals',   n:'Hit Calories',         meta:'Stay at target. Under-eating is not a shortcut'},
+ {id:'water',  n:'Drink Enough Water',   meta:'100 oz. Steady through the shift, not all at once'},
+ {id:'move',   n:'Move Through The Day', meta:'Security shifts count. Just keep moving'}
+];
+const STEP_GOAL=8000, WATER_GOAL=100; // oz
+
+let S=load();
+function load(){const D={v:1,week:null,day:null,order:{},d:{},n:{},s:{},h:{},wt:{},en:{},mo:{},sl:{}};
+  let X=D;
+  try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.v===1)X=Object.assign(D,x);}catch(e){}
+  /* SANITIZE. A saved field coming back null, a string or an array where an object
+     is expected throws on the first render and the app never opens at all. */
+  ['order','d','n','s','h','wt','en','mo','sl'].forEach(k=>{const v=X[k];
+    if(!v||typeof v!=='object'||Array.isArray(v))X[k]={};});
+  if(typeof X.week!=='number'||!isFinite(X.week))X.week=null;
+  else X.week=Math.max(1,Math.min(12,Math.round(X.week)));
+  if(typeof X.day!=='number'||!isFinite(X.day))X.day=null;
+  else X.day=Math.max(0,Math.min(6,Math.round(X.day)));
+  return X;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const key=(w,d)=>w+'-'+d;
+function dstate(w,d){const k=key(w,d);let t=S.d[k];
+  if(!t||typeof t!=='object'||Array.isArray(t)){t=S.d[k]={c:{},cu:{},sw:{},w:{}};return t;}
+  ['c','cu','sw','w'].forEach(f=>{const v=t[f];
+    if(!v||typeof v!=='object'||Array.isArray(v))t[f]={};});
+  return t;}
+function nstate(w,d){const k=key(w,d);let t=S.n[k];
+  if(!t||typeof t!=='object'||Array.isArray(t)){t=S.n[k]={m:{},t:null,x:[],hk:{}};return t;}
+  if(!t.m||typeof t.m!=='object'||Array.isArray(t.m))t.m={};
+  if(!t.hk||typeof t.hk!=='object'||Array.isArray(t.hk))t.hk={};
+  if(!Array.isArray(t.x))t.x=[];
+  if(t.t!==null&&!Array.isArray(t.t))t.t=null;
+  return t;}
+function order(w){if(!S.order[w])S.order[w]=[0,1,2,3,4,5,6];return S.order[w];}
+function dateOf(w,d){const x=new Date(START);x.setDate(x.getDate()+(w-1)*7+d);return x;}
+function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+/* DAY DIFFERENCE, DST SAFE. Two local midnights are 23 or 25 hours apart across a
+   daylight saving change, so dividing milliseconds and flooring can lose a whole
+   day. Comparing the calendar dates as UTC takes the clock out of the arithmetic. */
+function dayDiff(a,b){
+  const A=Date.UTC(a.getFullYear(),a.getMonth(),a.getDate());
+  const B=Date.UTC(b.getFullYear(),b.getMonth(),b.getDate());
+  return Math.round((A-B)/86400000);}
+function todayIdx(){const t=new Date();t.setHours(0,0,0,0);
+  const diff=dayDiff(t,START);if(diff<0)return{w:1,d:0};
+  const w=Math.min(12,Math.floor(diff/7)+1);return{w,d:diff%7};}
+if(S.week===null){const t=todayIdx();S.week=t.w;S.day=t.d;save();}
+
+function session(w,d){
+  const slot=order(w)[d],wk=W[w-1],kind=WEEKPLAN[slot],st=dstate(w,d);
+  if(kind==='run'){
+    const sun=slot===6;
+    const mins=sun?wk.run[2]:wk.run[0];
+    const label=(sun?'Long Run \u00b7 ':'Easy Run \u00b7 ')+mins+' min';
+    const meta=sun?`${mins} minutes continuous. Longest run of your week, keep it conversational`
+                  :`${mins} minutes continuous, easy pace. If you cannot talk in sentences, slow down`;
+    return {title:label,tag:'Run',cls:'t-run',note:wk.note,block:wk.b,swapped:slot!==d,
+      items:[{id:'wu',ex:'wuLower',n:'Warm-Up \u00b7 Lower Body',meta:'5 min before you start running',video:EX.wuLower.v,swap:1},
+             {id:'r0',n:label,meta,video:'S7DFiEvqkJQ'},
+             {id:'r1',ex:'stretch',n:'Post-Run Stretch',meta:'5 min. Calves, hips, hamstrings',video:EX.stretch.v,swap:1}]};
+  }
+  const S2=SESSIONS[kind];
+  const wu = kind==='legs'?'wuLower':(kind==='accessory'?'wuFull':'wuUpper');
+  const items=[{id:'wu',ex:wu,n:EX[wu].n,meta:'5 min, follow along. Do it before you touch a weight',video:EX[wu].v,swap:1}];
+  S2.ex.forEach((row,i)=>{
+    const [base,sets,reps]=row;
+    const id='e'+i,ek=st.sw[id]||base,e=EX[ek];
+    const n=Math.max(2,sets+wk.setMod);
+    items.push({id,ex:ek,n:e.n,meta:`${n} sets \u00d7 ${reps}${e.wt?' \u00b7 1-2 RIR':''}`,video:e.v,wt:e.wt,swap:1});
+  });
+  items.push({id:'cd',ex:'stretch',n:'Cool-Down Stretch',meta:'5 min. Whatever you just trained',video:EX.stretch.v,swap:1});
+  if(kind==='upper'&&RUN_ON_FRI)items.push({id:'run3',n:'Easy Run \u00b7 '+wk.run[1]+' min',
+    meta:'After the lift or later the same day. Easy pace, this is your third run',video:'S7DFiEvqkJQ'});
+  return {title:S2.t,tag:wk.b==='Deload'?'Deload':'Lift',cls:wk.b==='Deload'?'t-deload':'t-lift',
+    note:S2.sub+'. '+wk.note,block:wk.b,swapped:slot!==d,items};
+}
+function pct(w,d){const s=session(w,d),st=dstate(w,d);
+  const all=[...s.items,...HABITS.filter(i=>(!i.wed||d===2)&&(!i.tf||d===1||d===4))];const done=all.filter(i=>st.c[i.id]).length;
+  return{done,total:all.length,p:all.length?done/all.length:0};}
+function streak(){
+  const today=new Date();today.setHours(0,0,0,0);
+  let n=0,cur=new Date(today);
+  for(let g=0;g<120;g++){
+    const diff=dayDiff(cur,START);if(diff<0)break;
+    const w=Math.floor(diff/7)+1,d=diff%7;
+    if(w>12){cur.setDate(cur.getDate()-1);continue;}
+    const{p}=pct(w,d);
+    if(p>=1)n++;else if(!sameDay(cur,today))break;
+    cur.setDate(cur.getDate()-1);}
+  return n;}
+
+
+/* AUTO-ROLLOVER, added 14 Sep 2026.
+   S.week/S.day are persisted, so without this the app stays pinned to whatever
+   day it was first opened on and the client logs into the wrong day.
+   We only move them if they were sitting on what WAS today; if they have
+   deliberately navigated elsewhere we leave them alone. */
+let __booted=false;
+function syncToday(){
+  const t=todayIdx(), k=t.w+'-'+t.d;
+  /* On a fresh open ALWAYS land on today. S.week/S.day are persisted, so without
+     this a client who glanced at Monday on Thursday reopens on Monday forever. */
+  if(!__booted){ __booted=true; S.__today=k;
+    if(S.week!==t.w||S.day!==t.d){ S.week=t.w; S.day=t.d; save(); return true; }
+    save(); return false; }
+  /* Mid-session: only move them if they are sitting on what WAS today, so we
+     never yank someone who has deliberately navigated to another day. */
+  if(S.__today===k) return false;
+  const onOldToday = (S.week+'-'+S.day===S.__today);
+  S.__today=k;
+  if(onOldToday){ S.week=t.w; S.day=t.d; save(); return true; }
+  save(); return false;
+}
+
+function render(){syncToday();const __y=window.pageYOffset||document.documentElement.scrollTop||0;
+  document.getElementById('streakN').textContent=streak();
+  countdown();weekStrip();dayStrip();jumpBar();profileNums();
+  [sessionCard,metricsCard,rebuildCard,huelCard,retaCard,nutritionCard,groceryCard,dailyCard,photosCard,pastCard].forEach(fn=>{try{fn();}catch(e){console.error('card failed:',fn.name,e);}});
+  window.scrollTo(0,__y);}
+function countdown(){
+  const from=dateOf(S.week,S.day);from.setHours(0,0,0,0);
+  const days=dayDiff(END,from);
+  const n=document.getElementById('cdN'),l=document.getElementById('cdL');
+  if(days>1){n.textContent=days;l.textContent='DAYS LEFT';}
+  else if(days===1){n.textContent=1;l.textContent='DAY LEFT';}
+  else if(days===0){n.textContent='\u00b7';l.textContent='FINAL DAY';}
+  else{n.textContent='\u2713';l.textContent='COMPLETE';}}
+function latestWeight(){let last=142;for(let w=1;w<=12;w++)if(S.wt[w]!=null)last=S.wt[w];return last;}
+function profileNums(){document.getElementById('pfNow').textContent=latestWeight();}
+function weekStrip(){
+  const el=document.getElementById('weekStrip');
+  el.innerHTML=W.map((w,i)=>{const n=i+1;
+    return `<button class="wk ${n===S.week?'on':''}" onclick="goWeek(${n})"><b>${n}</b><i>${w.b.slice(0,5)}</i></button>`;}).join('');
+  const on=el.querySelector('.wk.on');if(on)el.scrollLeft=Math.max(0,on.offsetLeft-(el.clientWidth-on.offsetWidth)/2);}
+function dayStrip(){
+  const el=document.getElementById('dayStrip');const t=new Date();t.setHours(0,0,0,0);
+  el.innerHTML=[0,1,2,3,4,5,6].map(d=>{
+    const{p}=pct(S.week,d),dt=dateOf(S.week,d),R=13,C=2*Math.PI*R;
+    return `<button class="day ${d===S.day?'on':''} ${sameDay(dt,t)?'today':''}" onclick="goDay(${d})">
+      <div class="dn">${DOW[d]}</div><div class="dd">${dt.getDate()}</div>
+      <svg class="ring" width="30" height="30" viewBox="0 0 30 30">
+      <circle cx="15" cy="15" r="${R}" fill="none" stroke="var(--line)" stroke-width="2.5"/>
+      <circle cx="15" cy="15" r="${R}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"
+      stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p)}" transform="rotate(-90 15 15)"/></svg></button>`;}).join('');}
+function jumpBar(){const t=todayIdx(),off=!(t.w===S.week&&t.d===S.day);
+  document.getElementById('jumpBar').innerHTML=off
+    ?`<button class="jump" onclick="jumpToday()">\u2190 Back to today \u00b7 ${DOW[t.d]}, week ${t.w}</button>`:'';}
+function jumpToday(){const t=todayIdx();S.week=t.w;S.day=t.d;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+function prevWeight(ex){
+  for(let w=S.week-1;w>=1;w--)for(let d=0;d<7;d++){
+    const s=session(w,d),hit=s.items.find(i=>i.ex===ex&&i.wt);
+    if(hit){const v=dstate(w,d).w[hit.id];if(v!=null)return v;}}
+  return null;}
+function sessionCard(){
+  const s=session(S.week,S.day),st=dstate(S.week,S.day),dt=dateOf(S.week,S.day);
+  const rows=s.items.map(i=>{
+    const done=!!st.c[i.id];let acts='';
+    if(i.video)acts+=`<a class="act vid" href="https://www.youtube.com/watch?v=${i.video}" target="_blank" rel="noopener">\u25b6 Watch form</a>`;
+    acts+=`<button class="act" onclick="editItem('${i.id}')">\u270e Customize</button>`;
+    if(i.swap)acts+=`<button class="act" onclick="swapEx('${i.id}')">\u21c4 Swap</button>`;
+    if(i.wt){const cur=st.w[i.id],prev=prevWeight(i.ex);let lbl='Log weight';
+      if(cur!=null){lbl=cur+' lbs';
+        if(prev!=null){if(cur>prev)lbl+=` <span class="up">\u25b2</span><span class="sm">(was ${prev})</span>`;
+          else if(cur<prev)lbl+=` <span class="dn">\u25bc</span><span class="sm">(was ${prev})</span>`;
+          else lbl+=` <span class="sm">- (was ${prev})</span>`;}}
+      acts+=`<button class="act wt" onclick="logWeight('${i.id}')">${lbl}</button>`;}
+    return `<div class="row ${done?'done':''}">
+      <button class="cb ${done?'on':''}" onclick="toggle('${i.id}')" aria-label="Complete ${i.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${i.n}</div>${i.meta?`<div class="rm">${i.meta}</div>`:''}
+      ${st.cu[i.id]?`<div class="rcustom">Actually did: ${esc(st.cu[i.id])}</div>`:''}
+      <div class="acts">${acts}</div></div></div>`;}).join('');
+  document.getElementById('sessionCard').innerHTML=`<div class="card">
+    <div class="sess-h"><div><div class="eyebrow">Week ${S.week} \u00b7 ${s.block}${s.swapped?' \u00b7 swapped':''}</div>
+      <h2>${s.title}</h2><p class="sub">${DOW[S.day]} ${dt.getDate()}/${dt.getMonth()+1}</p></div>
+      <span class="tag ${s.cls}">${s.tag}</span></div>
+    <div class="info" style="margin-top:12px"><p>${s.note}</p></div>${rows}
+    <button class="btn alt" style="margin-top:14px" onclick="daySwap()">\u21c4 Swap this day with another</button>
+    <p class="sub" style="margin-top:8px;font-size:11.5px">Shift changed, double booked, rough day. Move the whole day rather than losing it.</p></div>`;}
+
+/* ---------- how you're actually doing ---------- */
+const MOODS=['Rough','Flat','OK','Good'];
+function enBand(v){return v>=7?'hi':(v>=4?'mid':'lo');}
+function metricsCard(){
+  const k=key(S.week,S.day);
+  const en=S.en[k],mo=S.mo[k],sl=S.sl[k];
+  let bars='',vals=[];
+  for(let i=13;i>=0;i--){
+    const dt=new Date(dateOf(S.week,S.day));dt.setDate(dt.getDate()-i);
+    const diff=dayDiff(dt,START);
+    const kk=(Math.floor(diff/7)+1)+'-'+(diff%7);
+    const v=(diff>=0)?S.en[kk]:undefined;
+    if(v!=null)vals.push(v);
+    bars+=v==null?`<div class="none" style="height:10%"></div>`
+      :`<div class="${enBand(v)}" style="height:${Math.max(8,v*10)}%"></div>`;
+  }
+  const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):null;
+  document.getElementById('metricsCard').innerHTML=`<div class="card">
+    <div class="eyebrow">Every day \u00b7 thirty seconds</div>
+    <h2>How you're actually doing</h2>
+    <p class="sub">This is the one I read first. Not the weights.</p>
+    <div class="metrics">
+      <button class="met" onclick="logEn()"><b class="${en!=null?enBand(en):''}">${en!=null?en:'-'}</b><i>Energy</i><small>1 to 10</small></button>
+      <button class="met" onclick="logMo()"><b style="font-size:15px">${mo!=null?MOODS[mo]:'-'}</b><i>Head</i><small>tap to log</small></button>
+      <button class="met" onclick="logSl()"><b>${sl!=null?sl:'-'}</b><i>Sleep hrs</i><small>tap to log</small></button>
+    </div>
+    <div class="spark">${bars}</div>
+    <p class="sub" style="margin-top:7px;font-size:11.5px">Last 14 days of energy. ${avg!=null?'Average '+avg+'.':'Log a few days and the trend shows up.'}</p>
+    <div class="info"><div class="ft">Why this is in here</div>
+      <p>You told me straight that some days are harder than others. This is how I see that without you having to write me a message about it.</p>
+      <p>Log it honestly, especially the rough ones. A flat week I can see is a week I can do something about. A flat week you push through quietly is one we both find out about later.</p></div>
+  </div>`;}
+function logEn(){numModal('Energy today','Honest number.','1 to 10',S.en[key(S.week,S.day)],'saveEn()','e.g. 6');}
+function saveEn(){const v=parseInt(document.getElementById('nIn').value,10);
+  if(!isNaN(v))S.en[key(S.week,S.day)]=Math.max(1,Math.min(10,v));save();closeModal();render();}
+function logSl(){numModal('Sleep','Hours actually slept.','Hours',S.sl[key(S.week,S.day)],'saveSl()','e.g. 7','0.5');}
+function saveSl(){const v=parseFloat(document.getElementById('nIn').value);
+  if(!isNaN(v))S.sl[key(S.week,S.day)]=v;save();closeModal();render();}
+function logMo(){
+  const cur=S.mo[key(S.week,S.day)];
+  const opts=MOODS.map((m,i)=>`<button class="opt ${cur===i?'cur':''}" onclick="saveMo(${i})"><span>${m}</span></button>`).reverse().join('');
+  openModal(`<h3>How's your head today?</h3><p class="ms">No wrong answer. Rough days are data, not failure.</p>${opts}`);}
+function saveMo(i){S.mo[key(S.week,S.day)]=i;save();closeModal();render();
+  if(i<=1)toast('Logged. Floor is one thing, not zero.');}
+function numModal(title,sub,label,val,fn,ph,step){
+  openModal(`<h3>${title}</h3><p class="ms">${sub}</p>
+    <div class="form"><label>${label}</label>
+    <input id="nIn" type="number" inputmode="decimal" step="${step||1}" value="${val!=null?val:''}" placeholder="${ph||''}">
+    <button class="btn" onclick="${fn}">Save</button></div>`);
+  setTimeout(()=>document.getElementById('nIn').focus(),60);}
+
+
+function retaCard(){
+  const el=document.getElementById('retaCard'); if(!el)return;
+  el.innerHTML=`<div class="card">
+    <div class="eyebrow">Protocol &middot; starting this week</div><h2>Retatrutide</h2>
+    <div style="display:flex;gap:8px;margin:12px 0">
+      <div class="stat" style="flex:1"><b>7</b><i>units</i></div>
+      <div class="stat" style="flex:1"><b>2</b><i>a week</i></div>
+      <div class="stat" style="flex:1"><b>Tue<br>Fri</b><i>days</i></div>
+    </div>
+    <div class="info"><div class="ft">The numbers</div>
+      <p>Your vial is 30mg mixed with 2ml of bacteriostatic water, so 1 unit on the syringe is 0.15mg.</p>
+      <p><span class="gold">7 units, Tuesday and Friday.</span> That is about 1mg a shot and 2mg across the week. One vial lasts you around fourteen weeks, so the whole program.</p></div>
+    <div class="info"><div class="ft">How</div>
+      <p>Subcutaneous into the stomach, and move the spot each time. Once it is mixed it lives in the fridge. Do not shake it, roll it.</p></div>
+    <div class="info"><div class="ft">The one thing to watch</div>
+      <p>This takes your appetite down, and your calories are coming down too. Those work together rather than against each other, which is the point of starting it now.</p>
+      <p><span class="gold">Protein is the one thing that does not move.</span> Everything else can flex, but hit your three Huels and your staple meal every day. That is what keeps the muscle while the fat comes off.</p><p>If your appetite drops so far that you are missing protein, tell me the same day rather than just eating less.</p>
+      <p>Some nausea in the first week or two is normal and usually settles. You had some last week alongside possibly being unwell, so we cannot yet tell which it was.</p><p><span class="gold">Tell me this week whether the nausea is still there.</span> If it is, and you are otherwise well, it is the Reta and we adjust. If it stops when you stop feeling ill, it was the bug. Either way I need to know rather than you pushing through it quietly.</p></div>
+  </div>`;}
+
+
+
+function standardCard(){
+  const el=document.getElementById('standardCard'); if(!el)return;
+  el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,var(--panel))">
+    <div class="eyebrow">Week 4 &middot; you asked for this</div>
+    <h2>The standard</h2>
+    <div class="info" style="margin-top:11px">
+      <p>You asked me to be harder on you and to tell you how serious you need to be. So here it is in numbers, and I am not going to dress it up.</p>
+      <p>Last week you did <span class="gold">2 lifting sessions out of 5</span>. The week before you did all five. Your food went from 7 days to 6 to 5. Your runs held at 3 of 3, so this is not about capacity, it is about the lifts specifically.</p>
+    </div>
+    <div class="flag">
+      <div class="ft">What adhering actually means</div>
+      <p><span class="gold">5 of 5 lifting sessions.</span> Not 4. Five.</p>
+      <p><span class="gold">3 of 3 runs.</span> You already do this. Keep it.</p>
+      <p><span class="gold">7 of 7 days on your food.</span> Three Huels, staple meal, top-up. All five lines ticked.</p>
+      <p><span class="gold">Both Reta doses.</span> Tuesday and Friday.</p>
+      <p>That is the week. Nothing else is being asked of you.</p>
+    </div>
+    <div class="info">
+      <div class="ft">And the part you also asked for</div>
+      <p>You said be strict but also be nice. Both of those are true at once, so here is the nice half, and it is not a consolation prize.</p>
+      <p>Your head has been rough for three weeks straight, your sleep has been 5 to 7 hours, your stress has been all over the place, and you still did every single run and took both your shots and took your photos. Most people do none of it on a week like that.</p>
+      <p><span class="gold">You are not failing. You had a bad week while ill.</span> The lifts are the thing to fix and they are fixable.</p>
+    </div>
+    <div class="info">
+      <div class="ft">The rule that gets you from 2 to 5</div>
+      <p>A missed session almost never starts as a decision to skip. It starts as a decision to postpone. So the rule for this week is simple.</p>
+      <p><span class="gold">If the session is not happening, you do the first exercise and stop.</span> Walk in, do one lift, tick it, walk out. That counts. That is a completed session for our purposes.</p>
+      <p>Two of five becomes five of five that way, and none of those five have to be good.</p>
+    </div>
+  </div>`;}
+
+function huelCard(){
+  const el=document.getElementById('huelCard'); if(!el)return;
+  el.innerHTML=`<div class="card">
+    <div class="eyebrow">Nutrition &middot; how to run it</div><h2>Bottle or powder, your call</h2>
+    <div class="info" style="margin-top:11px"><div class="ft">Switch any Huel line, any day</div>
+      <p>Each of your three Huel lines now has a Switch button. Use the bottle when you are on shift and the powder when you are not, or mix them. It updates your macros as you go.</p>
+      <p><span class="gold">Both are 400 calories</span>, so your day always adds up either way. The powder gives you about 5g more protein per serving, the bottle gives you slightly more carbs. Neither is better, it is whichever actually gets drunk.</p></div>
+    <div class="info"><div class="ft">The remaining 450 calories</div>
+      <p>Three Huels and your staple meal is 1,900. Everything after that is the top-up slot, and there are twenty options in the picker now.</p>
+      <p>The easiest ones if you are on shift with no time: <span class="gold">bagel with jam and a banana</span>, <span class="gold">chocolate milk and a granola bar</span>, <span class="gold">pretzels and a banana</span>, or a <span class="gold">soft pretzel from a stand</span>. All of those are one stop and no prep.</p>
+      <p>If you are at home: cereal with milk in a big bowl, two slices of toast with jam and juice, or a microwave rice pouch with a banana.</p></div>
+  </div>`;}
+
+function rebuildCard(){
+  const el=document.getElementById('rebuildCard'); if(!el)return;
+  if(S.week<5){el.innerHTML='';return;}
+  const k=CAL_K[Math.max(0,Math.min(11,S.week-1))];   /* read the real path, never a second copy */
+  el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,var(--panel))">
+    <div class="eyebrow">${S.week===5?'Week 5 · easing back in':'Building'}</div>
+    <h2>${S.week===5?'You can train. Start light.':'We are building now'}</h2>
+    ${S.week===5?`<div class="info" style="margin-top:11px">
+      <p>Yes, you can train. You asked and the answer is yes. But you have not lifted in two weeks and you have been ill, so <span class="gold">this week is deliberately easy.</span></p>
+      <p>Do the sessions but take a good few reps off everything. If last time you did 8 with a weight, do 5 with it. You are not testing anything this week, you are switching the lights back on.</p>
+      <p>You will feel weaker than you expect on day one. That is two weeks off, not two weeks of losing everything, and it comes back faster than it went.</p></div>`:''}
+    ${S.week>=7?`<div class="flag">
+      <div class="ft">Week 6 was your best week on this plan</div>
+      <p>Five lifts out of five, adherence 10, food seven days out of seven, appetite back, no nausea at all. <span class="gold">Three weeks ago you did two sessions out of five.</span></p>
+      <p>You also ran on Friday because the app still had a run there. That was my fault, not yours, and it is gone now. Two runs a week, Tuesday and Sunday. Nothing to apologise for.</p></div>
+    <div class="flag">
+      <div class="ft">You asked to get back to the grind, so week 7 is a full week</div>
+      <p>There was a deload pencilled in here. It is gone. <span class="gold">You had two weeks off ill, an easy week back and one full week, so a quiet week now would be your fourth in five.</span></p>
+      <p>Full volume. Same five lifts, same split, nothing restructured. The deload moves to week 10 where you will actually want it.</p></div>
+    <div class="flag">
+      <div class="ft">The one that needs sorting</div>
+      <p>You are 140. You were 142 last week and 150 a month ago, and this week you ate every day and lifted five times. <span class="gold">You are still losing while we are trying to build.</span></p>
+      <p>Weight going down on a building block means the food is not winning. Tell me honestly whether ${k.toLocaleString()} is actually going in, and go and see a doctor about the ER visit. You said not yet. Get it done this week.</p></div>`:''}
+    <div class="flag">
+      <div class="ft">The goal has changed. You are building now.</div>
+      <p>You were 150 a month ago and you are 140 now. The leaning out is done, you went past it while you were ill.</p>
+      <p><span class="gold">So we stop cutting and we start building.</span> Calories go UP, not down. This week is ${k.toLocaleString()}, and it climbs to 2,600.</p>
+      <p>That is a small surplus on purpose, about half a pound a week. Faster than that and you are just adding fat, especially straight after being unwell.</p></div>
+    <div class="info">
+      <div class="ft">What building actually asks of you</div>
+      <p><span class="gold">Eat every day, including the days you do not train.</span> Muscle is built on rest days, not just gym days. This is the opposite of the last month and it will feel strange.</p>
+      <p><span class="gold">Log every weight.</span> Building is measured by numbers going up over weeks. Without a log you have no idea if it is working.</p>
+      <p><span class="gold">Running is twice a week.</span> Not because running is bad, but because it competes for the same recovery you now need for the lifts.</p></div>
+    <div class="info">
+      <div class="ft">The boxes</div>
+      <p>You said ticking them off makes you feel good about your day. <span class="gold">That is not a small thing and I am not taking any of them away.</span> Every line in your food list is a real named thing with a box, and it stays that way.</p>
+      <p>You also said you messed up the log-something-else button. Do not worry about it. Tick your five lines, and only use that button for the stuff that is not on the plan.</p></div>
+  </div>`;}
+
+function nutritionCard(){
+  const ns=nstate(S.week,S.day),T=ns.t||targetFor(S.week);
+  const ML=mealsToday();
+  let got=[0,0,0,0];
+  ML.forEach((m,i)=>{if(ns.m[i])m.m.forEach((v,j)=>got[j]+=v);});
+  ns.x.forEach(x=>{got[0]+=x.k;got[1]+=x.p;got[2]+=x.c;got[3]+=x.f;});
+  const topBtn=`<button class="btn alt" style="margin:0 0 12px;border-style:dashed"
+    onclick="quickAdd()">+ Ate something else? Log it here</button>`;
+  const meals=ML.map((m,i)=>{const on=!!ns.m[i];
+    if(m.pick&&!m.chosen) return `<div class="row">
+      <button class="cb" onclick="pickTopup()" aria-label="Choose your carb top-up" style="border-style:dashed">
+      <span style="color:var(--gold);font-size:15px;line-height:1">+</span></button>
+      <div class="rb"><div class="rn" style="color:var(--gold)">Carb Top-Up ,  tap to choose</div>
+      <div class="rm">${topupTarget(S.week)} kcal of carbs. Pick one, or two to split it. Then it becomes a box you tick like the rest.</div>
+      <div class="acts"><button class="act vid" onclick="pickTopup()">Choose one</button></div></div></div>`;
+    return `<div class="row ${on?'done':''}">
+      <button class="cb ${on?'on':''}" onclick="toggleMeal(${i})" aria-label="Had ${m.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${m.n}</div><div class="rm">${m.m[0]} kcal \u00b7 ${m.m[1]}P / ${m.m[2]}C / ${m.m[3]}F</div>
+      ${m.pick?`<div class="acts"><button class="act" onclick="pickTopup()">\u21c4 Change or split</button></div>`:''}
+      ${m.huel?`<div class="acts"><button class="act" onclick="toggleHuel(${m.hi})">\u21c4 Switch to ${huelKind(m.hi)==='bottle'?'2 scoops':'bottle'}</button></div>`:''}</div></div>`;}).join('');
+  const extras=ns.x.map((x,i)=>`<div class="xrow"><div><b>${esc(x.n)}</b>
+    <div class="rm">${x.k} kcal \u00b7 ${x.p}P / ${x.c}C / ${x.f}F</div></div>
+    <button class="xdel" onclick="delExtra(${i})">\u2715</button></div>`).join('');
+  const L=['KCAL','PROTEIN','CARBS','FAT'];
+  const macs=[0,1,2,3].map(j=>`<div class="mac ${got[j]>T[j]*1.05?'over':''}">
+    <b>${Math.round(got[j])}${j?'g':''}</b><i>${L[j]}</i><div class="tgt">of ${T[j]}${j?'g':''}</div></div>`).join('');
+  document.getElementById('nutritionCard').innerHTML=`<div class="card">
+    <div class="sess-h"><div><div class="eyebrow">Fuel</div>
+      <h2>Today's Meals ${ns.t?'<span class="pill">custom</span>':''}</h2>
+      <p class="sub">Three Huels, your staple meal, one carb top-up</p></div>
+      <button class="act" onclick="customTarget()">\u270e Target</button></div>
+    ${macs}<div class="bar"><i style="width:${Math.min(100,got[0]/T[0]*100)}%"></i></div>
+    <div style="margin-top:6px">${topBtn}${meals}</div>
+    ${extras?`<div style="margin-top:6px">${extras}</div>`:''}
+    <button class="btn" style="margin-top:12px" onclick="quickAdd()">+ I ate something not on this list</button>
+    <button class="btn alt" style="margin-top:8px" onclick="addExtra()">Type in your own numbers</button>
+    ${ns.t?`<button class="btn alt" style="margin-top:8px" onclick="resetTarget()">Reset to plan default</button>`:''}
+    <div class="info" style="margin-top:14px"><div class="ft">How your day is built</div>
+      <p>Three Huel bottles plus your staple meal, comes to 1,900 calories. Your target is 2,350. The last 450 is yours to fill, and that is deliberate rather than an oversight.</p>
+      <p>Protein is already done at that point, 170g of your 180g target, so the top-up is almost pure carbs. Black Edition is deliberately low carb, and you are lifting five days and running twice, so that gap is the one thing you genuinely need to close.</p>
+      <p>Three Huels is the number. Two would leave 850 calories to fill every day, which is a lot of decisions on a bad day. Three leaves one easy choice.</p>
+      </div>
+    <details class="more"><summary>What the carb top-up can be</summary>${swapList()}</details>
+  </div>`;}
+function swapList(){return `<div class="swapg">
+  <h4>Grab and go, no prep at all</h4>
+  <ul><li>Large bagel with jam, plus a banana</li>
+  <li>Bag of pretzels and a banana</li>
+  <li>Two bananas and a handful of dried mango</li>
+  <li>Rice cakes with honey, plus a banana</li>
+  <li>Cereal bar, banana and a small orange juice</li>
+  <li>Pop Tarts, two, straight out of the packet</li></ul>
+  <h4>Hot water or a microwave only</h4>
+  <ul><li>Instant oats pot with a banana stirred in</li>
+  <li>Microwave rice pouch with soy sauce</li>
+  <li>Two slices of toast with jam or honey</li>
+  <li>Instant noodles plus a banana</li></ul>
+  <h4>Bought on shift</h4>
+  <ul><li>Large fruit smoothie from anywhere, no protein added</li>
+  <li>Plain bagel or a pastry with a coffee</li>
+  <li>Soft pretzel from a stand</li>
+  <li>Baked potato, plain or with beans</li></ul>
+  <div class="info" style="margin-top:12px"><div class="ft">The rule</div>
+    <p>Carbs, not protein. Your three Huels already give you 120g of protein and the staple meal adds 50 more. Protein is handled. What you are short on is fuel.</p>
+    <p>Black Edition is the low carb version of Huel on purpose. That is fine, it just means this slot is doing real work rather than being a nice extra.</p>
+    <p>Best time to eat it is around training. Before or straight after, whichever suits the shift.</p></div>
+  <div class="info"><div class="ft">If a Huel gets missed</div>
+    <p>Do not just skip it and eat less. Hit <span class="gold">Log something else</span> and tap whatever you actually had. The numbers are already filled in, so it takes about three seconds and you do not need to know any macros.</p>
+    <p>A rough guess that gets logged is worth ten times a perfect number that never does. A missed meal you tell me about is fixable. A missed meal I never see turns into a plateau I cannot explain.</p></div>
+</div>`;}
+const GROCERY=[
+ {h:'The core, one order',items:[
+  ['Huel Black Edition powder','5 to 6 bags a month','Three shakes a day at 2 scoops each is 21 servings a week, and a bag is about 17 servings. Put it on subscription so you never run out.'],
+  ['Shaker bottles','3','One is not enough. Three means there is always a clean one, which is the actual reason people miss shakes.'],
+  ['Small screw-top scoop pots','3 to 5','Pre-load two scoops into each on Sunday. Then a shake on shift is pour, add water, done. This is the single thing that makes powder work as well as bottles did.'],
+  ['Staple meal delivery','ongoing','Already sorted. This is your one real meal and it is the anchor of the day.']]},
+ {h:'Carb top-up, pick two or three',items:[
+  ['Bagels','1 pack','Longest shelf life of anything here.'],
+  ['Jam or honey','1 jar',''],
+  ['Bananas','7','One a day. The single easiest carb you can carry.'],
+  ['Pretzels','1 large bag','Shelf stable, lives in the car.'],
+  ['Instant oats pots','5','Hot water only. Works on a food truck shift.'],
+  ['Rice cakes','1 pack',''],
+  ['Dried mango or dates','1 bag','Dense carbs in a small package for a long shift.']]},
+ {h:'Keep in the bag',items:[
+  ['Water bottle','1','']  ,
+  ['Vitamins','ongoing','First habit of the day, every day.'],
+  ['Electrolyte tablets','1 tube','Security shifts plus lifting plus running adds up.']]}
+];
+function groceryCard(){
+  const body=GROCERY.map(g=>`<h4>${g.h}</h4>${g.items.map(([n,q,note])=>
+    `<div class="gitem"><div class="gtop"><span class="gn">${n}</span><span class="gq">${q}</span></div>${note?`<div class="gnote">${note}</div>`:''}</div>`).join('')}`).join('');
+  document.getElementById('groceryCard').innerHTML=`<div class="card">
+    <div class="eyebrow">One order &middot; nothing to cook</div><h2>Grocery list</h2>
+    <p class="sub">Nothing here needs a pan, a recipe, or more than one purchase.</p>
+    <div class="info" style="margin-top:11px"><p>Your whole food plan is four things. Huel, your staple meal, a carb top-up, and water. That is deliberate. Fewer decisions means fewer chances for a bad day to become a missed day.</p></div>
+    <details class="more"><summary>Full list</summary><div class="glist">${body}</div></details></div>`;}
+function dailyCard(){
+  const k=key(S.week,S.day),st0=dstate(S.week,S.day);
+  const stp=S.s[k]||0,wtr=S.h[k]||0;
+  const hab=HABITS.filter(i=>(!i.wed||S.day===2)&&(!i.tf||S.day===1||S.day===4)).map(i=>{const done=!!st0.c[i.id];
+    return `<div class="row ${done?'done':''}">
+      <button class="cb ${done?'on':''}" onclick="toggle('${i.id}')" aria-label="${i.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${i.n}</div><div class="rm">${i.meta}</div></div></div>`;}).join('');
+  document.getElementById('dailyCard').innerHTML=`<div class="card">
+    <div class="eyebrow">Every day \u00b7 regardless of session</div><h2>Daily non-negotiables</h2>
+    <div style="margin-top:8px">${hab}</div>
+    <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px">
+      <div class="brow"><span style="font-weight:600">Steps</span><span class="r">shifts count</span></div>
+      <div class="brow" style="margin-top:4px"><b>${stp.toLocaleString()}</b><span class="r">of ${STEP_GOAL.toLocaleString()}</span></div>
+      <div class="bar g"><i style="width:${Math.min(100,stp/STEP_GOAL*100)}%"></i></div>
+      <div class="tapper"><button class="tp" onclick="addSteps(1000)">+1,000</button>
+      <button class="tp" onclick="addSteps(2500)">+2,500</button>
+      <button class="tp" onclick="addSteps(5000)">+5,000</button>
+      <button class="tp" onclick="setSteps()">Set</button></div></div>
+    <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px">
+      <div class="brow"><span style="font-weight:600">Water</span><span class="r">spread it out</span></div>
+      <div class="brow" style="margin-top:4px"><b>${wtr} oz</b><span class="r">of ${WATER_GOAL} oz</span></div>
+      <div class="bar b"><i style="width:${Math.min(100,wtr/WATER_GOAL*100)}%"></i></div>
+      <div class="tapper"><button class="tp" onclick="addWater(8)">+8 oz</button>
+      <button class="tp" onclick="addWater(16)">+16 oz</button>
+      <button class="tp" onclick="addWater(32)">+32 oz</button>
+      <button class="tp" onclick="addWater(-8)">\u22128 oz</button></div>
+      <p class="sub" style="margin-top:9px;font-size:11.5px">A standard bottle is 16 oz. Six of them gets you there.</p></div></div>`;}
+function photosCard(){
+  const el=document.getElementById('photosCard');
+  if(S.day!==0){el.innerHTML='';return;}
+  const cur=S.wt[S.week];
+  el.innerHTML=`<div class="card">
+    <div class="eyebrow">Monday \u00b7 Week ${S.week}</div><h2>Weigh-in &amp; photos</h2>
+    <p class="sub">First thing, after the bathroom, before you eat or drink. Then send the photos straight to me.</p>
+    <button class="btn alt" style="margin-top:12px" onclick="logMorningWeight()">${cur!=null?'Weight: '+cur+' lbs, tap to change':'Log this morning\u2019s weight'}</button>
+    <div class="info" style="margin-top:12px"><p>The scale tells you the weight is moving. These photos tell you it is coming off the right places. Ninety seconds, same spot, same light, and in twelve weeks they will tell you everything.</p></div></div>`;}
+function pastCard(){
+  let rows='';
+  for(let w=1;w<S.week;w++){
+    let tot=0,dn=0;for(let d=0;d<7;d++){const p=pct(w,d);tot+=p.total;dn+=p.done;}
+    const pc=tot?Math.round(dn/tot*100):0;
+    rows+=`<div class="pw"><div><b>Week ${w}</b><div class="rm">${W[w-1].b} \u00b7 ${pc}% complete</div></div>
+      <div class="pv">${S.wt[w]!=null?S.wt[w]+' lbs':pc+'%'}</div></div>`;}
+  document.getElementById('pastCard').innerHTML=rows
+    ?`<div class="card"><div class="eyebrow">History</div><h2>Past Weeks</h2>
+      <p class="sub">Nothing is ever lost. Every week stays here.</p><div style="margin-top:10px">${rows}</div></div>`:'';}
+
+/* CLAMP AND ROUND. Without the rounding a fractional week survives and
+   W[S.week-1] comes back undefined, which kills the session card. */
+function goWeek(n){n=Math.round(Number(n)); if(!isFinite(n))n=1;
+  S.week=Math.max(1,Math.min(12,n));save();render();window.scrollTo({top:0,behavior:'smooth'});}
+function goDay(d){d=Math.round(Number(d)); if(!isFinite(d))d=0;
+  S.day=Math.max(0,Math.min(6,d));save();render();}
+function toggle(id){const st=dstate(S.week,S.day);
+  if(st.c[id])delete st.c[id];else st.c[id]=1;save();
+  const p=pct(S.week,S.day);render();
+  if(p.p>=1){toast('Day complete. That is the work.');confetti();}}
+function toggleMeal(i){const n=nstate(S.week,S.day);if(n.m[i])delete n.m[i];else n.m[i]=1;save();render();}
+function addSteps(v){const k=key(S.week,S.day);S.s[k]=Math.max(0,(S.s[k]||0)+v);save();render();if(S.s[k]>=STEP_GOAL)toast('Steps done.');}
+function addWater(v){const k=key(S.week,S.day);S.h[k]=Math.max(0,(S.h[k]||0)+v);save();render();}
+function esc(s){return String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+function openModal(h){document.getElementById('modal').innerHTML=h;document.getElementById('mask').classList.add('on');}
+function closeModal(){document.getElementById('mask').classList.remove('on');}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2100);}
+function editItem(id){const st=dstate(S.week,S.day),s=session(S.week,S.day);
+  const it=[...s.items,...HABITS].find(i=>i.id===id);
+  openModal(`<h3>Customize</h3><p class="ms">${it.n}. Type what you actually did.</p>
+    <div class="form"><label>What you did</label>
+    <input id="cuIn" value="${esc(st.cu[id]||'')}" placeholder="e.g. dropped to 3 sets, shoulder felt off">
+    <button class="btn" onclick="saveCustom('${id}')">Save</button>
+    <button class="btn alt" style="margin-top:8px" onclick="clearCustom('${id}')">Clear</button></div>`);
+  setTimeout(()=>document.getElementById('cuIn').focus(),60);}
+function saveCustom(id){const v=document.getElementById('cuIn').value.trim(),st=dstate(S.week,S.day);
+  if(v)st.cu[id]=v;else delete st.cu[id];save();closeModal();render();}
+function clearCustom(id){delete dstate(S.week,S.day).cu[id];save();closeModal();render();}
+function swapEx(id){const s=session(S.week,S.day),it=s.items.find(i=>i.id===id);
+  const opts=MASTER.map(k=>`<button class="opt ${k===it.ex?'cur':''}" onclick="doSwap('${id}','${k}')"><span>${EX[k].n}</span></button>`).join('');
+  openModal(`<h3>Swap exercise</h3><p class="ms">Replacing ${it.n} for today. Machine taken, or it just is not happening.</p>${opts}
+    <button class="btn alt" style="margin-top:8px" onclick="doSwap('${id}','')">Reset to original</button>`);}
+function doSwap(id,k){const st=dstate(S.week,S.day);if(k)st.sw[id]=k;else delete st.sw[id];save();closeModal();render();}
+function logWeight(id){const st=dstate(S.week,S.day);
+  openModal(`<h3>Log weight</h3><p class="ms">Working weight in pounds.</p>
+    <div class="form"><label>Weight (lbs)</label>
+    <input id="wIn" type="number" inputmode="decimal" step="2.5" value="${st.w[id]!=null?st.w[id]:''}" placeholder="e.g. 95">
+    <button class="btn" onclick="saveWeight('${id}')">Save</button></div>`);
+  setTimeout(()=>document.getElementById('wIn').focus(),60);}
+function saveWeight(id){const v=parseFloat(document.getElementById('wIn').value),st=dstate(S.week,S.day);
+  if(!isNaN(v))st.w[id]=v;else delete st.w[id];save();closeModal();render();}
+function logMorningWeight(){
+  openModal(`<h3>Morning weight</h3><p class="ms">Week ${S.week}. After the bathroom, before eating or drinking.</p>
+    <div class="form"><label>Weight (lbs)</label>
+    <input id="mwIn" type="number" inputmode="decimal" step="0.1" value="${S.wt[S.week]!=null?S.wt[S.week]:''}" placeholder="e.g. 146.2">
+    <button class="btn" onclick="saveMorningWeight()">Save</button></div>`);
+  setTimeout(()=>document.getElementById('mwIn').focus(),60);}
+function saveMorningWeight(){const v=parseFloat(document.getElementById('mwIn').value);
+  if(!isNaN(v))S.wt[S.week]=v;save();closeModal();render();toast('Logged.');}
+function setSteps(){const k=key(S.week,S.day);
+  openModal(`<h3>Set steps</h3><p class="ms">Straight from your phone.</p>
+    <div class="form"><label>Steps today</label>
+    <input id="sIn" type="number" inputmode="numeric" value="${S.s[k]||''}" placeholder="e.g. 7600">
+    <button class="btn" onclick="saveSteps()">Save</button></div>`);
+  setTimeout(()=>document.getElementById('sIn').focus(),60);}
+function saveSteps(){const v=parseInt(document.getElementById('sIn').value,10),k=key(S.week,S.day);
+  S.s[k]=isNaN(v)?0:Math.max(0,v);save();closeModal();render();}
+function customTarget(){const n=nstate(S.week,S.day),T=n.t||targetFor(S.week);
+  openModal(`<h3>Custom target for today</h3><p class="ms">Format: kcal,protein,carbs,fat</p>
+    <div class="form"><label>Today's target</label>
+    <input id="tIn" value="${T.join(',')}" inputmode="numeric">
+    <button class="btn" onclick="saveTarget()">Set for today</button></div>`);
+  setTimeout(()=>document.getElementById('tIn').focus(),60);}
+function saveTarget(){const p=document.getElementById('tIn').value.split(',').map(x=>parseInt(x.trim(),10));
+  if(p.length===4&&p.every(x=>!isNaN(x))){nstate(S.week,S.day).t=p;save();closeModal();render();}
+  else toast('Four numbers, comma separated.');}
+function resetTarget(){nstate(S.week,S.day).t=null;save();render();}
+
+/* ---------- tap-to-log food library. He should never have to know macros. ---------- */
+const QUICKADD=[
+ {g:'Huel, whichever you have',items:[
+   ['Huel powder, 2 scoops',400,40,24,18],
+   ['Huel powder, 3 scoops',600,60,36,27],
+   ['Huel ready-to-drink bottle',400,35,29,17],
+   ['Half a Huel',200,20,12,9]]},
+ {g:'Carb top-up',items:[
+   ['Bagel with jam',340,10,68,3],
+   ['Banana',105,1,27,0],
+   ['Bagel + banana',445,11,95,3],
+   ['Pretzels, small bag',230,6,48,2],
+   ['Instant oats pot',280,7,50,5],
+   ['Rice cakes + honey',250,4,55,1],
+   ['Microwave rice pouch',330,7,70,3],
+   ['2 Pop Tarts',400,4,70,10],
+   ['Fruit smoothie, large',350,5,80,1]]},
+ {g:'Bought on shift',items:[
+   ['Chicken sandwich / wrap',550,35,55,20],
+   ['Burrito',700,35,80,25],
+   ['Burger, no fries',600,30,50,30],
+   ['Slice of pizza',300,13,35,12],
+   ['Sub sandwich, 6 inch',450,25,50,15],
+   ['Rotisserie chicken, quarter',300,35,0,17],
+   ['Sushi tray',450,20,70,9],
+   ['Salad with chicken',400,35,20,18]]},
+ {g:'Snacks and drinks',items:[
+   ['Protein bar',210,20,22,7],
+   ['Greek yogurt cup',150,15,12,4],
+   ['String cheese x2',160,14,2,12],
+   ['Handful of nuts, 30g',180,6,6,16],
+   ['Beef jerky, 50g',140,25,6,2],
+   ['Coffee with milk',60,3,6,3],
+   ['Soda, regular can',150,0,39,0],
+   ['Beer',150,2,13,0]]}
+];
+
+/* ---------- the 450 kcal slot, as real things he can tick ---------- */
+/* the top-up slot shrinks as calories come down, so options are grouped by size */
+const TOPUPS=[
+ /* rebuilt Sep 2026. these are REAL portions sized for a 550-650 kcal slot, not small
+    snacks multiplied up. every one is grab-and-go and nothing needs cooking. */
+ {n:'Bagel with cream cheese + banana',   m:[600,18,98,15]},
+ {n:'2 bagels with jam',                  m:[600,18,120,4]},
+ {n:'Large chocolate milk + granola bar',  m:[590,20,88,16]},
+ {n:'Big bowl of cereal + milk',           m:[600,20,102,12]},
+ {n:'Instant oats pot + banana + honey',   m:[600,14,120,7]},
+ {n:'Microwave rice pouch + soy + banana', m:[610,12,128,6]},
+ {n:'Large fruit smoothie + granola bar',  m:[600,12,116,10]},
+ {n:'Soft pretzel + chocolate milk',       m:[610,20,102,13]},
+ {n:'Baked potato with beans + cheese',    m:[600,24,92,14]},
+ {n:'Instant noodles + 2 bananas',         m:[600,12,108,14]},
+ {n:'Sub sandwich, 6 inch',                m:[590,26,80,18]},
+ {n:'Bag of pretzels + dried mango',       m:[600,12,132,4]},
+ {n:'Toast with jam + juice + banana',     m:[600,13,128,5]},
+ {n:'2 granola bars + apple + yogurt',     m:[595,15,105,13]},
+ {n:'Rice cakes with peanut butter + honey', m:[600,17,78,26]},
+ {n:'Large yogurt + granola + berries',    m:[590,22,92,14]},
+ {n:'Gas station: 2 bananas + choc milk + pretzels', m:[600,17,112,10]},
+ {n:'Muffin + large juice',                m:[600,9,110,15]},
+ {n:'Trail mix, large handful + banana',   m:[600,16,72,32]},
+ {n:'Pop-Tarts, full pack + milk',         m:[600,13,104,17]}
+];
+function pickTopup(){
+  const L=tuList(S.week,S.day), need=topupTarget(S.week);
+  const each = L.length===2 ? Math.round(need/2) : need;
+  const opts=TOPUPS.map((t,i)=>{const on=L.includes(i);
+    const sc=(on&&L.length===2?need/2:need)/t.m[0];
+    const port = sc>1.15?' \u00d7'+(Math.round(sc*10)/10) : (sc<0.7?'half portion':'');
+    const kc=Math.round(t.m[0]*sc);
+    return `<button class="opt ${on?'cur':''}" onclick="setTopup(${i})">
+    <span>${on?'\u2713 ':''}${t.n}${port&&sc>1.15?port:''}${port&&sc<0.7?' ,  '+port:''}</span>
+    <small>${kc} kcal \u00b7 ${Math.round(t.m[1]*sc)}P</small></button>`;}).join('');
+  openModal(`<h3>Today's carb top-up</h3>
+    <p class="ms">This week's slot is <b>${need} calories</b>. Pick ONE and it scales to fill the whole thing, or pick TWO and they split it in half, ${Math.round(need/2)} each. Tap a picked item again to remove it.</p>
+    <p class="ms">All grab-and-go, nothing needs cooking, most can be bought on shift. They are almost all carbs, which is what your three Huels are light on.</p>
+    ${opts}
+    <button class="btn alt" style="margin-top:8px" onclick="setTopup(-1)">Clear my choice</button>`);
+}
+function setTopup(i){
+  const n=nstate(S.week,S.day);
+  if(i<0){delete n.tu;delete n.m[3];save();closeModal();render();return;}
+  let L=tuList(S.week,S.day).slice();
+  if(L.includes(i)) L=L.filter(x=>x!==i);          // tap again to remove
+  else if(L.length>=2) L=[L[1],i];                  // already two, replace the oldest
+  else L.push(i);
+  if(!L.length){delete n.tu;delete n.m[3];}else{n.tu=L;}
+  save();render();
+  if(L.length) toast(L.length===2?'Split across 2 items':'Set: '+TOPUPS[i].n);
+  pickTopup();
+}
+/* the top-up slot can hold ONE or TWO items. with two, each is scaled to half
+   the slot so he can split it instead of doubling a single thing. */
+function tuList(w,d){const t=nstate(w,d).tu;
+  if(t==null)return[];
+  return (Array.isArray(t)?t:[t]).filter(i=>TOPUPS[i]);}
+function topupFor(w,d){const L=tuList(w,d); if(!L.length)return null;
+  const need=topupTarget(w)/L.length;
+  const parts=L.map(i=>{const b=TOPUPS[i], sc=need/b.m[0];
+    const nm = sc>1.15 ? b.n+' \u00d7'+(Math.round(sc*10)/10)
+             : sc<0.7  ? b.n+' (half)'
+             : b.n;
+    return {n:nm, m:[Math.round(b.m[0]*sc),Math.round(b.m[1]*sc),Math.round(b.m[2]*sc),Math.round(b.m[3]*sc)]};});
+  const m=[0,0,0,0]; parts.forEach(x=>x.m.forEach((v,j)=>m[j]+=v));
+  return {n:parts.map(x=>x.n).join('  +  '), m};}
+
+function quickAdd(){
+  const body=QUICKADD.map((g,gi)=>`<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:14px 0 7px">${esc(g.g)}</div>`+
+    g.items.map((it,i)=>`<button class="opt" onclick="doQuick(${gi},${i})">
+      <span>${it[0]}</span><small>${it[1]} kcal &middot; ${it[2]}P ${it[3]}C ${it[4]}F</small></button>`).join('')).join('');
+  openModal(`<h3>Log something else</h3>
+    <p class="ms">For anything you ate that is <b>not</b> one of your five planned lines. Tap it and the numbers go in for you, no working anything out. Close enough beats not logging it at all.</p>
+    ${body}
+    <button class="btn alt" style="margin-top:10px" onclick="addExtra()">None of these, let me type it in</button>`);
+}
+/* the group is passed by INDEX, not by name. esc() does not escape single quotes,
+   so a group called "Kevin's meals" would have terminated the JS string literal
+   and silently killed every button under it. */
+function doQuick(gi,i){
+  const g=QUICKADD[parseInt(gi,10)]; if(!g)return;
+  const it=g.items[parseInt(i,10)]; if(!it)return;
+  nstate(S.week,S.day).x.push({n:it[0],k:it[1],p:it[2],c:it[3],f:it[4]});
+  save();closeModal();render();toast('Logged '+it[0]+'.');
+}
+
+function addExtra(){
+  openModal(`<h3>Add Something Extra</h3>
+    <p class="ms">Whatever you actually ate. Read it off the packet and type it in.</p>
+    <div class="form"><label>What was it</label><input id="xn" placeholder="e.g. large bagel with jam">
+      <label>Grams (optional)</label><input id="xg" type="number" inputmode="numeric" placeholder="">
+      <label>For that amount</label>
+      <div class="g4"><input id="xk" type="number" inputmode="numeric" placeholder="kcal">
+        <input id="xp" type="number" inputmode="numeric" placeholder="P">
+        <input id="xc" type="number" inputmode="numeric" placeholder="C">
+        <input id="xf" type="number" inputmode="numeric" placeholder="F"></div>
+      <button class="btn" onclick="saveExtra()">Add</button></div>`);
+  setTimeout(()=>document.getElementById('xn').focus(),60);}
+function saveExtra(){
+  const g=document.getElementById('xg').value.trim();
+  const nm=(document.getElementById('xn').value.trim()||'Extra')+(g?` (${g}g)`:'');
+  const num=id=>{const v=parseFloat(document.getElementById(id).value);return isNaN(v)?0:v;};
+  const e={n:nm,k:num('xk'),p:num('xp'),c:num('xc'),f:num('xf')};
+  if(!e.k&&!e.p&&!e.c&&!e.f){toast('Add at least one number.');return;}
+  nstate(S.week,S.day).x.push(e);save();closeModal();render();}
+function delExtra(i){nstate(S.week,S.day).x.splice(i,1);save();render();}
+function daySwap(){
+  const opts=[0,1,2,3,4,5,6].filter(d=>d!==S.day).map(d=>{
+    const s=session(S.week,d),dt=dateOf(S.week,d);
+    return `<button class="opt" onclick="doDaySwap(${d})"><span>${DOW[d]} ${dt.getDate()}/${dt.getMonth()+1}</span><small>${s.title}</small></button>`;}).join('');
+  openModal(`<h3>Swap with another day</h3><p class="ms">The whole day moves, training and everything with it.</p>${opts}`);}
+function doDaySwap(d){const o=order(S.week),t=o[S.day];o[S.day]=o[d];o[d]=t;save();closeModal();render();toast('Days swapped.');}
+function confetti(){
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=document.createElement('canvas');
+  c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:150';
+  c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);
+  const x=c.getContext('2d'),cols=['#8A6F34','#C9A34F','#111111'];
+  const P=Array.from({length:70},()=>({x:Math.random()*c.width,y:-20-Math.random()*140,
+    r:3+Math.random()*4,vy:2.4+Math.random()*3.2,vx:-1.4+Math.random()*2.8,
+    a:Math.random()*6.28,va:-.14+Math.random()*.28,c:cols[(Math.random()*3)|0]}));
+  let f=0;(function loop(){x.clearRect(0,0,c.width,c.height);
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va;x.save();x.translate(p.x,p.y);x.rotate(p.a);
+      x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);x.restore();});
+    if(++f<150)requestAnimationFrame(loop);else c.remove();})();}
+function a2Steps(){
+  const ua=navigator.userAgent||'';
+  const iOS=/iPad|iPhone|iPod/.test(ua)||(/Mac/.test(ua)&&navigator.maxTouchPoints>1);
+  const android=/Android/.test(ua);let steps;
+  if(iOS)steps=['Tap the Share button at the bottom of Safari, the square with the arrow pointing up.',
+    'Scroll down and tap <b style="color:var(--gold)">Add to Home Screen</b>.','Tap Add in the top right.',
+    'Open ELVT COACH from your home screen from now on, not from Safari.'];
+  else if(android)steps=['Tap the three dots in the top right of Chrome.',
+    'Tap <b style="color:var(--gold)">Add to Home screen</b> (or Install app).','Tap Add or Install to confirm.',
+    'Open ELVT COACH from your home screen from now on, not from Chrome.'];
+  else steps=['Open this link on your phone, that is where you will actually use it.',
+    'iPhone: Share, then Add to Home Screen. Android: three dots, then Add to Home screen.',
+    'Open it from the home screen icon from then on.'];
+  document.getElementById('a2steps').innerHTML=steps.map((t,i)=>`<div class="s"><b>${i+1}</b><span>${t}</span></div>`).join('');}
+function openA2(){a2Steps();document.getElementById('a2').classList.add('on');window.scrollTo({top:0});}
+function closeA2(){document.getElementById('a2').classList.remove('on');try{localStorage.setItem(KEY+'_a2','1')}catch(e){}}
+if(!localStorage.getItem(KEY+'_a2')&&!(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)){openA2();}
+render();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncToday())render();});
+window.addEventListener('focus',()=>{if(syncToday())render();});
+setInterval(()=>{if(syncToday())render();},60000);
+</script>
+</body>
+</html>

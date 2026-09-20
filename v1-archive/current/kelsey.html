@@ -1,0 +1,551 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FAF7F2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ELVT Kelsey">
+<title>ELVT COACH, Kelsey</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--panel:#FFFFFF;--panel2:#F4F0E9;--line:#E4DFD6;
+--gold:#8A6F34;--gold-dim:#A58A4E;--gold-soft:rgba(138,111,52,.09);
+--txt:#111111;--mut:#6E6A64;--mut2:#9A958D;--ok:#2F7D4F;--warn:#A8641F;--bad:#A33F36;--r:12px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+ font-size:15px;line-height:1.5;padding-bottom:40px}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+.top{position:sticky;top:0;z-index:50;background:rgba(250,247,242,.94);
+ backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:11px 0;margin-bottom:14px}
+.topin{max-width:560px;margin:0 auto;padding:0 14px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px}
+.brand img{height:15px;width:auto;display:block}
+.brand small{font-size:9px;letter-spacing:.2em;color:var(--mut);font-weight:600;text-transform:uppercase}
+.streak{font-size:10px;letter-spacing:.14em;color:var(--mut);border:1px solid var(--line);
+ border-radius:999px;padding:5px 12px;font-weight:600;text-transform:uppercase}
+.streak b{color:var(--gold);font-size:12px;margin-left:4px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+ padding:18px;margin-bottom:13px}
+.eyebrow{font-size:9.5px;letter-spacing:.2em;font-weight:700;color:var(--gold);
+ text-transform:uppercase;margin-bottom:7px}
+h2{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;margin:0 0 4px;line-height:1.15}
+.sub{font-size:12.5px;color:var(--mut);margin:0}
+.info,.flag{background:var(--panel2);border-radius:9px;padding:14px 16px;margin:12px 0}
+.flag{background:#FFFBF2;border-left:3px solid var(--gold)}
+.ft{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--gold);
+ text-transform:uppercase;margin-bottom:7px}
+.info p,.flag p{margin:0 0 7px;font-size:13px;color:#3A3833;line-height:1.6}
+.info p:last-child,.flag p:last-child{margin-bottom:0}
+.gold{color:var(--gold);font-weight:600}
+.row{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.rb{flex:1;min-width:0}
+.rn{font-size:14.5px;font-weight:600;line-height:1.3}
+.rm{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.45}
+.tick{width:26px;height:26px;border:1.5px solid var(--line);border-radius:7px;flex:0 0 auto;
+ background:transparent;cursor:pointer;position:relative;margin-top:1px;transition:.15s}
+.tick.on{background:var(--gold);border-color:var(--gold)}
+.tick.on:after{content:'';position:absolute;left:8px;top:4px;width:6px;height:11px;
+ border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}
+.stat{background:var(--panel2);border-radius:9px;padding:13px 8px;text-align:center}
+.stat b{display:block;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);line-height:1}
+.stat i{display:block;font-style:normal;font-size:9px;letter-spacing:.12em;
+ color:var(--mut);text-transform:uppercase;margin-top:5px}
+.bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:9px 0}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:.3s}
+.btn{display:block;width:100%;padding:14px;border-radius:9px;border:none;background:var(--gold);
+ color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn.alt{background:transparent;border:1.5px solid var(--line);color:var(--txt)}
+.act{font-size:11px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);
+ background:transparent;color:var(--mut);cursor:pointer;font-family:inherit;font-weight:600}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.allergy{background:#FFF4F2;border:1px solid #E8C9C4;border-radius:9px;padding:12px 14px;margin:12px 0}
+.allergy .ft{color:var(--bad)}
+.allergy p{font-size:12.5px;color:#5A3A36;margin:0;line-height:1.55}
+.mask{position:fixed;inset:0;background:rgba(17,17,17,.42);backdrop-filter:blur(3px);
+ z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.sheet{background:var(--panel);border-radius:16px 16px 0 0;padding:22px 18px 30px;
+ width:100%;max-width:560px;max-height:88vh;overflow-y:auto}
+.sheet h3{font-family:'Cormorant Garamond',serif;font-size:22px;margin:0 0 6px;font-weight:600}
+.ms{font-size:12.5px;color:var(--mut);margin:0 0 14px;line-height:1.55}
+.opt{display:flex;justify-content:space-between;align-items:center;width:100%;
+ padding:13px 14px;border:1px solid var(--line);border-radius:9px;background:transparent;
+ margin-bottom:7px;cursor:pointer;font-family:inherit;font-size:13.5px;text-align:left;color:var(--txt)}
+.opt.cur{border-color:var(--gold);background:var(--gold-soft)}
+.opt small{color:var(--mut);font-size:11.5px}
+.form label{display:block;font-size:11px;letter-spacing:.1em;color:var(--mut);
+ text-transform:uppercase;font-weight:700;margin-bottom:5px}
+.form input,.form textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;
+ background:var(--bg);color:var(--txt);font-size:15px;font-family:inherit;margin-bottom:11px}
+.pill{display:inline-block;font-size:9.5px;letter-spacing:.1em;padding:3px 8px;border-radius:99px;
+ border:1px solid var(--line);color:var(--mut);text-transform:uppercase;font-weight:700}
+.more{margin-top:12px}
+.more summary{font-size:11px;letter-spacing:.14em;font-weight:700;color:var(--gold);
+ text-transform:uppercase;cursor:pointer;list-style:none}
+.more summary::-webkit-details-marker{display:none}
+.more summary:after{content:'  +'}
+.more[open] summary:after{content:'  \2212'}
+.glist{margin-top:10px}
+.gcat{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--gold);
+ text-transform:uppercase;margin:13px 0 6px}
+.gitem{display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13px}
+.gitem span{color:var(--mut2);flex:0 0 auto}
+.scale{display:flex;gap:6px;margin:8px 0 0}
+.sc{flex:1;padding:9px 0;border:1px solid var(--line);border-radius:8px;background:transparent;
+ font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--txt)}
+.sc.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.qlab{font-size:12.5px;font-weight:600;margin:14px 0 0}
+</style></head><body>
+<div class="top"><div class="topin">
+<div class="brand"><img src="data:image/png;base64,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" alt="ELVT"><small>KELSEY</small></div>
+<div class="streak">STREAK <b id="stk">0</b></div>
+</div></div>
+<div class="wrap">
+ <div id="installCard"></div>
+ <div id="phaseCard"></div>
+ <div id="weekCard"></div>
+ <div id="dayStrip"></div>
+ <div id="todayCard"></div>
+ <div id="nutritionCard"></div>
+ <div id="groceryCard"></div>
+ <div id="whoopCard"></div>
+ <div id="checkinCard"></div>
+ <div id="minCard"></div>
+ <div id="progressCard"></div>
+ <div id="eduCard"></div>
+</div>
+<div class="mask" id="mask" onclick="if(event.target===this)closeModal()">
+ <div class="sheet" id="sheet"></div></div>
+<script>
+'use strict';
+const KEY='elvt_kelsey_v1';
+const START=new Date(2026,8,14);          // Mon 14 Sep 2026, week 1
+const WEEKS=26;                            // 6 months
+
+/* ---------- her numbers. week 1 is BASELINE, no deficit ---------- */
+const PHASES=[
+ {n:'BASELINE',   w:[1,2],   kcal:2400, note:'No deficit. We find out what your body actually does.'},
+ {n:'FAT LOSS 1', w:[3,12],  kcal:null, note:'Set from your real data, not a calculator.'},
+ {n:'MAINTENANCE',w:[13,14], kcal:null, note:'A planned break. Earned, not a failure.'},
+ {n:'FAT LOSS 2', w:[15,24], kcal:null, note:'Second block.'},
+ {n:'EXIT',       w:[25,26], kcal:null, note:'Keeping it, without me.'}
+];
+const PROTEIN=130, FAT=80;
+const STEP_GOAL=10000, WATER_GOAL=2500;   // ml, deliberately modest to start
+const START_LBS=238, GOAL_LOSS=100;
+
+/* ---------- ALLERGENS. hard exclusions, checked before anything displays ---------- */
+const ALLERGENS=['peanut','tree nut','pine nut','almond','coconut','seafood','shellfish',
+ 'prawn','shrimp','crab','lobster','oyster','mussel','scallop','squid','calamari','anchov','fish','salmon','tuna','cod','tilapia',
+ 'cashew','walnut','pecan','pistachio','hazelnut','macadamia','brazil nut','praline','marzipan',
+ 'nutella','nut butter','trail mix','pesto','satay','pad thai','granola'];
+/* bare "nut"/"nuts" needs a word boundary so it blocks "mixed nuts" without
+   tripping on "nutrition", "nutmeg" or "donut". */
+const ALLERGEN_RE=/\bnuts?\b/i;
+function safe(txt){const t=String(txt).toLowerCase();
+  if(ALLERGEN_RE.test(t))return false;
+  return !ALLERGENS.some(a=>t.includes(a));}
+
+/* ---------- meals, built only from foods she named ---------- */
+const MEALS=[
+ {n:'Meal 1 \u00b7 morning', m:[520,32,62,15], items:[
+   ['Eggs, scrambled','3'],['Toast or bagel','2 slices'],['Greek yogurt','150g']]},
+ {n:'Coffee', m:[210,8,24,9], items:[
+   ['Your usual coffee','1'],['Counted, not cut',', ']]},
+ {n:'Meal 2 \u00b7 work', m:[640,42,78,16], items:[
+   ['Chicken breast','170g cooked'],['White rice','200g cooked'],['Veg you actually like','handful']]},
+ {n:'Meal 3 \u00b7 evening', m:[780,48,96,22], items:[
+   ['Golden curry with chicken','1 portion'],['White rice','250g cooked'],
+   ['or quesadilla + chicken','alternative']]},
+ {n:'Planned sweet thing', m:[250,4,38,10], items:[
+   ['Whatever you actually want','1'],['In the numbers, not banned',', ']]}
+];
+
+/* ---------- grocery, generated from the meals ---------- */
+const GROCERY=[
+ ['PROTEINS',['Chicken breast, 2kg','Eggs, 2 dozen','Lean beef mince, 500g','Greek yogurt, large tub']],
+ ['CARBS',['White rice, large bag','Bagels','Bread','Tortillas, large pack','Potatoes']],
+ ['VEG & FRUIT',['Onions','Carrots','Bell peppers','Frozen mixed veg','Bananas','Whatever salad you like']],
+ ['DAIRY',['Milk','Shredded cheese, large','Butter']],
+ ['CURRY & SAUCES',['Golden Curry roux blocks','Soy sauce','Garlic','Stock cubes','Olive oil']],
+ ['BREAKFAST',['Oats','Honey or jam']],
+ ['SWEET, PLANNED',['Whatever you actually like ,  buy the single, not the multipack']],
+ ['DRINKS',['Coffee','Powerade Zero','Sparkling water']]
+];
+const STAPLES=['Rice','Chicken in the freezer','Eggs','Tortillas','Cheese','Curry blocks','Coffee'];
+const EMERGENCY=[
+ ['Microwave rice + frozen chicken','8 min, roughly 500 kcal, 40g protein'],
+ ['Quesadilla with pre-cooked chicken','5 min, roughly 550 kcal'],
+ ['Eggs on toast','6 min, roughly 450 kcal'],
+ ['Greek yogurt + honey + banana','1 min, roughly 300 kcal, 20g protein']
+];
+
+/* ---------- eating out, no bans ---------- */
+const OUT=[
+ ['STARBUCKS',[['Higher protein','Egg bites + an americano'],
+   ['Moderate','Grande latte with skim + a banana'],
+   ['Normal life','What you actually want. Log it and move on.']]],
+ ['CHIPOTLE',[['Higher protein','Chicken bowl, rice, beans, salsa, no queso'],
+   ['Moderate','Chicken bowl, half rice, lots of veg'],
+   ['Normal life','Add the cheese. It is 110 calories.']]],
+ ['CHICK-FIL-A',[['Higher protein','Grilled nuggets, 12 count, plus fruit'],
+   ['Moderate','Grilled sandwich'],
+   ['Normal life','Original sandwich. One meal is one meal.']]],
+ ['CAVA',[['Higher protein','Grilled chicken, greens base, rice on the side'],
+   ['Moderate','Chicken bowl, half rice'],
+   ['Normal life','Build what you want, skip the extra dressing.']]],
+ ['CHINESE',[['Higher protein','Steamed chicken and veg, sauce on the side, plain rice'],
+   ['Moderate','Chicken and broccoli, half the rice'],
+   ['Normal life','Get what you like. Watch the portion, not the menu.']]]
+];
+
+/* ---------- state ---------- */
+const D={v:1,d:{},w:{},whoop:{},ci:{},gr:{},install:0};
+function load(){
+  const s=JSON.parse(JSON.stringify(D));
+  try{const x=JSON.parse(localStorage.getItem(KEY)||'{}');
+    if(x&&typeof x==='object'&&!Array.isArray(x))Object.assign(s,x);
+  }catch(e){}
+  /* a saved null must not survive: Object.assign happily copies it over the default
+     and every dstate() call downstream then throws. */
+  ['d','w','whoop','ci','gr'].forEach(k=>{
+    if(!s[k]||typeof s[k]!=='object'||Array.isArray(s[k]))s[k]={};});
+  return s;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+let S=load();
+
+const key=(w,d)=>w+'-'+d;
+function dstate(w,d){const k=key(w,d);
+  let r=S.d[k];
+  if(!r||typeof r!=='object'||Array.isArray(r)){r=S.d[k]={t:{},meals:{},water:0,steps:null};return r;}
+  /* harden the sub-objects too. meals coming back null made nutritionCard throw,
+     and because render() catches per card the card just disappeared. */
+  ['t','meals'].forEach(f=>{const v=r[f];
+    if(!v||typeof v!=='object'||Array.isArray(v))r[f]={};});
+  if(typeof r.water!=='number'||!isFinite(r.water))r.water=0;
+  if(r.steps!=null&&(typeof r.steps!=='number'||!isFinite(r.steps)))r.steps=null;
+  return r;}
+function dateOf(w,d){const x=new Date(START);x.setDate(x.getDate()+(w-1)*7+d);return x;}
+/* DAY DIFFERENCE, DST SAFE. Two local midnights are 23 or 25 hours apart across
+   a daylight saving change, so dividing milliseconds and flooring can lose a day.
+   Comparing the calendar dates as UTC takes the clock out of it entirely. */
+function dayDiff(a,b){
+  const A=Date.UTC(a.getFullYear(),a.getMonth(),a.getDate());
+  const B=Date.UTC(b.getFullYear(),b.getMonth(),b.getDate());
+  return Math.round((A-B)/86400000);}
+function todayIdx(){const n=new Date();n.setHours(0,0,0,0);
+  const s=new Date(START);s.setHours(0,0,0,0);
+  const diff=dayDiff(n,s);
+  if(diff<0)return{w:1,d:0};
+  return{w:Math.min(WEEKS,Math.floor(diff/7)+1),d:diff%7};}
+let VW, VD, PINNED=false;
+(function(){const t=todayIdx();VW=t.w;VD=t.d;})();
+/* If she leaves the app open on her home screen the clock moves but the view would not.
+   Recompute before every render unless she has deliberately tapped another day. */
+function syncToday(){if(PINNED)return false;
+  const t=todayIdx();
+  if(t.w!==VW||t.d!==VD){VW=t.w;VD=t.d;return true;}
+  return false;}
+function goDay(w,d){const t=todayIdx();
+  /* clamp so a stray call can never create a phantom day record outside the program */
+  w=Math.round(Number(w)); if(!isFinite(w))w=1;
+  d=Math.round(Number(d)); if(!isFinite(d))d=0;
+  w=Math.max(1,Math.min(WEEKS,w));
+  d=Math.max(0,Math.min(6,d));
+  VW=w;VD=d;PINNED=!(w===t.w&&d===t.d);save();render();}
+function goToday(){const t=todayIdx();VW=t.w;VD=t.d;PINNED=false;render();}
+function phaseOf(w){return PHASES.find(p=>w>=p.w[0]&&w<=p.w[1])||PHASES[0];}
+function kcalFor(w){const p=phaseOf(w);return p.kcal||2400;}
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){const e=document.createElement('div');
+ e.textContent=t;e.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#FAF7F2;padding:11px 20px;border-radius:99px;font-size:13px;z-index:200;font-weight:600';
+ document.body.appendChild(e);setTimeout(()=>e.remove(),1900);}
+function openModal(h){document.getElementById('sheet').innerHTML=h;
+ document.getElementById('mask').classList.add('on');}
+function closeModal(){document.getElementById('mask').classList.remove('on');}
+
+
+/* ================= CARDS ================= */
+function installCard(){const el=document.getElementById('installCard');
+ if(S.install){el.innerHTML='';return;}
+ el.innerHTML=`<div class="card"><div class="eyebrow">Do this first</div>
+ <h2>Add this to your home screen</h2>
+ <div class="info"><p>Everything you log lives on this device. If you start logging in the browser and add it to your home screen later, <span class="gold">the home screen version starts empty.</span></p>
+ <p>1. Open this link on your phone.<br>2. iPhone: Share, then Add to Home Screen. Android: three dots, then Add to Home screen.<br>3. Open it from the icon from now on.</p></div>
+ <button class="btn" onclick="S.install=1;save();render()">Done, I've added it</button>
+ <button class="btn alt" style="margin-top:8px" onclick="S.install=1;save();render()">Skip for now</button></div>`;}
+
+function phaseCard(){const p=phaseOf(VW),el=document.getElementById('phaseCard');
+ const lost=Math.max(0,START_LBS-(lastWeight()||START_LBS));
+ const pct=Math.min(100,lost/GOAL_LOSS*100);
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">Phase ${PHASES.indexOf(p)+1} of 5 &middot; ${p.n}</div>
+ <h2>100 lb Transformation</h2>
+ <p class="sub">${p.note}</p>
+ <div class="bar" style="margin-top:14px"><i style="width:${pct}%"></i></div>
+ <div class="stats">
+  <div class="stat"><b>${(lastWeight()||START_LBS).toFixed(1)}</b><i>lbs now</i></div>
+  <div class="stat"><b>${lost.toFixed(1)}</b><i>lbs lost</i></div>
+  <div class="stat"><b>${pct.toFixed(0)}%</b><i>of goal</i></div>
+ </div>
+ <details class="more"><summary>How this works</summary>
+ <div class="info"><p>100 lb is the destination, not a weekly quota. There is no amount you have to lose in any given week.</p>
+ <p><span class="gold">The phases move when your data says so, and only when Darren approves them.</span> Not on a date.</p></div></details></div>`;}
+
+function weekCard(){const el=document.getElementById('weekCard');
+ if(VW!==1){el.innerHTML='';return;}
+ el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,#FFFFFF)">
+ <div class="eyebrow">Week 1 &middot; baseline</div>
+ <h2>This week is meant to feel easy</h2>
+ <div class="info"><p>There is <span class="gold">no deficit this week.</span> That is not me going soft on you, it is the whole point.</p>
+ <p>Every number we use for the next six months gets built on what happens in the next seven days. If we guess now, we spend a month correcting it.</p></div>
+ <div class="flag"><div class="ft">All I want this week</div>
+ <p>Eat around 2,400. Log it honestly, including the bits you would rather not. Walk. Wear the Whoop. Drink water. Tell me how you felt.</p>
+ <p><span class="gold">Honest logging beats good logging.</span> A day you would rather hide is the most useful data you can give me.</p></div>
+ <div class="flag"><div class="ft">What we are actually fixing</div>
+ <p>Your pattern is coffee, then nothing for six hours, then starving, then whatever is fastest, then a big evening.</p>
+ <p>Three meals at roughly the same times is the fix. Not the food. <span class="gold">The timing.</span></p></div></div>`;}
+
+function dayStrip(){const el=document.getElementById('dayStrip');if(!el)return;
+ const t=todayIdx(),DN=['M','T','W','T','F','S','S'];
+ el.innerHTML=`<div class="card" style="padding:13px 12px">
+  <div style="display:flex;gap:5px">
+  ${[0,1,2,3,4,5,6].map(d=>{const dt=dateOf(VW,d);
+    const isToday=(VW===t.w&&d===t.d), sel=(d===VD);
+    const done=(()=>{const x=S.d[key(VW,d)];return x&&x.t?Object.values(x.t).filter(Boolean).length:0;})();
+    return `<button onclick="goDay(${VW},${d})" style="flex:1;padding:8px 2px;border-radius:8px;cursor:pointer;font-family:inherit;
+      border:1px solid ${sel?'var(--gold)':'var(--line)'};background:${sel?'var(--gold)':'transparent'};
+      color:${sel?'#fff':'var(--txt)'}">
+      <div style="font-size:9px;letter-spacing:.06em;opacity:.7">${DN[d]}</div>
+      <div style="font-size:14px;font-weight:700;margin-top:2px">${dt.getDate()}</div>
+      <div style="font-size:8px;margin-top:3px;opacity:.75">${done?done+'/7':(isToday?'today':'&nbsp;')}</div>
+    </button>`;}).join('')}
+  </div>
+  <div style="display:flex;gap:6px;margin-top:9px">
+   <button class="act" onclick="goDay(${Math.max(1,VW-1)},VD)" ${VW<=1?'disabled style="opacity:.35"':''}>&larr; Week ${Math.max(1,VW-1)}</button>
+   ${PINNED?`<button class="act" onclick="goToday()" style="border-color:var(--gold);color:var(--gold)">Back to today</button>`:''}
+   <button class="act" onclick="goDay(${Math.min(26,VW+1)},VD)" ${VW>=26?'disabled style="opacity:.35"':''} style="margin-left:auto">Week ${Math.min(26,VW+1)} &rarr;</button>
+  </div></div>`;}
+
+function todayCard(){const st=dstate(VW,VD),el=document.getElementById('todayCard');
+ const dt=dateOf(VW,VD),DN=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+ const tasks=[
+  ['steps','Steps toward 10,000','Spread across the day. Walking pad counts. Flat only.'],
+  ['log','Log all food','Everything. The honest version.'],
+  ['kcal','Stay near '+kcalFor(VW).toLocaleString(),'Near it. Not under it.'],
+  ['pro','Protein '+PROTEIN+'g','The one that keeps you full in the evening.'],
+  ['water','Drink water','Powerade Zero counts.'],
+  ['whoop','Wear your Whoop','Nights matter more than days.'],
+  ['ci','Quick check-in','Six taps.']
+ ];
+ const done=tasks.filter(t=>st.t[t[0]]).length;
+ el.innerHTML=`<div class="card">
+ <div class="sess-h" style="display:flex;justify-content:space-between;align-items:flex-start">
+  <div><div class="eyebrow">${DN[VD]} ${dt.getDate()}/${dt.getMonth()+1} &middot; week ${VW}</div>
+  <h2>Today</h2></div>
+  <span class="pill">${done} of ${tasks.length}</span></div>
+ <div class="bar"><i style="width:${done/tasks.length*100}%"></i></div>
+ ${tasks.map(t=>`<div class="row">
+  <button class="tick ${st.t[t[0]]?'on':''}" onclick="tog('${t[0]}')" aria-label="${t[1]}"></button>
+  <div class="rb"><div class="rn">${t[1]}</div><div class="rm">${t[2]}</div></div></div>`).join('')}
+ </div>`;}
+function tog(k){const st=dstate(VW,VD);st.t[k]=!st.t[k];save();render();}
+
+function nutritionCard(){const st=dstate(VW,VD),el=document.getElementById('nutritionCard');
+ const K=kcalFor(VW);
+ const eaten=MEALS.reduce((a,m,i)=>a+(st.meals[i]?m.m[0]:0),0);
+ const pro=MEALS.reduce((a,m,i)=>a+(st.meals[i]?m.m[1]:0),0);
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">Fuel</div>
+ <h2>${K.toLocaleString()} kcal &middot; ${PROTEIN}g protein</h2>
+ <p class="sub">Weekly average is what matters. One day is noise.</p>
+ <div class="stats" style="grid-template-columns:1fr 1fr">
+  <div class="stat"><b>${eaten}</b><i>eaten &middot; of ${K}</i></div>
+  <div class="stat"><b>${pro}g</b><i>protein &middot; of ${PROTEIN}g</i></div></div>
+ <div class="bar" style="margin-top:11px"><i style="width:${Math.min(100,eaten/K*100)}%"></i></div>
+ <div class="allergy"><div class="ft">Always excluded</div>
+ <p>Peanuts &middot; tree nuts &middot; pine nuts &middot; almonds &middot; coconut &middot; seafood. Nothing in this app contains them. If you ever see something that does, tell me immediately.</p></div>
+ ${MEALS.map((m,i)=>`<div class="row">
+  <button class="tick ${st.meals[i]?'on':''}" onclick="togMeal(${i})"></button>
+  <div class="rb"><div class="rn">${esc(m.n)}</div>
+  <div class="rm">${m.m[0]} kcal &middot; ${m.m[1]}P / ${m.m[2]}C / ${m.m[3]}F</div>
+  <div class="food" style="display:flex;flex-wrap:wrap;gap:3px 10px;margin-top:5px">
+   ${m.items.map(it=>`<span style="font-size:11.5px;color:var(--mut)">${esc(it[0])} <b style="color:var(--txt)">${esc(it[1])}</b></span>`).join('')}
+  </div></div></div>`).join('')}
+ <button class="btn alt" style="margin-top:12px" onclick="logExtra()">+ I ate something not on this list</button>
+ <div class="flag" style="margin-top:14px"><div class="ft">Why your coffee is on the list</div>
+ <p>Because you are going to drink it. Counting it beats pretending, and a plan that removes what you love is a plan you quit in week five.</p>
+ <p>Same for the sweet thing. <span class="gold">It is in your numbers on purpose.</span></p></div>
+ <details class="more"><summary>Eating out, no bans</summary>
+ ${OUT.map(o=>`<div style="margin-top:12px"><div class="ft">${o[0]}</div>
+  ${o[1].map(r=>`<div class="rm" style="margin-top:5px"><b style="color:var(--txt)">${r[0]}:</b> ${r[1]}</div>`).join('')}</div>`).join('')}
+ </details></div>`;}
+function togMeal(i){const st=dstate(VW,VD);st.meals[i]=!st.meals[i];save();render();}
+function logExtra(){openModal(`<h3>Log something else</h3>
+ <p class="ms">Anything that is not one of your five lines. No judgment, this is data.</p>
+ <div class="form"><label>What was it</label><input id="xn" placeholder="e.g. second coffee">
+ <label>Roughly how many calories</label><input id="xk" type="number" inputmode="numeric" placeholder="best guess is fine">
+ <button class="btn" onclick="saveExtra()">Log it</button></div>`);}
+function saveExtra(){const n=document.getElementById('xn').value;
+ if(n&&!safe(n)){toast('That contains something on your exclusion list');return;}
+ closeModal();toast('Logged');}
+
+
+function groceryCard(){const el=document.getElementById('groceryCard');
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">One week &middot; one shop</div>
+ <h2>Grocery list</h2>
+ <p class="sub">Built from your meals. Nothing on here you did not ask for.</p>
+ <details class="more" open><summary>Buy this week</summary><div class="glist">
+ ${GROCERY.map(g=>`<div class="gcat">${g[0]}</div>
+  ${g[1].filter(safe).map((it,i)=>`<div class="gitem"><span>\u25A1</span>${esc(it)}</div>`).join('')}`).join('')}
+ </div></details>
+ <details class="more"><summary>Always keep in the house</summary>
+ <div class="glist">${STAPLES.filter(safe).map(s=>`<div class="gitem"><span>\u25A1</span>${esc(s)}</div>`).join('')}</div>
+ <div class="rm" style="margin-top:9px">If these five things are in, you are never more than ten minutes from a real meal.</div>
+ </details>
+ <details class="more"><summary>Emergency food, for the nights you would order</summary>
+ <div class="glist">${EMERGENCY.map(e=>`<div style="padding:9px 0;border-bottom:1px solid var(--line)">
+  <div class="rn" style="font-size:13.5px">${esc(e[0])}</div><div class="rm">${esc(e[1])}</div></div>`).join('')}</div>
+ <div class="flag" style="margin-top:11px"><p>This list exists for one reason. <span class="gold">It is 8pm, you have not eaten since morning, and you are about to order.</span> Pick one of these instead. That is the whole plan working.</p></div>
+ </details></div>`;}
+
+function whoopCard(){const el=document.getElementById('whoopCard');
+ const o=(S.whoop&&S.whoop[VW])||{};
+ const f=(k,lab,ph)=>`<div style="margin-bottom:10px"><label style="display:block;font-size:11px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;font-weight:700;margin-bottom:4px">${lab}</label>
+  <input style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:14px;font-family:inherit"
+   value="${esc(o[k]||'')}" placeholder="${esc(ph)}" onchange="setWhoop('${k}',this.value)"></div>`;
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">Whoop &middot; week ${VW}</div>
+ <h2>Your recovery trend</h2>
+ <p class="sub">Weekly averages only. One bad night means nothing.</p>
+ <div style="margin-top:14px">
+ ${f('recovery','Average recovery %','e.g. 58')}
+ ${f('strain','Average day strain','e.g. 11.2')}
+ ${f('sleepperf','Average sleep performance %','e.g. 82')}
+ ${f('sleep','Average hours of sleep','e.g. 6h 40m')}
+ ${f('hrv','Average HRV, ms','e.g. 62')}
+ ${f('rhr','Average resting HR','e.g. 68')}
+ ${f('steps','Step average','e.g. 8,400')}
+ </div>
+ <div class="qlab">Compared with last week, do you feel</div>
+ <div class="scale">${['Worse','The same','More recovered'].map(v=>
+  `<button class="sc ${o.rec===v?'on':''}" onclick="setWhoop('rec','${v}')" style="font-size:12px">${v}</button>`).join('')}</div>
+ <div class="info" style="margin-top:14px"><div class="ft">What the numbers mean</div>
+ <p>Recovery is a percentage. <span class="gold">Green is 67 and above, yellow is 34 to 66, red is below 34.</span> Most people sit in the yellow most of the time, so a yellow morning is not a bad morning.</p>
+ <p>Strain runs 0 to 21 and it is not a straight line. Going from 15 to 16 is far harder than going from 5 to 6, so do not expect the number to climb evenly as you get fitter.</p>
+ <p>Sleep performance is how much you slept against how much you needed, not a grade out of a hundred.</p></div>
+ <div class="info"><p>I am not going to react to one red recovery and neither should you. <span class="gold">What I am watching is whether your recovery, your sleep and your weight are all moving the same way over three or four weeks.</span></p>
+ <p>For reference, the average Whoop member sits near 58% recovery, 82% sleep performance and about 11 day strain, and average HRV for women is around 62ms. Yours is yours, though. The trend matters, the comparison does not.</p></div>
+ <div class="flag"><p>On a red morning the plan does not change, the <span class="gold">intensity</span> does. Walk instead of lift, or lift lighter and keep the session. Skipping it entirely is the thing that starts a bad week.</p></div>
+ </div>`;}
+function setWhoop(k,v){if(!S.whoop)S.whoop={};if(!S.whoop[VW])S.whoop[VW]={};
+ S.whoop[VW][k]=String(v).slice(0,20);save();render();}
+
+function checkinCard(){const el=document.getElementById('checkinCard');
+ const c=S.ci[key(VW,VD)]||{};
+ const sc=(k,lab,vals)=>`<div class="qlab">${lab}</div><div class="scale">
+  ${vals.map(v=>`<button class="sc ${String(c[k])===String(v)?'on':''}" onclick="setCI('${k}','${v}')">${v}</button>`).join('')}</div>`;
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">Sixty seconds</div>
+ <h2>Quick check-in</h2>
+ ${sc('hunger','Hunger',[1,2,3,4,5])}
+ ${sc('energy','Energy',[1,2,3,4,5])}
+ ${sc('mood','Mood',[1,2,3,4,5])}
+ ${sc('back','Back discomfort, 0 to 10',[0,2,4,6,8,10])}
+ <div class="qlab">Did you eat more than you intended today?</div>
+ <div class="scale">${['No','Yes'].map(v=>`<button class="sc ${c.over===v?'on':''}" onclick="setCI('over','${v}')">${v}</button>`).join('')}</div>
+ ${c.over==='Yes'?`<div class="info" style="margin-top:12px"><p><span class="gold">Noted, and that is all it is.</span> No fasting tomorrow, no cutting calories to make up for it, no punishment walk.</p>
+ <p>Log your next meal as planned. The next decision matters more than the last one.</p></div>`:''}
+ ${Number(c.back)>=6?`<div class="flag" style="margin-top:12px"><div class="ft">Your back</div>
+ <p>That is high. <span class="gold">Skip or modify anything loaded today and message me.</span> We work around it, we do not push through it.</p></div>`:''}
+ </div>`;}
+function setCI(k,v){const kk=key(VW,VD);if(!S.ci[kk])S.ci[kk]={};S.ci[kk][k]=v;save();render();}
+
+function minCard(){const el=document.getElementById('minCard');
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">For the weeks that go wrong</div>
+ <h2>The Minimum Day</h2>
+ <div class="info"><p>Work explodes. You sleep badly. Something happens. <span class="gold">You do not stop, you shrink.</span></p></div>
+ <div class="glist">
+ ${['Move, even ten minutes','Log honestly, even a bad day','Protein as close as you get','Water','Whoop on','Send me one message']
+   .map(x=>`<div class="gitem"><span>\u2713</span>${x}</div>`).join('')}</div>
+ <div class="flag" style="margin-top:12px"><div class="ft">Never, under any circumstances</div>
+ <p>Fasting because yesterday went badly. Cutting tomorrow's calories to compensate. A punishment walk. Waiting for Monday.</p>
+ <p><span class="gold">You told me one bad day writes off your week. That is the exact habit this replaces.</span></p></div></div>`;}
+
+function progressCard(){const el=document.getElementById('progressCard');
+ const w=lastWeight();
+ const M=[
+  ['First week logged',        ()=>weeksLogged()>=1],
+  ['7 days of steps',          ()=>stepDays()>=7],
+  ['First full week, all tasks',()=>fullWeeks()>=1],
+  ['First month',              ()=>daysLogged()>=28],
+  ['First clothing size down', ()=>!!S.gr.sizeDown],
+  ['5% of bodyweight',         ()=>!!w&&START_LBS-w>=START_LBS*0.05],
+  ['10% of bodyweight',        ()=>!!w&&START_LBS-w>=START_LBS*0.10],
+  ['100 days logged',          ()=>daysLogged()>=100]
+ ];
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">Milestones</div>
+ <h2>What counts as winning</h2>
+ <p class="sub">Most of these are not the scale, on purpose.</p>
+ <div class="glist" style="margin-top:12px">
+ ${M.map(m=>`<div class="gitem"><span>${m[1]()?'\u2713':'\u25A1'}</span>${m[0]}</div>`).join('')}</div>
+ <button class="btn alt" style="margin-top:14px" onclick="logWeight()">Log this week's weight</button>
+ <button class="btn alt" style="margin-top:8px" onclick="markSizeDown()">${S.gr.sizeDown?'\u2713 Clothing size down':'Mark a clothing size down'}</button>
+ <div class="rm" style="margin-top:9px">Once a week, same morning, same conditions. Not daily.</div></div>`;}
+function lastWeight(){const ks=Object.keys(S.w).map(Number).sort((a,b)=>a-b);
+  return ks.length?S.w[ks[ks.length-1]]:null;}
+function weeksLogged(){return Object.keys(S.w).length;}
+/* real counts, not placeholders */
+function daysLogged(){return Object.values(S.d).filter(d=>d&&d.t&&Object.values(d.t).some(Boolean)).length;}
+function stepDays(){return Object.values(S.d).filter(d=>d&&d.t&&d.t.steps).length;}
+function fullWeeks(){const byWeek={};
+  Object.keys(S.d).forEach(k=>{const w=k.split('-')[0],d=S.d[k];
+    if(d&&d.t&&Object.keys(d.t).filter(x=>d.t[x]).length>=7){byWeek[w]=(byWeek[w]||0)+1;}});
+  return Object.values(byWeek).filter(n=>n>=7).length;}
+function markSizeDown(){S.gr.sizeDown=!S.gr.sizeDown;save();render();
+  toast(S.gr.sizeDown?'Logged. That is the one that counts.':'Unmarked');}
+function logWeight(){openModal(`<h3>Weight, week ${VW}</h3>
+ <p class="ms">Morning, after the bathroom, before food. Same every week.</p>
+ <div class="form"><label>Weight, lbs</label>
+ <input id="wIn" type="number" inputmode="decimal" step="0.1" value="${S.w[VW]||''}" placeholder="e.g. 236.4">
+ <button class="btn" onclick="saveWeight()">Save</button></div>
+ <div class="info"><p>If it goes up one week, that is water, food timing or your cycle. <span class="gold">It is not fat and it is not failure.</span> We read the trend, not the day.</p></div>`);}
+function saveWeight(){const v=parseFloat(document.getElementById('wIn').value);
+ if(!isNaN(v))S.w[VW]=v;save();closeModal();render();toast('Logged');}
+
+function eduCard(){const el=document.getElementById('eduCard');
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">Why we are doing it this way</div>
+ <h2>The short version</h2>
+ <div class="info"><div class="ft">Maintenance is not a calculator number</div>
+ <p>Any app can tell you a number. It is an estimate. We confirm yours using what you actually eat and what your weight actually does over a week. <span class="gold">Then every number after that is real.</span></p></div>
+ <div class="info"><div class="ft">Why protein, specifically</div>
+ <p>Two reasons. It keeps you full, which is your evening problem. And it is what stops you losing muscle alongside fat while you are in a deficit.</p>
+ <p>It only works alongside lifting. That is why both are in the plan.</p></div>
+ <div class="info"><div class="ft">Why the training starts small</div>
+ <p>You said you could train five or six days. You probably could. You also said one rest day turns into several and that training is the first thing to go.</p>
+ <p><span class="gold">Two sessions you never miss beats five you abandon in March.</span></p></div>
+ <div class="info"><div class="ft">Why we are not rushing</div>
+ <p>100 lb is the destination. There is no weekly amount you have to hit, and there never will be.</p>
+ <p>Everything that has stopped you before started with one bad week becoming one bad month. That is the thing we are actually solving.</p></div></div>`;}
+
+/* ---------- render ---------- */
+function render(){
+ syncToday();
+ document.getElementById('stk').textContent=weeksLogged();
+ [installCard,phaseCard,weekCard,dayStrip,todayCard,nutritionCard,groceryCard,whoopCard,
+  checkinCard,minCard,progressCard,eduCard].forEach(fn=>{
+   try{fn();}catch(e){console.error('card failed:',fn.name,e);}});
+}
+render();
+/* a phone keeps this app alive for days. catch the date change three ways. */
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncToday())render();});
+window.addEventListener('focus',()=>{if(syncToday())render();});
+setInterval(()=>{if(syncToday())render();},60000);
+</script></body></html>

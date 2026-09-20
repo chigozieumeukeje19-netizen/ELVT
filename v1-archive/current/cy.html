@@ -1,0 +1,661 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FAF7F2"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ELVT Cy">
+<title>ELVT COACH, Cy</title><style>
+:root{--bg:#FAF7F2;--panel:#FFFFFF;--panel2:#F4F0E9;--line:#E4DFD6;
+--gold:#8A6F34;--gold-dim:#A58A4E;--gold-soft:rgba(138,111,52,.09);
+--txt:#111111;--mut:#6E6A64;--mut2:#9A958D;--ok:#2F7D4F;--warn:#A8641F;--bad:#A33F36;--r:12px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.5;padding-bottom:40px;
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+.top{position:sticky;top:0;z-index:50;background:rgba(250,247,242,.94);backdrop-filter:blur(8px);
+ border-bottom:1px solid var(--line);padding:11px 0;margin-bottom:14px}
+.topin{max-width:560px;margin:0 auto;padding:0 14px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px}
+.brand img{height:15px;width:auto;display:block}
+.brand small{font-size:9px;letter-spacing:.2em;color:var(--mut);font-weight:600;text-transform:uppercase}
+.rdy{font-size:9px;letter-spacing:.14em;border-radius:999px;padding:5px 12px;font-weight:700;text-transform:uppercase}
+.rdy.g{background:rgba(47,125,79,.12);color:var(--ok)}
+.rdy.y{background:rgba(168,100,31,.13);color:var(--warn)}
+.rdy.r{background:rgba(163,63,54,.12);color:var(--bad)}
+.rdy.n{background:var(--panel2);color:var(--mut)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:13px}
+.eyebrow{font-size:9.5px;letter-spacing:.2em;font-weight:700;color:var(--gold);text-transform:uppercase;margin-bottom:7px}
+h2{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:600;margin:0 0 4px;line-height:1.15}
+.sub{font-size:12.5px;color:var(--mut);margin:0}
+.info,.flag{background:var(--panel2);border-radius:9px;padding:14px 16px;margin:12px 0}
+.flag{background:#FFFBF2;border-left:3px solid var(--gold)}
+.ft{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--gold);text-transform:uppercase;margin-bottom:7px}
+.info p,.flag p{margin:0 0 7px;font-size:13px;color:#3A3833;line-height:1.6}
+.info p:last-child,.flag p:last-child{margin-bottom:0}
+.gold{color:var(--gold);font-weight:600}
+.row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.rb{flex:1;min-width:0}.rn{font-size:14.5px;font-weight:600;line-height:1.3}
+.rm{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.45}
+.tick{width:26px;height:26px;border:1.5px solid var(--line);border-radius:7px;flex:0 0 auto;
+ background:transparent;cursor:pointer;position:relative;margin-top:1px}
+.tick.on{background:var(--gold);border-color:var(--gold)}
+.tick.on:after{content:'';position:absolute;left:8px;top:4px;width:6px;height:11px;
+ border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.met{background:var(--panel2);border-radius:9px;padding:11px 9px;text-align:center;border:none;
+ cursor:pointer;font-family:inherit;width:100%}
+.met b{display:block;font-family:Georgia,serif;font-size:19px;color:var(--txt);line-height:1}
+.met b.empty{color:var(--mut2);font-size:15px}
+.met i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.1em;color:var(--mut);
+ text-transform:uppercase;margin-top:5px}
+.met .dl{font-size:9px;color:var(--gold);margin-top:3px;font-weight:700}
+.bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:9px 0}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:99px}
+.btn{display:block;width:100%;padding:14px;border-radius:9px;border:none;background:var(--gold);
+ color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn.alt{background:transparent;border:1.5px solid var(--line);color:var(--txt)}
+.act{font-size:11px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);
+ background:transparent;color:var(--mut);cursor:pointer;font-family:inherit;font-weight:600}
+.scale{display:flex;gap:4px;margin:7px 0 0}
+.sc{flex:1;padding:9px 0;border:1px solid var(--line);border-radius:7px;background:transparent;
+ font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--txt)}
+.sc.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.qlab{font-size:12px;font-weight:600;margin:13px 0 0;color:var(--txt)}
+.mask{position:fixed;inset:0;background:rgba(17,17,17,.42);backdrop-filter:blur(3px);z-index:100;
+ display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.sheet{background:var(--panel);border-radius:16px 16px 0 0;padding:22px 18px 30px;width:100%;
+ max-width:560px;max-height:88vh;overflow-y:auto}
+.sheet h3{font-family:Georgia,serif;font-size:21px;margin:0 0 6px;font-weight:600}
+.ms{font-size:12.5px;color:var(--mut);margin:0 0 14px;line-height:1.55}
+.form label{display:block;font-size:11px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;
+ font-weight:700;margin:11px 0 5px}
+.form input,.form select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;
+ background:var(--bg);color:var(--txt);font-size:15px;font-family:inherit}
+.more{margin-top:12px}
+.more summary{font-size:11px;letter-spacing:.14em;font-weight:700;color:var(--gold);
+ text-transform:uppercase;cursor:pointer;list-style:none}
+.more summary::-webkit-details-marker{display:none}
+.more summary:after{content:'  +'}.more[open] summary:after{content:'  \2212'}
+.trend{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.trend:last-child{border-bottom:none}
+.trend span{color:var(--mut)}.trend b{font-weight:600}
+.up{color:var(--ok)}.dn{color:var(--bad)}.flat{color:var(--mut)}
+.pill{display:inline-block;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:99px;
+ border:1px solid var(--line);color:var(--mut);text-transform:uppercase;font-weight:700}
+
+.ex{padding:13px 0;border-bottom:1px solid var(--line)}
+.ex:last-child{border-bottom:none}
+.exh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.exn{font-size:14.5px;font-weight:600;line-height:1.3}
+.exs{font-size:11.5px;color:var(--mut);margin-top:3px}
+.cue{font-size:11.5px;color:#3A3833;margin-top:6px;line-height:1.5}
+.cue b{color:var(--gold);font-weight:700}
+.lnk{font-size:11px;color:var(--gold);text-decoration:none;font-weight:700;
+ border:1px solid var(--line);padding:5px 10px;border-radius:7px;display:inline-block;margin-top:7px}
+.unv{font-size:10px;color:var(--warn);font-weight:700;margin-top:7px;display:block}
+.cd{font-family:Georgia,serif;font-size:30px;color:var(--gold);line-height:1}
+</style></head><body>
+<div class="top"><div class="topin">
+<div class="brand"><img src="data:image/png;base64,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" alt="ELVT"><small>CY</small></div>
+<div class="rdy n" id="cdPill">WEEK 1</div></div></div>
+<div class="wrap">
+ <div id="installCard"></div><div id="countCard"></div><div id="dayStrip"></div>
+ <div id="sessionCard"></div><div id="pushCard"></div><div id="fuelCard"></div><div id="foodCard"></div>
+<div id="lunchCard"></div>
+<div id="groceryCard"></div>
+<div id="cookCard"></div>
+ <div id="sleepCard"></div><div id="checkinCard"></div><div id="minCard"></div>
+ <div id="plateauCard"></div><div id="eduCard"></div>
+</div>
+<div class="mask" id="mask" onclick="if(event.target===this)closeModal()"><div class="sheet" id="sheet"></div></div>
+<script>
+'use strict';
+const KEY='elvt_cy_v1';
+const START=new Date(2026,8,14);
+const WEEKS=12;
+const KG=87.1, PROTEIN_TARGET=140, START_LBS=192;
+
+/* ---- ACE exercise library. every URL opened and verified 13 Sep 2026. ---- */
+const A='https://www.acefitness.org/resources/everyone/exercise-library/';
+const EX={
+ legpress:{n:'Seated Leg Press',url:A+'154/seated-leg-press/',src:'ACE',
+  cue:'Heels flat. Do not lock the knees out. Keep your backside on the seat.',
+  reg:'Reduce range before reducing weight.',sub:'Glute press'},
+ chest:{n:'Seated Chest Press',url:A+'188/seated-chest-press/',src:'ACE',
+  cue:'Shoulders back and down. Do not let the elbows flare past the chest line.',
+  reg:'Lighter, slower.',sub:'Seated cable press'},
+ cgchest:{n:'Seated Close-Grip Chest Press',url:A+'189/seated-close-grip-chest-press/',src:'ACE',
+  cue:'Elbows tucked closer to the body. Controlled all the way back.',
+  reg:'Lighter.',sub:'Seated chest press'},
+ cablepress:{n:'Seated Cable Press',url:A+'165/seated-cable-press/',src:'ACE',
+  cue:'Brace the trunk. Press without rocking the torso.',reg:'Lighter.',sub:'Seated chest press'},
+ hirow:{n:'Seated High Back Rows',url:A+'169/seated-high-back-rows/',src:'ACE',
+  cue:'Pull with the elbows, not the hands. Squeeze then release slowly.',
+  reg:'Lighter, pause at the back.',sub:'Seated row'},
+ row:{n:'Seated Row',url:A+'48/seated-row/',src:'ACE',
+  cue:'Chest up, straight back. Elbows travel close to the ribs.',
+  reg:'Lighter.',sub:'Seated high back rows'},
+ pulldown:{n:'Seated Lat Pulldown',url:A+'158/seated-lat-pulldown/',src:'ACE',
+  cue:'Shoulders down first, then pull. Lean back no more than 30 degrees.',
+  reg:'Lighter, full control.',sub:'Seated high back rows'},
+ hamcurl:{n:'Lying Hamstrings Curl',url:A+'153/lying-hamstrings-curl/',src:'ACE',
+  cue:'Hips stay down. Slow on the way back, that is the half that matters.',
+  reg:'Lighter.',sub:'Glute press'},
+ glute:{n:'Glute Press',url:A+'293/glute-press/',src:'ACE',
+  cue:'Push through the heel. Do not arch the low back to get more range.',
+  reg:'Reduce range.',sub:'Seated leg press'},
+ calf:{n:'Calf Raise',url:A+'294/calf-raise/',src:'ACE',
+  cue:'Full range, pause at the top. No bouncing.',reg:'Bodyweight only.',sub:'Standing calf raise'},
+ latraise:{n:'Lateral Shoulder Raise',url:A+'295/lateral-shoulder-raise/',src:'ACE',
+  cue:'Lead with the elbows, stop at shoulder height. Light weight works here.',
+  reg:'Lighter, this one needs very little.',sub:'Seated cable press'},
+ curl:{n:'Seated Biceps Curl',url:A+'184/seated-biceps-curl/',src:'ACE',
+  cue:'Elbows still. Do not swing.',reg:'Lighter.',sub:'Optional, can be skipped'},
+ crunch:{n:'Seated Crunch',url:A+'291/seated-crunch/',src:'ACE',
+  cue:'Curl the ribs toward the hips. Slow, no yanking.',reg:'Bodyweight plank instead.',sub:'Plank'}
+};
+const DAY_A=['legpress','chest','hirow','calf','crunch'];
+const DAY_B=['glute','pulldown','cablepress','hamcurl','latraise'];
+const DAY_C=['legpress','cgchest','row','hamcurl','curl','crunch'];
+const TPL={A:DAY_A,B:DAY_B,C:DAY_C};
+
+
+/* ---- running restructure: 33 mi/7 days -> ~17 mi/4 days. no increase for 3 weeks. ---- */
+function runWeek(w){
+ /* FOUR run days, which is what he was onboarded to: 16 miles across 4.
+    easy3 is Sunday, the shortest and easiest run of the week, and it is the
+    one that carries the difference between the three weekday runs and the
+    weekly total. total is now derived, never hand written, so the number on
+    his counter can never drift from the runs the app actually schedules. */
+ const t=(easy1,easy2,easy3,long)=>({easy1,easy2,easy3,long,total:easy1+easy2+easy3+long});
+ if(w<=2) return t(4,4,3,5);
+ if(w===3)return t(4,4,3,6);
+ if(w===4)return t(3,3,3,5);   // reduced week
+ if(w<=6) return t(4,4,4,6);
+ if(w===7)return t(4,4,4,7);
+ if(w===8)return t(3,3,3,5);   // reduced
+ if(w<=10)return t(4,4,4,7);
+ if(w===11)return t(4,4,4,8);
+ return t(4,4,3,6);
+}
+const PHASES=[
+ {n:'LEARN + STABILIZE',w:[1,4],d:'Learn the machines. Restructure the running. Build a meal rhythm.'},
+ {n:'BUILD',           w:[5,8],d:'Load goes up. Cooking gets simpler. One quality run if the knee is quiet.'},
+ {n:'PROGRESS + INDEPENDENCE',w:[9,12],d:'Keep progressing, then learn to run it yourself.'}
+];
+function phaseOf(w){return PHASES.find(p=>w>=p.w[0]&&w<=p.w[1])||PHASES[0];}
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+function sessionFor(w,d){
+ const r=runWeek(w);
+ /* quality run does NOT arrive on a date. Darren unlocks it once the knee
+    has been quiet and the running has settled. */
+ const q=(w>=5)&&!!S.qualityOK;
+ switch(d){
+  case 0:return {k:'lift',t:'Full Body A',tpl:'A'};
+  case 1:return {k:'run',t:'Easy run \u00b7 '+r.easy1+' mi',mi:r.easy1,hard:false};
+  case 2:return {k:'lift',t:'Full Body B',tpl:'B'};
+  case 3:return q?{k:'run',t:'Quality run \u00b7 '+r.easy2+' mi',mi:r.easy2,hard:true}
+                 :{k:'run',t:'Easy run \u00b7 '+r.easy2+' mi',mi:r.easy2,hard:false};
+  case 4:return {k:'lift',t:'Full Body C',tpl:'C'};
+  case 5:return {k:'run',t:'Long easy run \u00b7 '+r.long+' mi',mi:r.long,hard:false};
+  case 6:return {k:'run',t:'Recovery run \u00b7 '+r.easy3+' mi',mi:r.easy3,hard:false,recov:true};
+  default:return {k:'rest',t:'Rest or easy walk'};
+ }
+}
+
+/* ---- state ---- */
+/* HIS FOOD, IN HIS OWN WORDS, given 14 Sep 2026. Nothing here was invented,
+   suggested or substituted. Everything downstream, the grocery list, the
+   lunches and the fuel plan, is built only from these five lists. */
+const HIS={
+ protein:['Chicken','Beef','Yogurt','Cottage cheese','Cheese','Protein bars'],
+ carb:['Rice','Bread','Potatoes','Pasta','Tortillas','Bagels','Cereal'],
+ snack:['Goldfish','Cottage cheese','Rice cakes','Wheat Thins','Bananas','Apples'],
+ dinner:['Grilled chicken','Pasta','Tacos','Chicken cutlets','Burgers'],
+ drink:['Red Bull Zero','Water','Baja Blast','Coffee']
+};
+const HIS_LUNCH=[
+ {n:'Chicken and rice',       d:'Cooked chicken over rice. Make it Sunday, four containers, done.'},
+ {n:'Chicken tortilla wrap',  d:'Tortilla, chicken, cheese. Rolled the night before.'},
+ {n:'Cottage cheese and fruit',d:'Cottage cheese, a banana and an apple. No prep at all.'},
+ {n:'Bagel and cheese',       d:'Bagel, cheese, an apple on the side. Two minutes.'},
+ {n:'Leftover dinner',        d:'Whatever you made last night, in a container. This is the easiest one.'}
+];
+const D={v:1,d:{},wk:{},lunch:[],install:0,qualityOK:false,seeded:0,
+ safe:{protein:[],carb:[],snack:[],drink:[],dinner:[]},bought:{}};
+function load(){const s=JSON.parse(JSON.stringify(D));
+ try{const x=JSON.parse(localStorage.getItem(KEY)||'{}');
+  if(x&&typeof x==='object'&&!Array.isArray(x))Object.assign(s,x);}catch(e){}
+ ['d','wk'].forEach(k=>{if(!s[k]||typeof s[k]!=='object'||Array.isArray(s[k]))s[k]={};});
+ if(!Array.isArray(s.lunch))s.lunch=[];
+ if(!s.safe||typeof s.safe!=='object'||Array.isArray(s.safe))s.safe={};
+ ['protein','carb','snack','drink','dinner'].forEach(k=>{if(!Array.isArray(s.safe[k]))s.safe[k]=[];});
+ if(!s.bought||typeof s.bought!=='object'||Array.isArray(s.bought))s.bought={};
+ /* seed his food once. after that it is his to edit, and anything he removes
+    stays removed because the flag is already set. */
+ if(!s.seeded){
+  Object.keys(HIS).forEach(k=>{if(!s.safe[k].length)s.safe[k]=HIS[k].slice();});
+  if(!s.lunch.length)s.lunch=HIS_LUNCH.map(l=>({n:l.n,d:l.d}));
+  s.seeded=1;}
+ return s;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+let S=load();
+const key=(w,d)=>w+'-'+d;
+function ds(w,d){const k=key(w,d);
+ if(!S.d[k])S.d[k]={t:{},ex:{},ci:{},run:{}};
+ ['t','ex','ci','run'].forEach(x=>{if(!S.d[k][x])S.d[k][x]={};});
+ return S.d[k];}
+function dateOf(w,d){const x=new Date(START);x.setDate(x.getDate()+(w-1)*7+d);return x;}
+/* DAY DIFFERENCE, DST SAFE.
+   Two local midnights are 23 or 25 hours apart across a daylight saving
+   change, so dividing elapsed milliseconds by 86400000 and flooring it
+   loses a whole day when the clocks go forward. Comparing the calendar
+   dates as UTC removes the clock from the arithmetic entirely. */
+function dayDiff(a,b){
+  const A=Date.UTC(a.getFullYear(),a.getMonth(),a.getDate());
+  const B=Date.UTC(b.getFullYear(),b.getMonth(),b.getDate());
+  return Math.round((A-B)/86400000);}
+function todayIdx(){const n=new Date();n.setHours(0,0,0,0);
+ const s=new Date(START);s.setHours(0,0,0,0);
+ const diff=dayDiff(n,s);
+ if(diff<0)return{w:1,d:0};
+ return{w:Math.min(WEEKS,Math.floor(diff/7)+1),d:Math.min(6,diff%7)};}
+let VW,VD,PINNED=false;
+(function(){const t=todayIdx();VW=t.w;VD=t.d;})();
+function syncToday(){if(PINNED)return false;const t=todayIdx();
+ if(t.w!==VW||t.d!==VD){VW=t.w;VD=t.d;return true;}return false;}
+function goDay(w,d){const t=todayIdx();
+ /* ROUND as well as clamp: goDay(1.5) otherwise survives the clamp and
+    indexes week tables with a fractional key. */
+ w=Math.round(Number(w)); if(!isFinite(w))w=1;
+ d=Math.round(Number(d)); if(!isFinite(d))d=0;
+ w=Math.max(1,Math.min(WEEKS,w));d=Math.max(0,Math.min(6,d));
+ VW=w;VD=d;PINNED=!(w===t.w&&d===t.d);render();}
+function goToday(){const t=todayIdx();VW=t.w;VD=t.d;PINNED=false;render();}
+function daysLeft(){const end=dateOf(WEEKS,6);const n=new Date();n.setHours(0,0,0,0);
+ return Math.max(0,dayDiff(end,n));}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){const e=document.createElement('div');e.textContent=t;
+ e.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#FAF7F2;padding:11px 20px;border-radius:99px;font-size:13px;z-index:200;font-weight:600';
+ document.body.appendChild(e);setTimeout(()=>e.remove(),1800);}
+function openModal(h){document.getElementById('sheet').innerHTML=h;document.getElementById('mask').classList.add('on');}
+function closeModal(){document.getElementById('mask').classList.remove('on');}
+function sessionsDone(){let n=0;Object.values(S.d).forEach(x=>{if(x&&x.t&&x.t.session)n++;});return n;}
+
+
+function installCard(){const el=document.getElementById('installCard');
+ if(S.install){el.innerHTML='';return;}
+ el.innerHTML=`<div class="card"><div class="eyebrow">Read this once</div>
+ <h2>Before your first session</h2>
+ <div class="flag"><div class="ft">Add this to your home screen</div>
+ <p>Share, then Add to Home Screen. Open it from the icon from now on, or your logging will not carry over.</p></div>
+ <div class="flag"><div class="ft">Your running is about to drop. On purpose.</div>
+ <p>You are running about 33 miles a week across 7 days with no structure, a 5 mile longest run, and a knee that talks to you. <span class="gold">Week 1 is 16 miles across 4 days.</span></p>
+ <p>That is not losing fitness. Nearly all of your aerobic base comes from the long run and the easy runs, and almost none of it came from the seventh identical 4 miler. What we are buying with those three days is fresh legs for the gym and a knee that stops complaining.</p></div>
+ <button class="btn" onclick="S.install=1;save();render()">Got it</button></div>`;}
+
+function countCard(){const el=document.getElementById('countCard');const p=phaseOf(VW);
+ const M=[['First week done',()=>VW>1||sessionsDone()>=6],['First 10 sessions',()=>sessionsDone()>=10],
+  ['First month',()=>VW>=5],['First load increase',()=>Object.values(S.d).some(x=>x&&x.ex&&Object.values(x.ex).some(e=>e&&e.up))],
+  ['First month of structured running',()=>VW>=5],['30 sessions',()=>sessionsDone()>=30]];
+ el.innerHTML=`<div class="card">
+ <div style="display:flex;justify-content:space-between;align-items:flex-start">
+ <div><div class="eyebrow">${p.n}</div><h2>Week ${VW} of 12</h2>
+ <p class="sub">${p.d}</p></div>
+ <div style="text-align:right"><div class="cd">${daysLeft()}</div>
+ <div style="font-size:8.5px;letter-spacing:.12em;color:var(--mut);text-transform:uppercase">days left</div></div></div>
+ <div class="bar" style="margin-top:13px"><i style="width:${VW/12*100}%"></i></div>
+ <div class="grid3" style="margin-top:11px">
+  <div class="met"><b>${sessionsDone()}</b><i>sessions done</i></div>
+  <div class="met"><b>${runWeek(VW).total}</b><i>miles this week</i></div>
+  <div class="met"><b>${S.wk[VW]&&S.wk[VW].wt?S.wk[VW].wt:'\u00b7'}</b><i>weight lbs</i></div></div>
+ <details class="more"><summary>Milestones</summary>
+ <div class="glist" style="margin-top:9px">
+ ${M.map(m=>`<div class="gitem" style="display:flex;gap:9px;padding:5px 0;font-size:13px">
+  <span style="color:var(--mut2)">${m[1]()?'\u2713':'\u25A1'}</span>${m[0]}</div>`).join('')}</div></details>
+ <button class="btn alt" style="margin-top:11px" onclick="logWeight()">Log this week's weight</button></div>`;}
+function logWeight(){openModal(`<h3>Weight, week ${VW}</h3>
+ <p class="ms">Once a week, same morning, same conditions. Not daily.</p>
+ <div class="form"><label>lbs</label><input id="wIn" type="number" inputmode="decimal" step="0.1"
+  value="${S.wk[VW]&&S.wk[VW].wt?S.wk[VW].wt:''}" placeholder="e.g. 190.4">
+ <button class="btn" style="margin-top:12px" onclick="saveWeight()">Save</button></div>`);}
+function saveWeight(){const v=parseFloat(document.getElementById('wIn').value);
+ if(!isNaN(v)){if(!S.wk[VW])S.wk[VW]={};S.wk[VW].wt=v;}save();closeModal();render();}
+
+function dayStrip(){const el=document.getElementById('dayStrip');const t=todayIdx();
+ el.innerHTML=`<div class="card" style="padding:13px 12px">
+ <div style="display:flex;gap:5px">
+ ${[0,1,2,3,4,5,6].map(d=>{const dt=dateOf(VW,d),sel=d===VD,isT=(VW===t.w&&d===t.d);
+  const done=(()=>{const x=S.d[key(VW,d)];return !!(x&&x.t&&x.t.session);})();   /* guard: a record with no t killed the strip */
+  return `<button onclick="goDay(${VW},${d})" style="flex:1;padding:8px 2px;border-radius:8px;cursor:pointer;font-family:inherit;
+   border:1px solid ${sel?'var(--gold)':'var(--line)'};background:${sel?'var(--gold)':'transparent'};color:${sel?'#fff':'var(--txt)'}">
+   <div style="font-size:9px;opacity:.7">${DAYS[d][0]}</div>
+   <div style="font-size:14px;font-weight:700;margin-top:2px">${dt.getDate()}</div>
+   <div style="font-size:8px;margin-top:3px;opacity:.75">${done?'\u2713':(isT?'today':'&nbsp;')}</div></button>`;}).join('')}
+ </div>
+ <div style="display:flex;gap:6px;margin-top:9px">
+  <button class="act" onclick="goDay(${VW-1},VD)" ${VW<=1?'disabled style="opacity:.35"':''}>&larr; Wk ${Math.max(1,VW-1)}</button>
+  ${PINNED?`<button class="act" onclick="goToday()" style="border-color:var(--gold);color:var(--gold)">Today</button>`:''}
+  <button class="act" onclick="goDay(${VW+1},VD)" ${VW>=WEEKS?'disabled style="opacity:.35"':''} style="margin-left:auto">Wk ${Math.min(WEEKS,VW+1)} &rarr;</button>
+ </div></div>`;}
+
+function sessionCard(){const el=document.getElementById('sessionCard');
+ const s=sessionFor(VW,VD),st=ds(VW,VD),dt=dateOf(VW,VD);
+ let body='';
+ if(s.k==='lift'){
+  const list=TPL[s.tpl];
+  body=list.map((id,i)=>{const e=EX[id],lg=st.ex[id]||{};
+   return `<div class="ex"><div class="exh">
+    <div style="flex:1"><div class="exn">${i+1}. ${esc(e.n)}</div>
+    <div class="exs">${VW<=2?'2':'3'} sets &middot; 8-12 reps &middot; 3-4 reps in reserve &middot; 90 sec rest</div>
+    <div class="cue"><b>Cue:</b> ${esc(e.cue)}</div>
+    <a class="lnk" href="${e.url}" target="_blank" rel="noopener">How to do it \u2197 ${e.src}</a>
+    </div>
+    <button class="tick ${lg.done?'on':''}" onclick="togEx('${id}')"></button></div>
+    <button class="act" style="margin-top:7px" onclick="logSet('${id}')">${lg.wt?esc(lg.wt)+' lb \u00d7 '+esc(lg.reps||'?'):'Log weight'}</button>
+    ${lg.up?'<span class="unv" style="color:var(--ok)">\u2713 progressed</span>':''}
+   </div>`;}).join('');
+  body+=`<div class="info"><div class="ft">How you get stronger</div>
+   <p>When you hit <span class="gold">12 reps on every set</span>, with good form, still two or three reps short of failure, and nothing hurts, go up by the smallest jump the machine allows next time.</p>
+   <p>That is the whole system. No maxing, nothing to failure.</p></div>`;
+ } else if(s.k==='run'){
+  const r=st.run;
+  const m=(k,lab,u)=>`<button class="met" onclick="editRun('${k}','${lab}','${u||''}')">
+   <b class="${r[k]==null?'empty':''}">${r[k]!=null?esc(r[k]):'\u00b7'}</b><i>${lab}</i></button>`;
+  body=`<div class="grid3" style="margin-top:4px">${m('mi','Distance','mi')}${m('min','Duration','min')}${m('hr','Avg HR')}</div>
+   <div class="grid3" style="margin-top:8px">${m('rpe','RPE','1-10')}${m('knee','Knee','0-10')}${m('enjoy','Enjoyment','1-5')}</div>
+   ${s.hard?`<div class="flag"><div class="ft">Quality session</div>
+    <p>This is the only hard run of the week. Everything else stays genuinely easy.</p></div>`
+   :(VW>=5&&!S.qualityOK?`<div class="info"><p>A faster session slots in here at some point, but <span class="gold">only once your knee has been quiet for a stretch.</span> Until then this stays easy. I will tell you when it changes.</p></div>`
+   :(s.recov?`<div class="info"><p><span class="gold">This is the easiest run of your week and it is meant to feel almost too slow.</span> It is the day after your long run, so the job is to move the legs, not to train.</p>
+    <p>If the knee is talking to you this morning, walk it instead and log the walk. That is not skipping it.</p></div>`
+   :`<div class="info"><p>Easy means <span class="gold">you could hold a conversation.</span> Your easy HR sits around 132, so use that as the ceiling, not a target to beat.</p></div>`))}
+   ${Number(r.knee)>=4?`<div class="flag" style="border-left-color:var(--bad)"><div class="ft" style="color:var(--bad)">Knee</div>
+    <p>Log it and tell me. <span class="gold">If it persists, worsens, changes how you walk, swells, or stops you doing normal things</span>, that is a physio or doctor conversation, not something we push through.</p></div>`:''}`;
+ } else {
+  body=`<div class="info"><p>Nothing today. A walk if you want one, but no run and no gym.</p>
+   <p><span class="gold">Rest days are when the work you did actually becomes fitness.</span> Tick it off, it counts.</p></div>`;
+ }
+ el.innerHTML=`<div class="card">
+ <div style="display:flex;justify-content:space-between;align-items:flex-start">
+ <div><div class="eyebrow">${DAYS[VD]} ${dt.getDate()}/${dt.getMonth()+1}</div><h2>${esc(s.t)}</h2></div>
+ <span class="pill">${s.k==='lift'?'GYM':(s.k==='run'?'RUN':'REST')}</span></div>
+ <div class="row" style="margin-top:6px"><button class="tick ${st.t.session?'on':''}" onclick="togT('session')"></button>
+  <div class="rb"><div class="rn">Done</div><div class="rm">Tick it the moment you finish.</div></div></div>
+ ${body}</div>`;}
+function togT(k){const st=ds(VW,VD);st.t[k]=!st.t[k];save();render();}
+function togEx(id){const st=ds(VW,VD);if(!st.ex[id])st.ex[id]={};
+ st.ex[id].done=!st.ex[id].done;save();render();}
+function logSet(id){const lg=ds(VW,VD).ex[id]||{};
+ openModal(`<h3>${esc(EX[id].n)}</h3><p class="ms">What you actually lifted. Guessing is fine on week one.</p>
+ <div class="form"><label>Weight, lb</label><input id="sw" type="number" inputmode="decimal" value="${lg.wt||''}">
+ <label>Reps on your last set</label><input id="sr" type="number" inputmode="numeric" value="${lg.reps||''}">
+ <button class="btn" style="margin-top:12px" onclick="saveSet('${id}')">Save</button></div>`);}
+function saveSet(id){const w=document.getElementById('sw').value,r=document.getElementById('sr').value;
+ const st=ds(VW,VD);if(!st.ex[id])st.ex[id]={};
+ st.ex[id].wt=w;st.ex[id].reps=r;
+ st.ex[id].up=(Number(r)>=12);
+ save();closeModal();render();
+ if(Number(r)>=12)toast('12 reps. Go up next time.');}
+function editRun(k,lab,u){const r=ds(VW,VD).run;
+ openModal(`<h3>${esc(lab)}</h3><p class="ms">${u?esc(u):''}</p>
+ <div class="form"><input id="rIn" type="text" inputmode="decimal" value="${r[k]!=null?esc(r[k]):''}">
+ <button class="btn" style="margin-top:12px" onclick="saveRun('${k}')">Save</button></div>`);}
+function saveRun(k){const v=document.getElementById('rIn').value.trim();
+ const r=ds(VW,VD).run;if(v==='')delete r[k];else r[k]=v;save();closeModal();render();}
+
+
+function fuelCard(){const el=document.getElementById('fuelCard');const st=ds(VW,VD);
+ const yn=(k,lab)=>`<div class="qlab">${lab}</div><div class="scale">
+  ${['No','Yes'].map(v=>`<button class="sc ${st.t[k]===v?'on':''}" onclick="setT('${k}','${v}')">${v}</button>`).join('')}</div>`;
+ el.innerHTML=`<div class="card"><div class="eyebrow">Fuel${VW<=4?' &middot; weeks 1 to 4':''}</div>
+ <h2>${VW<=4?'Structure first. No deficit.':'Eating, week '+VW}</h2>
+ ${VW<=4?`<div class="flag"><div class="ft">Read this once and then stop worrying about it</div>
+ <p>You have already lost <span class="gold">33 pounds.</span> I am not putting you in a deficit on top of that while you add three gym sessions to 16 miles of running.</p>
+ <p>For the next four weeks the only job is <span class="gold">three eating occasions a day and enough protein.</span> If the scale moves anyway, fine. If it does not, also fine. It is not the target this month.</p></div>`
+ :`<div class="flag"><div class="ft">Where the food sits now</div>
+ <p>The first block was about getting three meals a day to actually happen. <span class="gold">Keep doing exactly that.</span></p>
+ <p>Any change to your intake comes from me, based on your weight trend and how your training is going. Not from the app, and not from a bad week on the scale.</p></div>`}
+ ${yn('meal1','Ate something in the morning')}
+ ${yn('meal2','Ate a real lunch')}
+ ${yn('meal3','Ate dinner')}
+ ${yn('prerun','Ate something before running')}
+ <div class="grid2" style="margin-top:11px">
+  <button class="met" onclick="editT('protein','Protein','g')"><b class="${st.t.protein==null?'empty':''}">${st.t.protein!=null?esc(st.t.protein):'\u00b7'}</b><i>protein g</i></button>
+  <button class="met" onclick="editT('caff','Caffeine','mg')"><b class="${st.t.caff==null?'empty':''}">${st.t.caff!=null?esc(st.t.caff):'\u00b7'}</b><i>caffeine mg</i></button></div>
+ <div class="info"><div class="ft">Protein</div>
+ <p>Building toward <span class="gold">${PROTEIN_TARGET}g</span>. Not on day one. Add one protein source at a time until you get there.</p>
+ <p>Shakes count. Bars count. Whatever you already eat and know you are fine with counts. <span class="gold">Nothing new goes in this plan unless you choose to put it there.</span></p></div>
+ <div class="flag"><div class="ft">Before you run</div>
+ <p>You often run having barely eaten. That is most of why you are ravenous later and why the evening gets away from you.</p>
+ <p><span class="gold">Before the long run and any hard session:</span> something with carbs in it, roughly an hour before. Off your own list, whatever sits well.</p>
+ <p><span class="gold">Short easy runs:</span> do not overthink it. If you have eaten in the last few hours you are fine.</p></div>
+ <div class="flag"><div class="ft">After you run</div>
+ <p>Protein and carbs within an hour or so. It does not need to be a meal, and it does not need to be complicated.</p>
+ <p>This is the one that stops the 9pm hunger that ruins the evening.</p></div></div>`;}
+function setT(k,v){ds(VW,VD).t[k]=v;save();render();}
+function editT(k,lab,u){const st=ds(VW,VD);
+ openModal(`<h3>${esc(lab)}</h3><p class="ms">${esc(u||'')}</p>
+ <div class="form"><input id="tIn" type="number" inputmode="decimal" value="${st.t[k]!=null?esc(st.t[k]):''}">
+ <button class="btn" style="margin-top:12px" onclick="saveT('${k}')">Save</button></div>`);}
+function saveT(k){const v=document.getElementById('tIn').value.trim();
+ const st=ds(VW,VD);if(v==='')delete st.t[k];else st.t[k]=v;save();closeModal();render();}
+
+function lunchCard(){const el=document.getElementById('lunchCard');
+ el.innerHTML=`<div class="card"><div class="eyebrow">Your hardest meal</div>
+ <h2>The teacher lunch system</h2>
+ <div class="info"><p>You snack through lunch because you are teaching, not because you are not hungry. So this is not about willpower, it is about having five things that need <span class="gold">no cooking, no prep and no decision.</span></p></div>
+ ${S.lunch.length?S.lunch.map((l,i)=>`<div class="row">
+  <div class="rb"><div class="rn">${i+1}. ${esc(l.n||'Combination '+(i+1))}</div>
+  <div class="rm">${esc(l.d||'')}</div></div>
+  <button class="act" onclick="delLunch(${i})">Remove</button></div>`).join('')
+ :`<div class="flag"><p>Nothing here yet. <span class="gold">Build five combinations from food you already eat and know you are fine with.</span></p>
+   <p>Each one needs a protein, a carb, and something you actually want to eat. Then you rotate them and never think about lunch again.</p></div>`}
+ <button class="btn alt" style="margin-top:11px" onclick="addLunch()">+ Add a lunch combination</button></div>`;}
+function addLunch(){
+ const opts=(cat)=>S.safe[cat].length
+  ? S.safe[cat].map(f=>`<option value="${esc(f)}">${esc(f)}</option>`).join('')
+  : '<option value="">nothing on your list yet</option>';
+ openModal(`<h3>Build a lunch</h3>
+ <p class="ms">Pick from your own food list. A protein, a carb, and something you actually want.</p>
+ <div class="form"><label>Name it</label><input id="ln" placeholder="e.g. Wrap day">
+ <label>Protein</label><select id="lp">${opts('protein')}</select>
+ <label>Carb</label><select id="lc">${opts('carb')}</select>
+ <label>Plus</label><select id="ls">${opts('snack')}</select>
+ <button class="btn" style="margin-top:14px" onclick="saveLunch()">Save</button></div>
+ ${S.safe.protein.length?'':'<div class="flag" style="margin-top:12px"><p>Add a few things to your food list first and they will show up here.</p></div>'}`);}
+function saveLunch(){const n=document.getElementById('ln').value.trim();
+ const parts=['lp','lc','ls'].map(id=>{const el=document.getElementById(id);return el?el.value:'';}).filter(Boolean);
+ const d=parts.join(', ');
+ if(n||d)S.lunch.push({n:n||('Lunch '+(S.lunch.length+1)),d});
+ save();closeModal();render();}
+function delLunch(i){S.lunch.splice(i,1);save();render();}
+
+
+/* the hints deliberately name NO foods now that his own list is in. Listing
+   examples was useful when the categories were empty and is a suggestion once
+   they are not, which is exactly what his file says never to do. */
+const CATS=[['protein','Proteins','Anything you get your protein from'],
+ ['carb','Carbs','Anything you get your carbs from'],
+ ['snack','Snacks','What you actually reach for'],
+ ['dinner','Dinners','Meals you already eat or would happily eat again'],
+ ['drink','Drinks','Including the Red Bull Zero. It goes on the list, not in the bin']];
+
+/* FUEL ON THE HARD DAYS. Mon, Wed and Fri are the lifts and Saturday is the long
+   run. He is home at 5:45 and trains at 8:30, so dinner IS the pre-training meal
+   and the job after training is protein, not another meal. Every item named here
+   comes off his own list. Nothing is left as a choice, because an unnamed slot
+   reads as broken to someone who is already anxious about food. */
+const FUEL={
+ 0:{t:'Full Body A',    d:'Grilled chicken with rice',      pre:'A banana about an hour before you lift', post:'Yogurt, or a protein bar if it is late'},
+ 2:{t:'Full Body B',    d:'Pasta, a big plate of it',        pre:'Rice cakes about an hour before you lift', post:'Cottage cheese'},
+ 4:{t:'Full Body C',    d:'Tacos, load the tortillas up',    pre:'A banana about an hour before you lift', post:'Yogurt'},
+ 5:{t:'Long run day',   d:'Chicken cutlets with potatoes',   pre:'A bagel before you head out, not after', post:'Chicken and rice, or last night\u2019s leftovers'}
+};
+function pushCard(){const el=document.getElementById('pushCard'); if(!el)return;
+ const f=FUEL[VD];
+ if(!f){el.innerHTML=`<div class="card"><div class="eyebrow">Fuel</div>
+   <h2>Today is an easy day</h2>
+   <div class="info"><p>Nothing extra to hit. <span class="gold">Three eating occasions and your protein</span>, same as any other day.</p>
+   <p>The bigger days are Monday, Wednesday, Friday and Saturday. Those are the ones with a plan attached.</p></div></div>`;return;}
+ el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,var(--panel))">
+  <div class="eyebrow">Fuel &middot; ${f.t}</div>
+  <h2>Today is one of the days you push</h2>
+  <div class="info"><p>You are home at 5:45 and lifting at 8:30, so <span class="gold">dinner is your pre-training meal.</span> It is not a separate thing to remember.</p></div>
+  <div class="row"><div class="rb"><div class="rn">Dinner, around 6:30</div><div class="rm">${esc(f.d)}</div></div></div>
+  <div class="row"><div class="rb"><div class="rn">Before you train</div><div class="rm">${esc(f.pre)}</div></div></div>
+  <div class="row"><div class="rb"><div class="rn">After</div><div class="rm">${esc(f.post)}</div></div></div>
+  <div class="info"><p>Every one of those is off your own list. <span class="gold">Nothing new, nothing you have to try.</span></p>
+  <p>If one of them is not in the house, swap it for anything else on your list rather than skipping it. Under-eating on a lifting day costs you the session, not the week.</p></div>
+  <div class="flag"><p>The Red Bull Zero before you train is fine and it is staying. <span class="gold">Just log it</span>, because caffeine at 8pm is worth watching against your bedtime, not banning.</p></div>
+  </div>`;}
+function foodCard(){const el=document.getElementById('foodCard');
+ const total=CATS.reduce((a,c)=>a+S.safe[c[0]].length,0);
+ el.innerHTML=`<div class="card"><div class="eyebrow">Do this before week 1</div>
+ <h2>Your food list</h2>
+ <div class="info"><p>This is the only setup job in the app, and everything else is built from it. <span class="gold">List the food you already eat and are comfortable with.</span></p>
+ <p>Nothing gets added to this list that you have not put there yourself. No new foods, no swaps, no "have you tried". <span class="gold">We work with what you eat.</span></p></div>
+ ${CATS.map(c=>`<div style="margin-top:14px">
+  <div class="ft">${c[1]} <span style="color:var(--mut2);font-weight:400;text-transform:none;letter-spacing:0"> ${S.safe[c[0]].length}</span></div>
+  <div class="rm" style="margin-bottom:7px">${c[2]}</div>
+  ${S.safe[c[0]].length?S.safe[c[0]].map((f,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px">
+   <span>${esc(f)}</span><button class="act" onclick="delFood('${c[0]}',${i})">\u2715</button></div>`).join('')
+   :'<div class="rm" style="color:var(--mut2)">Nothing added yet</div>'}
+  <button class="act" style="margin-top:7px" onclick="addFood('${c[0]}','${c[1]}')">+ Add</button>
+ </div>`).join('')}
+ ${total<5?`<div class="flag" style="margin-top:14px"><p><span class="gold">Get at least a few into each list before Monday.</span> Your lunches and your shopping list both come straight out of this.</p></div>`:''}
+ </div>`;}
+function addFood(cat,lab){openModal(`<h3>Add to ${esc(lab)}</h3>
+ <p class="ms">Only things you already eat and are fine with.</p>
+ <div class="form"><input id="fIn" placeholder="e.g. whatever you actually buy">
+ <button class="btn" style="margin-top:12px" onclick="saveFood('${cat}')">Add</button></div>`);
+ setTimeout(()=>{const i=document.getElementById('fIn');if(i)i.focus();},60);}
+function saveFood(cat){const v=document.getElementById('fIn').value.trim();
+ if(v)S.safe[cat].push(v);save();closeModal();render();}
+function delFood(cat,i){S.safe[cat].splice(i,1);save();render();}
+
+function groceryCard(){const el=document.getElementById('groceryCard');
+ const all=CATS.map(c=>[c[1],S.safe[c[0]],c[0]]).filter(x=>x[1].length);
+ el.innerHTML=`<div class="card"><div class="eyebrow">One shop, one week</div>
+ <h2>Grocery list</h2>
+ ${all.length?`<p class="sub">Straight from your food list. Tick what you need this week.</p>
+ ${all.map(g=>`<div style="margin-top:13px"><div class="ft">${g[0]}</div>
+  ${g[1].map(f=>{const k=buyKey(g[2],f);
+   return `<div style="display:flex;gap:9px;align-items:center;padding:5px 0;font-size:13.5px;cursor:pointer" onclick="togBuy('${g[2]}',${JSON.stringify(f).replace(/"/g,'&quot;')})">
+   <span style="color:${S.bought[k]?'var(--gold)':'var(--mut2)'}">${S.bought[k]?'\u2713':'\u25A1'}</span>${esc(f)}</div>`;}).join('')}
+  </div>`).join('')}
+ <div class="flag" style="margin-top:14px"><div class="ft">The rule that makes this work</div>
+ <p>If it is not in the house, you will order something. <span class="gold">That is the whole reason lunch keeps failing.</span></p>
+ <p>One shop on Sunday and the week mostly runs itself.</p></div>`
+ :`<div class="flag"><p>Fill in your food list above and your shopping list builds itself from it.</p></div>`}
+ </div>`;}
+/* one key function for both render and click. the old version stripped apostrophes
+   on click but not on render, so ticking anything with one silently did nothing. */
+function buyKey(cat,food){return cat+'||'+String(food);}
+function togBuy(cat,food){const k=buyKey(cat,food);
+ if(S.bought[k])delete S.bought[k];else S.bought[k]=true;save();render();}
+
+function cookCard(){const el=document.getElementById('cookCard');
+ const step=VW<=1?0:(VW<=2?1:(VW<=4?2:3));
+ const L=[
+  ['Week 1 \u00b7 Assemble','No cooking at all. Put things on a plate or in a container. A wrap, yogurt and fruit is a meal.'],
+  ['Week 2 \u00b7 Microwave and ready-made','Microwave rice, pre-cooked chicken, anything that comes ready. Heat and eat, still no real cooking.'],
+  ['Weeks 3 to 4 \u00b7 One pan','One protein and one carb in one pan or an air fryer. Twenty minutes, one thing to wash up.'],
+  ['Week 5 onward \u00b7 Two or three you repeat','Not variety. Two or three meals you can make without thinking, on rotation forever.']
+ ];
+ el.innerHTML=`<div class="card"><div class="eyebrow">You said you do not cook</div>
+ <h2>The cooking ladder</h2>
+ <div class="info"><p>You are not being asked to learn to cook. <span class="gold">You are being asked to stop needing to order.</span> Those are different jobs and the second one is much easier.</p></div>
+ ${L.map((x,i)=>`<div class="row">
+  <div class="rb"><div class="rn" style="color:${i===step?'var(--txt)':'var(--mut)'}">${i===step?'\u25B6 ':''}${x[0]}</div>
+  <div class="rm">${x[1]}</div></div></div>`).join('')}
+ </div>`;}
+
+function sleepCard(){const el=document.getElementById('sleepCard');const st=ds(VW,VD);
+ const target=Math.min(7,5.5+VW*0.25);
+ /* 15 min earlier each week from midnight, floored at 10:30pm which gives
+    7h15 in bed against his fixed 5:45 wake. */
+ const tgtTime=(()=>{
+  const mins=Math.min(90,(VW-1)*15);          // minutes earlier than midnight
+  const total=(24*60)-mins;                    // minutes from 00:00
+  let h=Math.floor(total/60)%24, m=total%60;
+  if(h===0&&m===0)return '12:00 midnight';
+  const ampm=h>=12?'pm':'am';
+  let h12=h%12; if(h12===0)h12=12;
+  return h12+':'+String(m).padStart(2,'0')+' '+ampm;})();
+ el.innerHTML=`<div class="card"><div class="eyebrow">The biggest lever you have</div>
+ <h2>Sleep</h2>
+ <div class="info"><p>You are getting about <span class="gold">5.5 hours</span> and you are up at 5:45 whether you like it or not. The wake time is fixed, so bedtime is the only thing we can move.</p>
+ <p>Fifteen minutes earlier a week. That is it. <span class="gold">This week: lights out by ${tgtTime}.</span></p></div>
+ <div class="grid2">
+  <button class="met" onclick="editT('bed','Bedtime')"><b class="${st.t.bed==null?'empty':''}">${st.t.bed!=null?esc(st.t.bed):'\u00b7'}</b><i>lights out</i></button>
+  <button class="met" onclick="editT('slept','Slept','hrs')"><b class="${st.t.slept==null?'empty':''}">${st.t.slept!=null?esc(st.t.slept):'\u00b7'}</b><i>hours</i></button></div>
+ <div class="flag"><div class="ft">Win the hour before bed</div>
+ <p>Finish caffeine earlier. Get your school things ready before you sit down, not after. Same shutdown every night. Phone out of reach if it is what keeps you up.</p></div>
+ <div class="flag"><div class="ft">Your 9pm pre-workout</div>
+ <p>You train at 8:30 or 9 and you struggle to fall asleep. Those two facts are probably related.</p>
+ <p>I am not banning it. <span class="gold">Try two weeks without it on the late sessions and look at your own numbers.</span> If nothing changes, keep it.</p></div></div>`;}
+
+function checkinCard(){const el=document.getElementById('checkinCard');const c=ds(VW,VD).ci;
+ const sc=(k,lab,vals)=>`<div class="qlab">${lab}</div><div class="scale">
+  ${vals.map(v=>`<button class="sc ${String(c[k])===String(v)?'on':''}" onclick="setCI('${k}',${v})">${v}</button>`).join('')}</div>`;
+ el.innerHTML=`<div class="card"><div class="eyebrow">Twenty seconds</div>
+ <h2>Check-in</h2>
+ ${sc('energy','Energy',[1,2,3,4,5])}
+ ${sc('motiv','Motivation',[1,2,3,4,5])}
+ ${sc('knee','Knee discomfort',[0,2,4,6,8,10])}
+ ${Number(c.motiv)<=2?`<div class="info" style="margin-top:12px"><p>Low motivation is not a reason to skip, it is the exact day the <span class="gold">Minimum Day</span> below exists for.</p>
+ <p>Twenty minutes still counts. Message me rather than going quiet.</p></div>`:''}</div>`;}
+function setCI(k,v){ds(VW,VD).ci[k]=v;save();render();}
+
+function minCard(){const el=document.getElementById('minCard');
+ el.innerHTML=`<div class="card"><div class="eyebrow">For finals week, illness, and the bad ones</div>
+ <h2>The Minimum Day</h2>
+ <div class="info"><p>Something will go wrong in the next twelve weeks. Work, illness, finals. <span class="gold">You do not stop, you shrink.</span></p></div>
+ <div style="margin-top:9px">
+ ${['20 to 30 minutes in the gym, first three exercises only','Or a short easy walk, nothing more',
+    'Three eating occasions, protein as close as you get','Log the check-in even if the day was rubbish','Sleep']
+  .map(x=>`<div style="display:flex;gap:9px;padding:6px 0;font-size:13px"><span style="color:var(--mut2)">\u2713</span>${x}</div>`).join('')}</div>
+ <div class="flag"><div class="ft">The thing that actually ends programs</div>
+ <p>Not the missed day. <span class="gold">The decision to restart on Monday.</span> There is no restarting. There is only the next session.</p></div></div>`;}
+
+function plateauCard(){const el=document.getElementById('plateauCard');
+ if(VW<4){el.innerHTML='';return;}
+ el.innerHTML=`<div class="card"><div class="eyebrow">Read this before you get annoyed</div>
+ <h2>A plateau is data, not failure</h2>
+ <div class="info"><p>You told me plateaus are where you lose motivation. So here is what happens instead of panicking.</p>
+ <p><span class="gold">Nothing changes on the back of two flat weigh-ins.</span> A stall under three weeks is noise: water, food timing, salt, a heavier training week.</p></div>
+ <div class="flag"><div class="ft">If it is genuinely flat for 3 to 4 weeks</div>
+ <p>We check adherence, then intake consistency, then training, then sleep, then activity. <span class="gold">Then we make the smallest change that could work.</span> Usually one thing, never four.</p>
+ <p>And the scale is one number out of about eight I am watching. Your lifts going up while the scale sits still is the program working, not failing.</p></div></div>`;}
+
+function eduCard(){const el=document.getElementById('eduCard');
+ el.innerHTML=`<div class="card"><div class="eyebrow">Why it is built this way</div>
+ <h2>The reasoning</h2>
+ <div class="info"><div class="ft">Why machines, not barbells</div>
+ <p>You have never lifted and you said you worry about people watching. A machine holds the path for you, so there is no setup, no balance, and nothing to get visibly wrong.</p>
+ <p>Free weights come later once you are not thinking about the room.</p></div>
+ <div class="info"><div class="ft">Why the running had to come down</div>
+ <p>Seven identical days was giving you the aerobic benefit of about four and the knee irritation of seven.</p>
+ <p>There is also good news: the research on running plus lifting says the interference mostly shows up in people who are already <span class="gold">trained lifters.</span> You are not one yet, so you can do both without the running blunting your strength.</p></div>
+ <div class="info"><div class="ft">Why 5 to 7 exercises and not 15</div>
+ <p>Because you will do 5 to 7 at 9pm after teaching all day. You will not do 15, and a session you skip is worth nothing.</p></div>
+ <div class="info"><div class="ft">Why no deficit yet</div>
+ <p>33 pounds is already gone. Cutting further while you add gym work on top of running is how people end up exhausted, injured and back where they started.</p>
+ <p>Four weeks of eating properly. Then we look.</p></div></div>`;}
+
+function render(){
+ syncToday();
+ const p=document.getElementById('cdPill');
+ p.className='rdy n';p.textContent='WEEK '+VW+' / 12';
+ [installCard,countCard,dayStrip,sessionCard,pushCard,fuelCard,foodCard,lunchCard,groceryCard,cookCard,sleepCard,
+  checkinCard,minCard,plateauCard,eduCard].forEach(fn=>{
+   try{fn();}catch(e){console.error('card failed:',fn.name,e);}});
+}
+render();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncToday())render();});
+window.addEventListener('focus',()=>{if(syncToday())render();});
+setInterval(()=>{if(syncToday())render();},60000);
+</script></body></html>

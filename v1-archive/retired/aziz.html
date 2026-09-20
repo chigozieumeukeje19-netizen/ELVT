@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ELVT COACH — Aziz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b0d;--panel:#121215;--panel2:#17171b;--line:#232329;
+--gold:#c9a34f;--gold-dim:#8a6f34;--gold-soft:rgba(201,163,79,.12);
+--txt:#eceae6;--mut:#8d8d96;--mut2:#5f5f68;--ok:#5db87a;--warn:#d98b4a;--bad:#c05b52;--r:14px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:Inter,-apple-system,system-ui,sans-serif;
+font-size:15px;line-height:1.5;padding-bottom:80px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:.01em}
+button{font-family:inherit;color:inherit;border:none;background:none;cursor:pointer;font-size:inherit}
+input{font-family:inherit}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px}
+.topbar{position:sticky;top:0;z-index:60;background:rgba(11,11,13,.94);backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.tb-in{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;max-width:640px;margin:0 auto}
+.brand{font-family:'Cormorant Garamond',serif;font-size:23px;letter-spacing:.14em;color:var(--gold);font-weight:600}
+.brand small{display:block;font-family:Inter,sans-serif;font-size:9px;letter-spacing:.3em;color:var(--mut2);font-weight:500;margin-top:-3px}
+.streak{display:flex;align-items:center;gap:6px;background:var(--gold-soft);border:1px solid rgba(201,163,79,.28);
+padding:6px 11px;border-radius:100px;font-size:13px;font-weight:600;color:var(--gold)}
+.streak span.lbl{font-size:9px;letter-spacing:.16em;color:var(--mut);font-weight:500}
+.race{margin:14px 0 0;background:linear-gradient(140deg,#17130a,#121215);border:1px solid rgba(201,163,79,.3);
+border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.race .l{font-size:10px;letter-spacing:.2em;color:var(--gold);font-weight:600;text-transform:uppercase}
+.race .t{font-family:'Cormorant Garamond',serif;font-size:21px;margin-top:2px}
+.race .s{font-size:12px;color:var(--mut);margin-top:1px}
+.race .n{font-family:'Cormorant Garamond',serif;font-size:38px;line-height:1;color:var(--gold);text-align:center}
+.race .n small{display:block;font-family:Inter,sans-serif;font-size:9px;letter-spacing:.16em;color:var(--mut);font-weight:500;margin-top:3px}
+.strip{display:flex;gap:6px;overflow-x:auto;padding:14px 0 4px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.wk{flex:0 0 auto;min-width:52px;padding:8px 6px;border-radius:11px;background:var(--panel);border:1px solid var(--line);text-align:center;transition:.15s}
+.wk b{display:block;font-size:14px;font-weight:600}
+.wk i{display:block;font-style:normal;font-size:8px;letter-spacing:.1em;color:var(--mut2);text-transform:uppercase;margin-top:2px}
+.wk.on{background:var(--gold);border-color:var(--gold);color:#0b0b0d}
+.wk.on i{color:rgba(11,11,13,.65)}
+.days{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:1 1 0;min-width:44px;padding:9px 2px 8px;border-radius:12px;background:var(--panel);border:1px solid var(--line);text-align:center;transition:.15s}
+.day.on{border-color:var(--gold);background:#17130c}
+.day .dn{font-size:9px;letter-spacing:.09em;color:var(--mut);text-transform:uppercase}
+.day .dd{font-size:14px;font-weight:600;margin-top:1px}
+.day.today .dd{color:var(--gold)}
+.day.on .dn{color:var(--gold)}
+.ring{margin:5px auto 0;display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:14px 0}
+.card.compact{padding:14px 16px}
+.card h2{margin:0 0 3px;font-size:21px}
+.eyebrow{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.sub{font-size:12.5px;color:var(--mut);margin:0}
+.goals{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap}
+.goal{flex:1 1 0;min-width:88px;display:flex;align-items:center;gap:7px;background:var(--panel2);
+border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;font-weight:500}
+.goal span{flex:0 0 auto;width:17px;height:17px;border-radius:100px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.32);color:var(--gold);font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+details.more{margin-top:12px}
+details.more>summary{list-style:none;cursor:pointer;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+color:var(--mut);font-weight:600;padding:8px 0 2px;display:flex;align-items:center;gap:6px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:'\FF0B';color:var(--gold);font-size:13px;letter-spacing:0}
+details.more[open]>summary::after{content:'\2212'}
+.jump{display:block;width:100%;margin:8px 0 0;padding:9px;border-radius:10px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.3);color:var(--gold);font-size:12.5px;font-weight:600}
+.flag{background:#1a1410;border:1px solid rgba(217,139,74,.32);border-radius:11px;padding:12px 14px;margin:10px 0}
+.flag .ft{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--warn);font-weight:600;margin-bottom:4px}
+.flag p{margin:0 0 6px;font-size:13px;color:#cfc9c1;line-height:1.55}
+.flag p:last-child{margin-bottom:0}
+.info{background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:9px;padding:12px 14px;margin:10px 0}
+.info .ft{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:4px}
+.info p{margin:0 0 6px;font-size:13px;color:#c6c2bc;line-height:1.55}
+.info p:last-child{margin-bottom:0}
+.gold{color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center}
+.stat b{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);line-height:1.1}
+.stat i{display:block;font-style:normal;font-size:9px;letter-spacing:.11em;color:var(--mut);text-transform:uppercase;margin-top:3px}
+.sess-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
+.tag{font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:4px 9px;border-radius:100px;white-space:nowrap}
+.t-lift{background:rgba(201,163,79,.14);color:var(--gold);border:1px solid rgba(201,163,79,.3)}
+.t-run{background:rgba(93,184,122,.12);color:var(--ok);border:1px solid rgba(93,184,122,.28)}
+.t-rec{background:rgba(141,141,150,.12);color:var(--mut);border:1px solid var(--line)}
+.t-deload{background:rgba(74,159,208,.12);color:#4a9fd0;border:1px solid rgba(74,159,208,.3)}
+.row{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:none}
+.cb{flex:0 0 auto;width:23px;height:23px;border-radius:7px;border:1.5px solid #3a3a42;background:var(--panel2);
+display:flex;align-items:center;justify-content:center;margin-top:1px;transition:.15s}
+.cb.on{background:var(--gold);border-color:var(--gold)}
+.cb svg{opacity:0;transition:.15s}
+.cb.on svg{opacity:1}
+.rb{flex:1;min-width:0}
+.rn{font-size:14.5px;font-weight:500;line-height:1.35}
+.row.done .rn{color:var(--mut);text-decoration:line-through;text-decoration-color:var(--gold-dim)}
+.rm{font-size:11.5px;color:var(--mut);margin-top:2px}
+.rcustom{font-size:11.5px;color:var(--warn);margin-top:3px;font-style:italic}
+.acts{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.act{font-size:10.5px;letter-spacing:.05em;padding:4px 9px;border-radius:100px;border:1px solid var(--line);
+background:var(--panel2);color:var(--mut);display:inline-flex;align-items:center;gap:4px}
+.act.vid{color:var(--gold);border-color:rgba(201,163,79,.28)}
+.act.wt{color:var(--txt)}
+.act .up{color:var(--ok)}.act .dn{color:var(--bad)}.act .sm{color:var(--mut2)}
+.bar{height:7px;border-radius:100px;background:#232329;overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:100px;transition:width .35s}
+.bar.g i{background:linear-gradient(90deg,#3d7a52,var(--ok))}
+.bar.b i{background:linear-gradient(90deg,#2f5f7a,#4a9fd0)}
+.brow{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px}
+.brow b{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--gold)}
+.brow .r{color:var(--mut);font-size:11.5px}
+.tapper{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+.tp{flex:1;min-width:62px;padding:9px 4px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);text-align:center;font-size:12.5px;font-weight:500}
+.macros{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}
+.mac{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 5px;text-align:center}
+.mac b{display:block;font-family:'Cormorant Garamond',serif;font-size:17px;line-height:1.15}
+.mac i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;margin-top:2px}
+.mac .tgt{font-size:9.5px;color:var(--mut2);margin-top:1px}
+.mac.over b{color:var(--warn)}
+.xrow{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.xdel{font-size:16px;color:var(--mut2);padding:0 5px}
+.form{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:11px}
+.form label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.form input{width:100%;background:#0e0e11;border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--txt);font-size:15px;margin-bottom:9px}
+.form input:focus{outline:none;border-color:var(--gold-dim)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.btn{width:100%;padding:11px;border-radius:9px;background:var(--gold);color:#0b0b0d;font-weight:600;font-size:14px}
+.btn.alt{background:var(--panel2);color:var(--gold);border:1px solid rgba(201,163,79,.3)}
+.pill{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warn);
+border:1px solid rgba(217,139,74,.35);border-radius:100px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+.glist h4,.swapg h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:16px 0 7px;font-weight:600}
+.gitem{padding:9px 0;border-top:1px solid var(--line)}
+.gtop{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.gn{font-size:13.5px;font-weight:500;flex:1}
+.gq{font-size:12px;color:var(--gold);white-space:nowrap;font-weight:500}
+.gnote{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.5}
+.swapg ul{margin:0;padding-left:17px}
+.swapg li{font-size:13px;color:#c6c2bc;margin-bottom:5px;line-height:1.5}
+.recipe{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:9px}
+.recipe b{display:block;font-size:13.5px;margin-bottom:3px}
+.recipe p{margin:0 0 5px;font-size:12.5px;color:var(--mut);line-height:1.55}
+.recipe p:last-child{margin-bottom:0}
+.pw{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--line);font-size:13.5px}
+.pw:first-child{border-top:none}
+.pw .pv{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold)}
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.modal{width:100%;max-width:640px;background:var(--panel);border:1px solid var(--line);border-radius:20px 20px 0 0;
+padding:20px 18px calc(24px + env(safe-area-inset-bottom));max-height:86vh;overflow-y:auto}
+.modal h3{margin:0 0 3px;font-size:20px}
+.modal .ms{font-size:12.5px;color:var(--mut);margin:0 0 14px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;
+padding:12px 13px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);margin-bottom:7px;font-size:14px}
+.opt.cur{border-color:var(--gold);color:var(--gold)}
+.opt small{color:var(--mut);font-size:11px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,90px);background:var(--gold);color:#0b0b0d;
+font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:100px;z-index:200;transition:.32s;opacity:0;white-space:nowrap}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.a2{position:fixed;inset:0;background:rgba(11,11,13,.97);z-index:300;display:none;flex-direction:column;
+align-items:center;justify-content:center;text-align:center;padding:34px}
+.a2.on{display:flex}
+.a2 h2{font-size:29px;margin:0 0 8px;color:var(--gold)}
+.a2 p{font-size:14px;color:var(--mut);max-width:340px;margin:0 0 8px;line-height:1.6}
+.a2steps{max-width:340px;width:100%;margin-top:16px;text-align:left}
+.a2steps .s{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.a2steps .s:first-child{border-top:none}
+.a2steps .s b{flex:0 0 auto;width:20px;height:20px;border-radius:100px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.32);color:var(--gold);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.a2steps .s span{font-size:13.5px;color:#c6c2bc;line-height:1.5}
+.helplink{display:block;width:100%;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);padding:12px 0 0;font-weight:600}
+.foot{text-align:center;font-size:10px;letter-spacing:.2em;color:var(--mut2);text-transform:uppercase;padding:20px 0 10px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="a2" id="a2">
+  <h2>Save this first</h2>
+  <p><b style="color:#eceae6">Do this before you tick anything off.</b> Your progress is stored on this device in this app. If you start logging in the browser and add it to your home screen later, the home screen version will start empty.</p>
+  <div class="a2steps" id="a2steps"></div>
+  <p style="font-size:12px;color:#5f5f68;margin-top:14px">Fifteen seconds. Then open it from your home screen every time.</p>
+  <button class="btn" style="max-width:250px;margin-top:16px" onclick="closeA2()">Done, I've added it</button>
+  <button class="btn alt" style="max-width:250px;margin-top:9px" onclick="closeA2()">Skip for now</button>
+</div>
+
+<div class="topbar"><div class="tb-in">
+  <div class="brand">ELVT<small>COACH &middot; AZIZ</small></div>
+  <div class="streak"><span class="lbl">STREAK</span><span id="streakN">0</span></div>
+</div></div>
+
+<div class="wrap">
+  <div class="race">
+    <div><div class="l">Program</div>
+      <div class="t">12 Weeks &middot; Finish Line</div>
+      <div class="s">Sunday 25 October 2026</div></div>
+    <div class="n"><span id="cdN">&ndash;</span><small id="cdL">DAYS LEFT</small></div>
+  </div>
+
+  <div class="strip" id="weekStrip"></div>
+  <div class="days" id="dayStrip"></div>
+  <div id="jumpBar"></div>
+
+  <div class="card compact">
+    <div class="eyebrow">Athlete</div>
+    <h2>Aziz</h2>
+    <p class="sub">Weight loss &middot; 12 weeks &middot; started Mon 3 August 2026</p>
+    <div class="goals">
+      <div class="goal"><span>1</span>Lean out</div>
+      <div class="goal"><span>2</span>Keep up with the kids</div>
+      <div class="goal"><span>3</span>Strong into your 50s</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>108.7</b><i>kg / 240 lbs</i></div>
+      <div class="stat"><b>178.5</b><i>cm / 5'8"</i></div>
+      <div class="stat"><b id="pfCal">3,000</b><i>kcal/day</i></div>
+    </div>
+    <details class="more">
+      <summary>More detail</summary>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat"><b>34</b><i>Age</i></div>
+        <div class="stat"><b>210g</b><i>Protein</i></div>
+        <div class="stat"><b>360g</b><i>Carbs</i></div>
+        <div class="stat"><b>80g</b><i>Fat</i></div>
+        <div class="stat"><b>4+2</b><i>Lift / rest days</i></div>
+        <div class="stat"><b>10K</b><i>Steps</i></div>
+      </div>
+      <div class="info" style="margin-top:10px">
+        <div class="ft">Why you're doing this</div>
+        <p>Keeping up with two young kids now, and being strong and capable into your 50s. Everything in here serves that. Nothing in here is about a number on a scale for its own sake.</p>
+      </div>
+    </details>
+  </div>
+
+  <div id="tripCard"></div>
+  <div id="sessionCard"></div>
+  <div id="nutritionCard"></div>
+  <div id="groceryCard"></div>
+  <div id="dailyCard"></div>
+  <div id="photosCard"></div>
+  <div id="pastCard"></div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Why you now have two rest days</h2>
+    <div class="flag">
+      <div class="ft">This is the change from your last plan</div>
+      <p>You were training seven days a week with no day off at all. Thursday and Sunday are now genuine full rest days. They are programmed, not optional, and they are not there because you have gone soft.</p>
+    </div>
+    <div class="info">
+      <div class="ft">Why, specifically for you</div>
+      <p>Your blood work came back excellent across the board with one exception: hsCRP, a marker of systemic inflammation, came back elevated. Training every single day with no recovery window works directly against bringing that number down. Your anti inflammatory food choices were doing one job while a seven day training week undid it.</p>
+      <p>You also have a knee overload history, and there is a baby in the house. Recovery is not a resource you currently have in surplus, so we stopped spending it faster than it arrives.</p>
+      <p>Four lifting days, one run, two full rest days. That is still a serious week for anyone.</p>
+    </div>
+    <div class="info">
+      <div class="ft">Why the second run went, and not a lifting day</div>
+      <p>Your goal is to lean out and build. The lifting is what does that, so the lifting stays.</p>
+      <p>The runs were the highest impact thing in your week, and you were doing them at 108kg on a knee with an overload history. That is the session most likely to cost you something. Meanwhile your 10,000 steps every single day is already doing a serious amount of aerobic work quietly in the background.</p>
+      <p>One quality Zone 2 run plus 10K daily steps is plenty right now. When your bodyweight comes down and the impact cost drops with it, the second run comes back.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Your knee, and the runs</h2>
+    <div class="flag">
+      <div class="ft">Leg days</div>
+      <p>No deep flexion, no high impact loading. Hip dominant and controlled patterns on both leg days. Stop anything that produces sharp or unusual pain and tell me.</p>
+    </div>
+    <div class="info">
+      <div class="ft">The runs are the impact, not the leg days</div>
+      <p>Your leg sessions are already built around your knee. The run is the highest impact thing in your week, and at your current bodyweight it is the session most likely to aggravate it.</p>
+      <p>Keep them genuinely conversational. If the knee talks to you during a run, walk the rest of it and tell me. Do not push through and hope. As your weight comes down over the twelve weeks the impact cost drops with it.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Week 1 is a baseline, not a cut</h2>
+    <div class="info">
+      <div class="ft">What 3,000 calories is doing</div>
+      <p>This number was not guessed. It sits deliberately between the formula estimate from your real stats and your own reported intake, because neither one alone was worth trusting.</p>
+      <p>Week 1 is a metabolic reset. The job is to hold your weight steady, not to lose. Your fasted Monday weigh-in at the end of this week tells us whether 3,000 is genuinely your maintenance. Only then does a real lean out phase begin, and only then does this number move.</p>
+      <p>Eating exactly 3,000 this week is worth more than eating less. A guess built on a bad baseline costs you months.</p>
+    </div>
+  </div>
+
+  <button class="helplink" onclick="openA2()">How to save this app</button>
+  <div class="foot">ELVT COACHING</div>
+</div>
+
+<div class="mask" id="mask" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================
+   ELVT COACH - Aziz
+   12 weeks. Mon 3 Aug 2026 to Sun 25 Oct 2026.
+   Dual units. Weight log in kg. Knee overload history.
+   CHANGE FROM PREVIOUS PLAN: Thursday is now a full rest day.
+   ========================================================== */
+const START=new Date(2026,7,3);
+const END  =new Date(2026,9,25);
+const KEY='elvt_aziz_v2';
+const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+// photo uploads handled manually by coach; no Drive link in the app
+
+const EX={
+  bench  :{n:'Barbell Bench Press',            v:'rT7DgCr-3pg',wt:1},
+  incbb  :{n:'Incline Barbell Press',          v:'2jFFCy8JBU8',wt:1},
+  shpress:{n:'Seated DB Shoulder Press',       v:'fuQpuu--bMI',wt:1},
+  clatr  :{n:'Cable Lateral Raise',            v:'djTVHrWCvw8',wt:1},
+  tripd  :{n:'Cable Tricep Pushdown',          v:'_iSX_125XUg',wt:1},
+  dips   :{n:'Dips',                           v:'YSkEs0lyZl4',wt:1},
+  ohtri  :{n:'Overhead Tricep Extension',      v:'R4ZQl70YtvY',wt:1},
+  pullup :{n:'Pull-Up (or Assisted)',          v:'vw5Xmu5CIew',wt:1},
+  latpd  :{n:'Lat Pulldown',                   v:'j9jtjL8FhPI',wt:1},
+  csrow  :{n:'Chest-Supported Row',            v:'QpLTp2AJ_cI',wt:1},
+  scrow  :{n:'Seated Cable Row',               v:'7BkgqzC6WsM',wt:1},
+  fpull  :{n:'Face Pull',                      v:'0Po47vvj9g4',wt:1},
+  ezcurl :{n:'EZ Bar Curl',                    v:'SDFZBaJcTsU',wt:1},
+  hammer :{n:'Hammer Curl',                    v:'zC3nLlEvin4',wt:1},
+  dbcurl :{n:'Seated DB Bicep Curl',           v:'uj001FhllVU',wt:1},
+  legpr  :{n:'Leg Press (moderate depth)',     v:'K5n2vg3oZa4',wt:1},
+  rdl    :{n:'Romanian Deadlift',              v:'xgusDooVfKU',wt:1},
+  legcurl:{n:'Leg Curl',                       v:'3gZm9wGTsEo',wt:1},
+  legext :{n:'Leg Extension',                  v:'2lvdnQg04PM',wt:1},
+  hip    :{n:'Hip Thrust',                     v:'8xJ0Vxjv0sw',wt:1},
+  scalf  :{n:'Standing Calf Raise',            v:'SorIB5_zO9A',wt:1},
+  sitcalf:{n:'Seated Calf Raise',              v:'pz66Bw6HJ4s',wt:1},
+  wplank :{n:'Weighted Plank',                 v:'LDK-UG8XZfM',wt:0},
+  stretch:{n:'Stretch',                        v:'IlHgLYdt3kc',wt:0},
+  farmer :{n:'Farmer\u2019s Carry',                v:'E94UNm8fD-4',wt:1},
+  suitcase:{n:'Suitcase Carry',                v:'y-hn_Ha1-RE',wt:1},
+  tgu    :{n:'Turkish Get-Up',                 v:'lpltjWHd0ek',wt:1},
+  bearcr :{n:'Bear Crawl',                     v:'t0J_ovs9x3Y',wt:0},
+  wgs    :{n:'World\u2019s Greatest Stretch',     v:'BJp3W1CIzGY',wt:0}
+};
+const MASTER=Object.keys(EX);
+const SESSIONS={
+  push:{t:'Push',sub:'Chest, shoulders, triceps',ex:[
+    ['bench',4,'8\u201310'],['incbb',3,'10\u201312'],['shpress',3,'10\u201312'],
+    ['clatr',3,'12\u201315'],['tripd',3,'12\u201315'],['dips',3,'10\u201312']]},
+  legsA:{t:'Legs A',sub:'Hinge and quad, knee-safe throughout',ex:[
+    ['legpr',4,'10\u201312'],['rdl',3,'10\u201312'],['legcurl',3,'12\u201315'],
+    ['legext',3,'12\u201315'],['scalf',4,'15']]},
+  pull:{t:'Pull',sub:'Back and biceps',ex:[
+    ['pullup',4,'6\u201310'],['csrow',4,'10\u201312'],['latpd',3,'10\u201312'],
+    ['fpull',3,'15'],['ezcurl',3,'12\u201315'],['hammer',3,'12\u201315']]},
+  func:{t:'Functional',sub:'Loaded carries and get-ups. The stuff you actually asked for',ex:[
+    ['farmer',4,'40 m'],['suitcase',3,'30 m each side'],['tgu',3,'3 each side, slow'],
+    ['bearcr',3,'20 m'],['wplank',3,'45 sec'],['wgs',2,'5 each side']]},
+  legsB:{t:'Legs B',sub:'Glute dominant, lower joint load',ex:[
+    ['hip',4,'12'],['legpr',3,'12\u201315'],['legcurl',3,'12\u201315'],
+    ['sitcalf',4,'15'],['wplank',3,'45 sec']]}
+};
+/* Mon push, Tue run, Wed legs A, Thu mobility, Fri run, Sat pull, Sun legs B */
+/* second run restored 10 Aug. runs sit Tue and Fri, two days apart. legs sit Wed and Sun, four days apart. */
+/* Mon Push + Run, Tue Legs A, Wed Run, Thu Pull, Fri Legs B, Sat Functional, Sun Run */
+/* 5 lifting days + 3 runs. Monday is the only double, and it pairs a run with UPPER work so nothing lands on a leg day. */
+const WEEKPLAN=['push','legsA','run','pull','legsB','func','run'];
+const RUN_ON_MON=true;
+
+const W=[
+ {b:'Reset', setMod:0,run:45,note:'Week 1 is your baseline. Hit 3,000 exactly and weigh in fasted on Monday. Do not try to lose anything this week.'},
+ {b:'Build', setMod:0,run:45,note:'Load starts climbing. Log every working weight so we can both see it.'},
+ {b:'Build', setMod:0,run:50,note:'Add weight before you add reps. That is the whole progression model.'},
+ {b:'Build', setMod:0,run:50,note:'Four weeks in. Photos on Monday, and look at them next to week 1.'},
+ {b:'Build', setMod:0,run:55,note:'Runs are a little longer now. Still conversational, still easy.'},
+ {b:'Build', setMod:0,run:55,note:'Halfway. The scale is the least interesting thing we are tracking.'},
+ {b:'Deload',setMod:-1,run:35,note:'Planned deload. Sets come down, weight stays. Given your inflammation marker, this week matters more for you than for most.'},
+ {b:'Push',  setMod:0,run:50,note:'Back to full volume off a fresh nervous system. Expect the weights to jump.'},
+ {b:'Push',  setMod:0,run:55,note:'Heaviest block. Form before ego on every single set.'},
+ {b:'Push',  setMod:0,run:55,note:'Everything you built in weeks 1 to 8 is on the bar now.'},
+ {b:'Peak',  setMod:0,run:60,note:'Second to last. Hold the quality, do not chase numbers.'},
+ {b:'Finish',setMod:0,run:45,note:'Final week. Full photos, fasted weigh-in, and we look at all of it together.'}
+];
+
+const MEALS=[
+ {n:'Breakfast',          m:[620,40,80,16]},
+ {n:'Post-Workout Shake', m:[300,30,35,5]},
+ {n:'Lunch',              m:[800,65,75,21]},
+ {n:'Snack',              m:[350,25,30,15]},
+ {n:'Dinner',             m:[930,50,140,23]}
+];
+const CAL_K=[3000,2800,2800,2750,2700,2650,2650,2550,2450,2400,2350,2300];
+const PRO_HOLD=210;
+const BASE=MEALS.reduce((a,m)=>[a[0]+m.m[0],a[1]+m.m[1],a[2]+m.m[2],a[3]+m.m[3]],[0,0,0,0]);
+// protein is held flat; only carbs and fat scale to hit the week's calorie target
+function scaleFor(w){const k=CAL_K[Math.max(0,Math.min(11,w-1))];
+  return (k-PRO_HOLD*4)/(BASE[0]-BASE[1]*4);}
+function targetFor(w){const sv=S.week;S.week=w;const M=mealsToday();S.week=sv;
+  const t=[0,0,0,0];M.forEach(m=>m.m.forEach((v,i)=>t[i]+=v));return t;}
+function mealsToday(){const sc=scaleFor(S.week);
+  const out=MEALS.map(m=>{const c=Math.round(m.m[2]*sc),ft=Math.round(m.m[3]*sc);
+    return {n:m.n,m:[Math.round(m.m[1]*4+c*4+ft*9),m.m[1],c,ft]};});
+  // absorb rounding into the last meal so the day sums exactly to the target
+  const want=CAL_K[Math.max(0,Math.min(11,S.week-1))];
+  const got=out.reduce((a,m)=>a+m.m[0],0), diff=want-got;
+  if(diff){const L=out[out.length-1];const dc=Math.round(diff/4);
+    L.m[2]=Math.max(0,L.m[2]+dc);L.m[0]=Math.round(L.m[1]*4+L.m[2]*4+L.m[3]*9);}
+  return out;}
+
+const HABITS=[
+ {id:'protein',n:'Hit Protein Target',   meta:'210g. The number that protects muscle while you lean out'},
+ {id:'cals',   n:'Hit Calorie Target',   meta:'3,000. This week that means exactly 3,000, not under'},
+ {id:'water',  n:'Drink Enough Water',   meta:'Steady through the day'}
+];
+const STEP_GOAL=10000, WATER_GOAL=3500;
+
+let S=load();
+function load(){const D={v:1,week:null,day:null,order:{},d:{},n:{},s:{},h:{},wt:{}};try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.v===1)return Object.assign(D,x);}catch(e){}return D;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const key=(w,d)=>w+'-'+d;
+function dstate(w,d){const k=key(w,d);if(!S.d[k])S.d[k]={c:{},cu:{},sw:{},w:{}};return S.d[k];}
+function nstate(w,d){const k=key(w,d);if(!S.n[k])S.n[k]={m:{},t:null,x:[]};return S.n[k];}
+function order(w){if(!S.order[w])S.order[w]=[0,1,2,3,4,5,6];return S.order[w];}
+function dateOf(w,d){const x=new Date(START);x.setDate(x.getDate()+(w-1)*7+d);return x;}
+function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function todayIdx(){const t=new Date();t.setHours(0,0,0,0);
+  const diff=Math.floor((t-START)/86400000);if(diff<0)return{w:1,d:0};
+  const w=Math.min(12,Math.floor(diff/7)+1);return{w,d:diff%7};}
+if(S.week===null){const t=todayIdx();S.week=t.w;S.day=t.d;save();}
+
+function session(w,d){
+  const slot=order(w)[d],wk=W[w-1],kind=WEEKPLAN[slot],st=dstate(w,d);
+  if(kind==='run') return {title:'Zone 2 Run',tag:'Run',cls:'t-run',
+    note:'Your only run of the week, so make it a good one. Conversational pace the whole way. If the knee talks to you, walk the rest and tell me.',block:wk.b,swapped:slot!==d,
+    items:[{id:'r0',n:'Zone 2 Run',meta:wk.run+' min, conversational pace',video:'S7DFiEvqkJQ'},
+           {id:'r1',ex:'wgs',n:'World\u2019s Greatest Stretch',meta:'5 each side. Hips, hamstrings, thoracic',video:EX.wgs.v,swap:1}]};
+  if(kind==='rest'){const sun=slot===6;
+    return {title:'Mobility + Walk',tag:'Recovery',cls:'t-rec',
+    note:'Not a training day and not a nothing day. You said the rest days felt empty, so this is what goes in them. Mobility costs you no recovery, and it is the thing you asked for.',block:wk.b,swapped:slot!==d,
+    items:[{id:'z0',ex:sun?'mobFull':'mobHip',n:sun?'Full Body Mobility Flow':'Hip Mobility Routine',
+            meta:sun?'20 min, follow along':'12 min, follow along. Your hips drive how your knee tracks',
+            video:sun?EX.mobFull.v:EX.mobHip.v,swap:1},
+           {id:'z1',n:'Walk 10,000 steps',meta:'This IS the session today. Not optional'},
+           {id:'z2',n:'Eat your full target',meta:'Do not eat less because you did not lift'},
+           {id:'z3',n:'Get to bed early',meta:'With a baby in the house, take the hour when it is there'}]};}
+  const S2=SESSIONS[kind];
+  const items=S2.ex.map((row,i)=>{
+    const [base,sets,reps]=row;
+    const id='e'+i,ek=st.sw[id]||base,e=EX[ek];
+    const n=Math.max(2,sets+wk.setMod);
+    return {id,ex:ek,n:e.n,meta:`${n} sets \u00d7 ${reps}${e.wt?' \u00b7 1\u20132 RIR':''}`,video:e.v,wt:e.wt,swap:1};
+  });
+  if(kind==='push'&&RUN_ON_MON)items.push({id:'run',n:'Zone 2 Run \u00b7 '+wk.run+' min',
+    meta:'After the lift, or later the same day. Conversational pace',video:'S7DFiEvqkJQ'});
+  return {title:S2.t,tag:wk.b==='Deload'?'Deload':'Lift',cls:wk.b==='Deload'?'t-deload':'t-lift',
+    note:S2.sub+'. '+wk.note,block:wk.b,swapped:slot!==d,items};
+}
+function pct(w,d){const s=session(w,d),st=dstate(w,d);
+  const all=[...s.items,...HABITS];const done=all.filter(i=>st.c[i.id]).length;
+  return{done,total:all.length,p:all.length?done/all.length:0};}
+function streak(){
+  const today=new Date();today.setHours(0,0,0,0);
+  let n=0,cur=new Date(today);
+  for(let g=0;g<120;g++){
+    const diff=Math.floor((cur-START)/86400000);if(diff<0)break;
+    const w=Math.floor(diff/7)+1,d=diff%7;
+    if(w>12){cur.setDate(cur.getDate()-1);continue;}
+    const{p}=pct(w,d);
+    if(p>=1)n++;else if(!sameDay(cur,today))break;
+    cur.setDate(cur.getDate()-1);}
+  return n;}
+
+function render(){const __y=window.pageYOffset||document.documentElement.scrollTop||0;
+  document.getElementById('streakN').textContent=streak();
+  countdown();weekStrip();dayStrip();
+  {const el=document.getElementById('pfCal');if(el)el.textContent=targetFor(S.week)[0].toLocaleString();}jumpBar();
+  [tripCard,sessionCard,nutritionCard,groceryCard,dailyCard,photosCard,pastCard].forEach(fn=>{try{fn();}catch(e){console.error('card failed:',fn.name,e);}});
+  window.scrollTo(0,__y);}
+function countdown(){
+  const from=dateOf(S.week,S.day);from.setHours(0,0,0,0);
+  const days=Math.round((END-from)/86400000);
+  const n=document.getElementById('cdN'),l=document.getElementById('cdL');
+  if(days>1){n.textContent=days;l.textContent='DAYS LEFT';}
+  else if(days===1){n.textContent=1;l.textContent='DAY LEFT';}
+  else if(days===0){n.textContent='\u00b7';l.textContent='FINAL DAY';}
+  else{n.textContent='\u2713';l.textContent='COMPLETE';}}
+function weekStrip(){
+  const el=document.getElementById('weekStrip');
+  el.innerHTML=W.map((w,i)=>{const n=i+1;
+    return `<button class="wk ${n===S.week?'on':''}" onclick="goWeek(${n})"><b>${n}</b><i>${w.b.slice(0,5)}</i></button>`;}).join('');
+  const on=el.querySelector('.wk.on');if(on)el.scrollLeft=Math.max(0,on.offsetLeft-(el.clientWidth-on.offsetWidth)/2);}
+function dayStrip(){
+  const el=document.getElementById('dayStrip');const t=new Date();t.setHours(0,0,0,0);
+  el.innerHTML=[0,1,2,3,4,5,6].map(d=>{
+    const{p}=pct(S.week,d),dt=dateOf(S.week,d),R=13,C=2*Math.PI*R;
+    return `<button class="day ${d===S.day?'on':''} ${sameDay(dt,t)?'today':''}" onclick="goDay(${d})">
+      <div class="dn">${DOW[d]}</div><div class="dd">${dt.getDate()}</div>
+      <svg class="ring" width="30" height="30" viewBox="0 0 30 30">
+      <circle cx="15" cy="15" r="${R}" fill="none" stroke="#232329" stroke-width="2.5"/>
+      <circle cx="15" cy="15" r="${R}" fill="none" stroke="#c9a34f" stroke-width="2.5" stroke-linecap="round"
+      stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p)}" transform="rotate(-90 15 15)"/></svg></button>`;}).join('');}
+function jumpBar(){const t=todayIdx(),off=!(t.w===S.week&&t.d===S.day);
+  document.getElementById('jumpBar').innerHTML=off
+    ?`<button class="jump" onclick="jumpToday()">\u2190 Back to today \u00b7 ${DOW[t.d]}, week ${t.w}</button>`:'';}
+function jumpToday(){const t=todayIdx();S.week=t.w;S.day=t.d;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+function prevWeight(ex){
+  for(let w=S.week-1;w>=1;w--)for(let d=0;d<7;d++){
+    const s=session(w,d),hit=s.items.find(i=>i.ex===ex&&i.wt);
+    if(hit){const v=dstate(w,d).w[hit.id];if(v!=null)return v;}}
+  return null;}
+function sessionCard(){
+  const s=session(S.week,S.day),st=dstate(S.week,S.day),dt=dateOf(S.week,S.day);
+  const rows=s.items.map(i=>{
+    const done=!!st.c[i.id];let acts='';
+    if(i.video)acts+=`<a class="act vid" href="https://www.youtube.com/watch?v=${i.video}" target="_blank" rel="noopener">\u25b6 Watch form</a>`;
+    acts+=`<button class="act" onclick="editItem('${i.id}')">\u270e Customise</button>`;
+    if(i.swap)acts+=`<button class="act" onclick="swapEx('${i.id}')">\u21c4 Swap</button>`;
+    if(i.wt){const cur=st.w[i.id],prev=prevWeight(i.ex);let lbl='Log weight';
+      if(cur!=null){lbl=cur+' kg';
+        if(prev!=null){if(cur>prev)lbl+=` <span class="up">\u25b2</span><span class="sm">(was ${prev})</span>`;
+          else if(cur<prev)lbl+=` <span class="dn">\u25bc</span><span class="sm">(was ${prev})</span>`;
+          else lbl+=` <span class="sm">\u2013 (was ${prev})</span>`;}}
+      acts+=`<button class="act wt" onclick="logWeight('${i.id}')">${lbl}</button>`;}
+    return `<div class="row ${done?'done':''}">
+      <button class="cb ${done?'on':''}" onclick="toggle('${i.id}')" aria-label="Complete ${i.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="#0b0b0d" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${i.n}</div>${i.meta?`<div class="rm">${i.meta}</div>`:''}
+      ${st.cu[i.id]?`<div class="rcustom">Actually did: ${esc(st.cu[i.id])}</div>`:''}
+      <div class="acts">${acts}</div></div></div>`;}).join('');
+  document.getElementById('sessionCard').innerHTML=`<div class="card">
+    <div class="sess-h"><div><div class="eyebrow">Week ${S.week} \u00b7 ${s.block}${s.swapped?' \u00b7 swapped':''}</div>
+      <h2>${s.title}</h2><p class="sub">${DOW[S.day]} ${dt.getDate()}/${dt.getMonth()+1}</p></div>
+      <span class="tag ${s.cls}">${s.tag}</span></div>
+    <div class="info" style="margin-top:12px"><p>${s.note}</p></div>${rows}
+    <button class="btn alt" style="margin-top:14px" onclick="daySwap()">\u21c4 Swap this day with another</button>
+    <p class="sub" style="margin-top:8px;font-size:11.5px">Moves the whole day. Useful when the kids decide otherwise.</p></div>`;}
+
+/* ---------- London, 11 to 16 Aug, covers Tue to Sun of week 2 ---------- */
+const TRIP_START=new Date(2026,7,11), TRIP_END=new Date(2026,7,16);
+function tripCard(){
+  const el=document.getElementById('tripCard');
+  const d=dateOf(S.week,S.day); d.setHours(0,0,0,0);
+  if(d<TRIP_START||d>TRIP_END){el.innerHTML='';return;}
+  el.innerHTML=`<div class="card" style="border-color:rgba(201,163,79,.4);background:linear-gradient(140deg,#17130a,#121215)">
+    <div class="eyebrow">London &middot; 11 to 16 August</div>
+    <h2>This week travels with you</h2>
+    <div class="info" style="margin-top:11px"><div class="ft">London is the easiest 10K steps you will ever get</div>
+      <p>In London you walk everywhere. Tube stations, streets, the lot. If you just refuse to take a taxi for anything under thirty minutes you will hit 10,000 without trying.</p>
+      <p><span class="gold">This is the single most valuable thing you can do this week.</span> Not the lifting. The lifting is already handled.</p></div>
+    <div class="info"><div class="ft">If the hotel gym is limited</div>
+      <p>Most hotel gyms have dumbbells and a bench and not much else. That covers everything you need. Swap the machine work using the swap button on any exercise and pick the dumbbell version.</p>
+      <p>No gym at all? Do the mobility flow and walk. A missed session on a travel week costs you nothing. A week of sitting still costs you a lot.</p></div>
+    <div class="info"><div class="ft">Eating out, which you will be</div>
+      <p>Protein first at every meal, then carbs, then whatever else. Hit 210g of protein and the rest sorts itself out.</p>
+      <p>Log it roughly rather than not at all. A guessed entry beats a blank day, and blank days are the only thing I cannot coach around.</p></div>
+  </div>`;}
+
+function nutritionCard(){
+  const ns=nstate(S.week,S.day),T=ns.t||targetFor(S.week);
+  const ML=mealsToday();
+  let got=[0,0,0,0];
+  ML.forEach((m,i)=>{if(ns.m[i])m.m.forEach((v,j)=>got[j]+=v);});
+  ns.x.forEach(x=>{got[0]+=x.k;got[1]+=x.p;got[2]+=x.c;got[3]+=x.f;});
+  const meals=ML.map((m,i)=>{const on=!!ns.m[i];
+    return `<div class="row ${on?'done':''}">
+      <button class="cb ${on?'on':''}" onclick="toggleMeal(${i})" aria-label="Ate ${m.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="#0b0b0d" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${m.n}</div><div class="rm">${m.m[0]} kcal \u00b7 ${m.m[1]}P / ${m.m[2]}C / ${m.m[3]}F</div></div></div>`;}).join('');
+  const extras=ns.x.map((x,i)=>`<div class="xrow"><div><b>${esc(x.n)}</b>
+    <div class="rm">${x.k} kcal \u00b7 ${x.p}P / ${x.c}C / ${x.f}F</div></div>
+    <button class="xdel" onclick="delExtra(${i})">\u2715</button></div>`).join('');
+  const L=['KCAL','PROTEIN','CARBS','FAT'];
+  const macs=[0,1,2,3].map(j=>`<div class="mac ${got[j]>T[j]*1.05?'over':''}">
+    <b>${Math.round(got[j])}${j?'g':''}</b><i>${L[j]}</i><div class="tgt">of ${T[j]}${j?'g':''}</div></div>`).join('');
+  document.getElementById('nutritionCard').innerHTML=`<div class="card">
+    <div class="sess-h"><div><div class="eyebrow">Fuel</div>
+      <h2>Today's Meals ${ns.t?'<span class="pill">custom</span>':''}</h2>
+      <p class="sub">${T[0]} kcal \u00b7 ${T[1]}P / ${T[2]}C / ${T[3]}F</p></div>
+      <button class="act" onclick="customTarget()">\u270e Target</button></div>
+    ${macs}<div class="bar"><i style="width:${Math.min(100,got[0]/T[0]*100)}%"></i></div>
+    <div style="margin-top:6px">${meals}</div>
+    ${extras?`<div style="margin-top:6px">${extras}</div>`:''}
+    <button class="btn alt" style="margin-top:12px" onclick="addExtra()">+ Add Something Extra</button>
+    ${ns.t?`<button class="btn alt" style="margin-top:8px" onclick="resetTarget()">Reset to plan default</button>`:''}
+    <div class="info" style="margin-top:14px"><div class="ft">Time your carbs around training</div>
+      <p>Carbs do the most work concentrated around your sessions. Breakfast and the post-workout shake carry the load on lifting days, and dinner is deliberately the biggest carb meal of the day.</p></div>
+    <details class="more"><summary>Swap list, built for your volume problem</summary>${swapList()}</details>
+  </div>`;}
+function swapList(){return `<div class="swapg">
+  <div class="info" style="margin-bottom:6px"><p>You said the only thing you want changed is the quantity of food. So this week take every carb from the dense list below rather than the bulky ones. Same calories, noticeably less on the plate.</p><p>Dinner is your hardest meal to hit, so that is the one to shrink first. Swap the potato or the bulk carb there for rice, dates or honey and it stops being a chore.</p></div>
+  <h4>Carbs, dense and low volume — lean on these harder this week</h4>
+  <ul><li>White rice, 250g cooked = 325 kcal, 71g carbs</li>
+  <li>Dates, 50g or about 4 = 140 kcal, 36g carbs</li>
+  <li>Honey, 30g or 2 tbsp = 90 kcal, 24g carbs</li>
+  <li>Bagel, 1 at 95g = 260 kcal, 52g carbs</li>
+  <li>Rice cakes, 4 = 140 kcal, 30g carbs</li>
+  <li>Dried fruit, 60g = around 170 kcal, 45g carbs</li></ul>
+  <h4>Protein</h4>
+  <ul><li>Chicken breast, 200g raw</li><li>Beef mince 90/10, 200g raw</li>
+  <li>Whey, 1 to 2 scoops</li><li>Greek yogurt, 250g</li><li>4 whole eggs</li></ul>
+  <h4>Fats, anti inflammatory first</h4>
+  <ul><li>Olive oil, 1 tbsp</li><li>Salmon or oily fish, 150g, counts as protein and fat together</li>
+  <li>Walnuts or almonds, 30g</li><li>Avocado, half</li>
+  <li>Turmeric and ginger, freely, in anything</li></ul>
+  <div class="info" style="margin-top:12px"><div class="ft">Why the anti inflammatory slant</div>
+    <p>Your blood panel came back excellent apart from one marker, hsCRP, which is a measure of systemic inflammation. Omega 3 sources, turmeric, ginger and gut friendly foods are in your plan specifically because of that. It is not a general wellness gesture, it is aimed at a real number on your results.</p></div>
+</div>`;}
+const GROCERY=[
+ {h:'Protein',items:[
+  ['Chicken breast or thigh','2 kg','The backbone of lunch and dinner. Batch cook it once and the week gets easier.'],
+  ['Beef mince or steak','1 kg',''],
+  ['Salmon or oily fish','4 fillets','Omega-3s. This is one of the two things on this list aimed straight at your inflammation marker.'],
+  ['Eggs','2 dozen',''],
+  ['Greek yogurt','1.5 kg',''],
+  ['Whey protein','1 tub','Your post-workout shake.']]},
+ {h:'Carbs, dense and low volume',items:[
+  ['White rice','2 kg dry','Chosen over sweet potato on purpose. Far more carbs for far less food on the plate.'],
+  ['Medjool dates','500g','About 36g of carbs in four dates. The easiest way to close a gap without a big meal.'],
+  ['Honey','500g jar','On yogurt, in the shake, on rice cakes.'],
+  ['Bagels','1 pack','260 kcal and 52g of carbs each. Very little chewing for the return.'],
+  ['Rice cakes','2 packs',''],
+  ['Potatoes','1.5 kg',''],
+  ['Bananas and dried fruit','7 and 300g','']]},
+ {h:'Fats, anti-inflammatory first',items:[
+  ['Extra virgin olive oil','1 bottle',''],
+  ['Walnuts or almonds','300g','Weigh them rather than pour them.'],
+  ['Avocado','4','']]},
+ {h:'The inflammation work',items:[
+  ['Turmeric and fresh ginger','ongoing','Into anything. This is the other item aimed directly at your hsCRP.'],
+  ['Leafy greens and mixed veg','plenty','Unlimited, and it makes 3,000 calories feel like more food.'],
+  ['Berries, fresh or frozen','1 kg','']]},
+ {h:'The rest',items:[
+  ['Electrolytes','1 box',''],
+  ['A 1 litre water bottle','1','Three and a half fills a day. That is the whole hydration plan.']]}
+];
+const PREP=[
+ ['Sunday, 45 minutes','Cook the full 2kg of rice and portion it. Cook and portion the chicken. That is lunch and dinner mostly handled, which matters more than usual with a baby in the house.'],
+ ['Every night, 2 minutes','Set out tomorrow\u2019s dates, rice cakes or bagel. On the days the carbs feel like too much food, these are what get you there.']
+];
+function groceryCard(){
+  const body=GROCERY.map(g=>`<h4>${g.h}</h4>${g.items.map(([n,q,note])=>
+    `<div class="gitem"><div class="gtop"><span class="gn">${n}</span><span class="gq">${q}</span></div>${note?`<div class="gnote">${note}</div>`:''}</div>`).join('')}`).join('');
+  const prep=PREP.map(([w,t])=>`<div class="recipe"><b>${w}</b><p>${t}</p></div>`).join('');
+  document.getElementById('groceryCard').innerHTML=`<div class="card">
+    <div class="eyebrow">One week \u00b7 one shop</div><h2>Grocery list</h2>
+    <p class="sub">Built for your numbers and for the fact that 360g of carbs is a lot of food.</p>
+    <div class="info" style="margin-top:11px"><p>Quantities cover seven days. The carb choices here are deliberately dense so you can hit the target without every meal feeling enormous.</p></div>
+    <details class="more"><summary>Full list</summary><div class="glist">${body}</div></details>
+    <details class="more"><summary>Prep schedule</summary><div style="margin-top:8px">${prep}</div></details></div>`;}
+
+function dailyCard(){
+  const k=key(S.week,S.day),st0=dstate(S.week,S.day);
+  const stp=S.s[k]||0,wtr=S.h[k]||0;
+  const hab=HABITS.map(i=>{const done=!!st0.c[i.id];
+    return `<div class="row ${done?'done':''}">
+      <button class="cb ${done?'on':''}" onclick="toggle('${i.id}')" aria-label="${i.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="#0b0b0d" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${i.n}</div><div class="rm">${i.meta}</div></div></div>`;}).join('');
+  document.getElementById('dailyCard').innerHTML=`<div class="card">
+    <div class="eyebrow">Every day \u00b7 regardless of session</div><h2>Daily non-negotiables</h2>
+    <div style="margin-top:8px">${hab}</div>
+    <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px">
+      <div class="brow"><span style="font-weight:600">Steps</span><span class="r">mandatory, every day</span></div>
+      <div class="brow" style="margin-top:4px"><b>${stp.toLocaleString()}</b><span class="r">of ${STEP_GOAL.toLocaleString()}</span></div>
+      <div class="bar g"><i style="width:${Math.min(100,stp/STEP_GOAL*100)}%"></i></div>
+      <div class="tapper"><button class="tp" onclick="addSteps(1000)">+1,000</button>
+      <button class="tp" onclick="addSteps(2500)">+2,500</button>
+      <button class="tp" onclick="addSteps(5000)">+5,000</button>
+      <button class="tp" onclick="setSteps()">Set</button></div></div>
+    <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px">
+      <div class="brow"><span style="font-weight:600">Water</span><span class="r">spread through the day</span></div>
+      <div class="brow" style="margin-top:4px"><b>${(wtr/1000).toFixed(1)} L</b><span class="r">of ${(WATER_GOAL/1000).toFixed(1)} L</span></div>
+      <div class="bar b"><i style="width:${Math.min(100,wtr/WATER_GOAL*100)}%"></i></div>
+      <div class="tapper"><button class="tp" onclick="addWater(250)">+250 ml</button>
+      <button class="tp" onclick="addWater(500)">+500 ml</button>
+      <button class="tp" onclick="addWater(1000)">+1 L</button>
+      <button class="tp" onclick="addWater(-250)">\u2212250</button></div></div></div>`;}
+function photosCard(){
+  const el=document.getElementById('photosCard');
+  if(S.day!==0){el.innerHTML='';return;}
+  const cur=S.wt[S.week];
+  el.innerHTML=`<div class="card">
+    <div class="eyebrow">Monday \u00b7 Week ${S.week}</div><h2>Fasted weigh-in &amp; photos</h2>
+    <p class="sub">First thing, after the bathroom, before food or water. Then send the photos straight to me.</p>
+    <button class="btn alt" style="margin-top:12px" onclick="logMorningWeight()">${cur!=null?'Weight: '+cur+' kg ('+(cur*2.20462).toFixed(1)+' lbs), tap to change':'Log this morning\u2019s weight (kg)'}</button>
+    <div class="info" style="margin-top:12px"><p>${S.week===1?'This is the one that matters most. Week 1\u2019s fasted weigh-in is what tells us whether 3,000 calories is genuinely your maintenance. Everything after it is built on this number.':'Same conditions every week, or the comparison means nothing.'}</p></div></div>`;}
+function pastCard(){
+  let rows='';
+  for(let w=1;w<S.week;w++){
+    let tot=0,dn=0;for(let d=0;d<7;d++){const p=pct(w,d);tot+=p.total;dn+=p.done;}
+    const pc=tot?Math.round(dn/tot*100):0;
+    rows+=`<div class="pw"><div><b>Week ${w}</b><div class="rm">${W[w-1].b} \u00b7 ${pc}% complete</div></div>
+      <div class="pv">${S.wt[w]!=null?S.wt[w]+' kg':pc+'%'}</div></div>`;}
+  document.getElementById('pastCard').innerHTML=rows
+    ?`<div class="card"><div class="eyebrow">History</div><h2>Past Weeks</h2>
+      <p class="sub">Nothing is ever lost. Every week stays here.</p><div style="margin-top:10px">${rows}</div></div>`:'';}
+
+function goWeek(n){S.week=n;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+function goDay(d){S.day=d;save();render();}
+function toggle(id){const st=dstate(S.week,S.day);
+  if(st.c[id])delete st.c[id];else st.c[id]=1;save();
+  const p=pct(S.week,S.day);render();
+  if(p.p>=1){toast('Day complete. Well done.');confetti();}}
+function toggleMeal(i){const n=nstate(S.week,S.day);if(n.m[i])delete n.m[i];else n.m[i]=1;save();render();}
+function addSteps(v){const k=key(S.week,S.day);S.s[k]=Math.max(0,(S.s[k]||0)+v);save();render();if(S.s[k]>=STEP_GOAL)toast('10K done.');}
+function addWater(v){const k=key(S.week,S.day);S.h[k]=Math.max(0,(S.h[k]||0)+v);save();render();}
+function esc(s){return String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+function openModal(h){document.getElementById('modal').innerHTML=h;document.getElementById('mask').classList.add('on');}
+function closeModal(){document.getElementById('mask').classList.remove('on');}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2100);}
+function editItem(id){const st=dstate(S.week,S.day),s=session(S.week,S.day);
+  const it=[...s.items,...HABITS].find(i=>i.id===id);
+  openModal(`<h3>Customise</h3><p class="ms">${it.n}. Type what you actually did.</p>
+    <div class="form"><label>What you did</label>
+    <input id="cuIn" value="${esc(st.cu[id]||'')}" placeholder="e.g. dropped a set, knee felt tight">
+    <button class="btn" onclick="saveCustom('${id}')">Save</button>
+    <button class="btn alt" style="margin-top:8px" onclick="clearCustom('${id}')">Clear</button></div>`);
+  setTimeout(()=>document.getElementById('cuIn').focus(),60);}
+function saveCustom(id){const v=document.getElementById('cuIn').value.trim(),st=dstate(S.week,S.day);
+  if(v)st.cu[id]=v;else delete st.cu[id];save();closeModal();render();}
+function clearCustom(id){delete dstate(S.week,S.day).cu[id];save();closeModal();render();}
+function swapEx(id){const s=session(S.week,S.day),it=s.items.find(i=>i.id===id);
+  const opts=MASTER.map(k=>`<button class="opt ${k===it.ex?'cur':''}" onclick="doSwap('${id}','${k}')"><span>${EX[k].n}</span></button>`).join('');
+  openModal(`<h3>Swap exercise</h3><p class="ms">Replacing ${it.n} for today. Everything here respects your knee.</p>${opts}
+    <button class="btn alt" style="margin-top:8px" onclick="doSwap('${id}','')">Reset to original</button>`);}
+function doSwap(id,k){const st=dstate(S.week,S.day);if(k)st.sw[id]=k;else delete st.sw[id];save();closeModal();render();}
+function logWeight(id){const st=dstate(S.week,S.day);
+  openModal(`<h3>Log weight</h3><p class="ms">Working weight in kilograms.</p>
+    <div class="form"><label>Weight (kg)</label>
+    <input id="wIn" type="number" inputmode="decimal" step="2.5" value="${st.w[id]!=null?st.w[id]:''}" placeholder="e.g. 60">
+    <button class="btn" onclick="saveWeight('${id}')">Save</button></div>`);
+  setTimeout(()=>document.getElementById('wIn').focus(),60);}
+function saveWeight(id){const v=parseFloat(document.getElementById('wIn').value),st=dstate(S.week,S.day);
+  if(!isNaN(v))st.w[id]=v;else delete st.w[id];save();closeModal();render();}
+function logMorningWeight(){
+  openModal(`<h3>Fasted weigh-in</h3><p class="ms">Week ${S.week}. Before food or water.</p>
+    <div class="form"><label>Weight (kg)</label>
+    <input id="mwIn" type="number" inputmode="decimal" step="0.1" value="${S.wt[S.week]!=null?S.wt[S.week]:''}" placeholder="e.g. 108.7">
+    <button class="btn" onclick="saveMorningWeight()">Save</button></div>`);
+  setTimeout(()=>document.getElementById('mwIn').focus(),60);}
+function saveMorningWeight(){const v=parseFloat(document.getElementById('mwIn').value);
+  if(!isNaN(v))S.wt[S.week]=v;save();closeModal();render();toast('Logged.');}
+function setSteps(){const k=key(S.week,S.day);
+  openModal(`<h3>Set steps</h3><p class="ms">Straight from your phone or watch.</p>
+    <div class="form"><label>Steps today</label>
+    <input id="sIn" type="number" inputmode="numeric" value="${S.s[k]||''}" placeholder="e.g. 10200">
+    <button class="btn" onclick="saveSteps()">Save</button></div>`);
+  setTimeout(()=>document.getElementById('sIn').focus(),60);}
+function saveSteps(){const v=parseInt(document.getElementById('sIn').value,10),k=key(S.week,S.day);
+  S.s[k]=isNaN(v)?0:Math.max(0,v);save();closeModal();render();}
+function customTarget(){const n=nstate(S.week,S.day),T=n.t||targetFor(S.week);
+  openModal(`<h3>Custom target for today</h3><p class="ms">Format: kcal,protein,carbs,fat</p>
+    <div class="form"><label>Today's target</label>
+    <input id="tIn" value="${T.join(',')}" inputmode="numeric">
+    <button class="btn" onclick="saveTarget()">Set for today</button></div>`);
+  setTimeout(()=>document.getElementById('tIn').focus(),60);}
+function saveTarget(){const p=document.getElementById('tIn').value.split(',').map(x=>parseInt(x.trim(),10));
+  if(p.length===4&&p.every(x=>!isNaN(x))){nstate(S.week,S.day).t=p;save();closeModal();render();}
+  else toast('Four numbers, comma separated.');}
+function resetTarget(){nstate(S.week,S.day).t=null;save();render();}
+function addExtra(){
+  openModal(`<h3>Add Something Extra</h3>
+    <p class="ms">Weigh it, then type in what that amount actually was. No maths, no per-100g.</p>
+    <div class="form"><label>What was it</label><input id="xn" placeholder="e.g. 4 dates">
+      <label>Grams (optional)</label><input id="xg" type="number" inputmode="numeric" placeholder="50">
+      <label>For that amount</label>
+      <div class="g4"><input id="xk" type="number" inputmode="numeric" placeholder="kcal">
+        <input id="xp" type="number" inputmode="numeric" placeholder="P">
+        <input id="xc" type="number" inputmode="numeric" placeholder="C">
+        <input id="xf" type="number" inputmode="numeric" placeholder="F"></div>
+      <button class="btn" onclick="saveExtra()">Add</button></div>`);
+  setTimeout(()=>document.getElementById('xn').focus(),60);}
+function saveExtra(){
+  const g=document.getElementById('xg').value.trim();
+  const nm=(document.getElementById('xn').value.trim()||'Extra')+(g?` (${g}g)`:'');
+  const num=id=>{const v=parseFloat(document.getElementById(id).value);return isNaN(v)?0:v;};
+  const e={n:nm,k:num('xk'),p:num('xp'),c:num('xc'),f:num('xf')};
+  if(!e.k&&!e.p&&!e.c&&!e.f){toast('Add at least one number.');return;}
+  nstate(S.week,S.day).x.push(e);save();closeModal();render();}
+function delExtra(i){nstate(S.week,S.day).x.splice(i,1);save();render();}
+function daySwap(){
+  const opts=[0,1,2,3,4,5,6].filter(d=>d!==S.day).map(d=>{
+    const s=session(S.week,d),dt=dateOf(S.week,d);
+    return `<button class="opt" onclick="doDaySwap(${d})"><span>${DOW[d]} ${dt.getDate()}/${dt.getMonth()+1}</span><small>${s.title}</small></button>`;}).join('');
+  openModal(`<h3>Swap with another day</h3><p class="ms">The whole day moves, training and food target together.</p>${opts}`);}
+function doDaySwap(d){const o=order(S.week),t=o[S.day];o[S.day]=o[d];o[d]=t;save();closeModal();render();toast('Days swapped.');}
+function confetti(){
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=document.createElement('canvas');
+  c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:150';
+  c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);
+  const x=c.getContext('2d'),cols=['#c9a34f','#8a6f34','#eceae6'];
+  const P=Array.from({length:70},()=>({x:Math.random()*c.width,y:-20-Math.random()*140,
+    r:3+Math.random()*4,vy:2.4+Math.random()*3.2,vx:-1.4+Math.random()*2.8,
+    a:Math.random()*6.28,va:-.14+Math.random()*.28,c:cols[(Math.random()*3)|0]}));
+  let f=0;(function loop(){x.clearRect(0,0,c.width,c.height);
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va;x.save();x.translate(p.x,p.y);x.rotate(p.a);
+      x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);x.restore();});
+    if(++f<150)requestAnimationFrame(loop);else c.remove();})();}
+function a2Steps(){
+  const ua=navigator.userAgent||'';
+  const iOS=/iPad|iPhone|iPod/.test(ua)||(/Mac/.test(ua)&&navigator.maxTouchPoints>1);
+  const android=/Android/.test(ua);let steps;
+  if(iOS)steps=['Tap the Share button at the bottom of Safari, the square with the arrow pointing up.',
+    'Scroll down and tap <b style="color:#c9a34f">Add to Home Screen</b>.','Tap Add in the top right.',
+    'Open ELVT COACH from your home screen from now on, not from Safari.'];
+  else if(android)steps=['Tap the three dots in the top right of Chrome.',
+    'Tap <b style="color:#c9a34f">Add to Home screen</b> (or Install app).','Tap Add or Install to confirm.',
+    'Open ELVT COACH from your home screen from now on, not from Chrome.'];
+  else steps=['Open this link on your phone, that is where you will actually use it.',
+    'iPhone: Share, then Add to Home Screen. Android: three dots, then Add to Home screen.',
+    'Open it from the home screen icon from then on.'];
+  document.getElementById('a2steps').innerHTML=steps.map((t,i)=>`<div class="s"><b>${i+1}</b><span>${t}</span></div>`).join('');}
+function openA2(){a2Steps();document.getElementById('a2').classList.add('on');window.scrollTo({top:0});}
+function closeA2(){document.getElementById('a2').classList.remove('on');try{localStorage.setItem(KEY+'_a2','1')}catch(e){}}
+if(!localStorage.getItem(KEY+'_a2')&&!(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)){openA2();}
+render();
+</script>
+</body>
+</html>

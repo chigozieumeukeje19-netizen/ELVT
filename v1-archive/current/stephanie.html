@@ -1,0 +1,672 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FAF7F2"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ELVT Steph">
+<title>ELVT COACH, Stephanie</title>
+<style>
+:root{--bg:#FAF7F2;--panel:#FFFFFF;--panel2:#F4F0E9;--line:#E4DFD6;
+--gold:#8A6F34;--gold-dim:#A58A4E;--gold-soft:rgba(138,111,52,.09);
+--txt:#111111;--mut:#6E6A64;--mut2:#9A958D;--ok:#2F7D4F;--warn:#A8641F;--bad:#A33F36;--r:12px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.5;padding-bottom:40px;
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+.top{position:sticky;top:0;z-index:50;background:rgba(250,247,242,.94);backdrop-filter:blur(8px);
+ border-bottom:1px solid var(--line);padding:11px 0;margin-bottom:14px}
+.topin{max-width:560px;margin:0 auto;padding:0 14px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px}
+.brand img{height:15px;width:auto;display:block}
+.brand small{font-size:9px;letter-spacing:.2em;color:var(--mut);font-weight:600;text-transform:uppercase}
+.rdy{font-size:9px;letter-spacing:.14em;border-radius:999px;padding:5px 12px;font-weight:700;text-transform:uppercase}
+.rdy.g{background:rgba(47,125,79,.12);color:var(--ok)}
+.rdy.y{background:rgba(168,100,31,.13);color:var(--warn)}
+.rdy.r{background:rgba(163,63,54,.12);color:var(--bad)}
+.rdy.n{background:var(--panel2);color:var(--mut)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:13px}
+.eyebrow{font-size:9.5px;letter-spacing:.2em;font-weight:700;color:var(--gold);text-transform:uppercase;margin-bottom:7px}
+h2{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:600;margin:0 0 4px;line-height:1.15}
+.sub{font-size:12.5px;color:var(--mut);margin:0}
+.info,.flag{background:var(--panel2);border-radius:9px;padding:14px 16px;margin:12px 0}
+.flag{background:#FFFBF2;border-left:3px solid var(--gold)}
+.ft{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--gold);text-transform:uppercase;margin-bottom:7px}
+.info p,.flag p{margin:0 0 7px;font-size:13px;color:#3A3833;line-height:1.6}
+.info p:last-child,.flag p:last-child{margin-bottom:0}
+.gold{color:var(--gold);font-weight:600}
+.row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.rb{flex:1;min-width:0}.rn{font-size:14.5px;font-weight:600;line-height:1.3}
+.rm{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.45}
+.tick{width:26px;height:26px;border:1.5px solid var(--line);border-radius:7px;flex:0 0 auto;
+ background:transparent;cursor:pointer;position:relative;margin-top:1px}
+.tick.on{background:var(--gold);border-color:var(--gold)}
+.tick.on:after{content:'';position:absolute;left:8px;top:4px;width:6px;height:11px;
+ border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.met{background:var(--panel2);border-radius:9px;padding:11px 9px;text-align:center;border:none;
+ cursor:pointer;font-family:inherit;width:100%}
+.met b{display:block;font-family:Georgia,serif;font-size:19px;color:var(--txt);line-height:1}
+.met b.empty{color:var(--mut2);font-size:15px}
+.met i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.1em;color:var(--mut);
+ text-transform:uppercase;margin-top:5px}
+.met .dl{font-size:9px;color:var(--gold);margin-top:3px;font-weight:700}
+.bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:9px 0}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:99px}
+.btn{display:block;width:100%;padding:14px;border-radius:9px;border:none;background:var(--gold);
+ color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn.alt{background:transparent;border:1.5px solid var(--line);color:var(--txt)}
+.act{font-size:11px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);
+ background:transparent;color:var(--mut);cursor:pointer;font-family:inherit;font-weight:600}
+.scale{display:flex;gap:4px;margin:7px 0 0}
+.sc{flex:1;padding:9px 0;border:1px solid var(--line);border-radius:7px;background:transparent;
+ font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--txt)}
+.sc.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.qlab{font-size:12px;font-weight:600;margin:13px 0 0;color:var(--txt)}
+.mask{position:fixed;inset:0;background:rgba(17,17,17,.42);backdrop-filter:blur(3px);z-index:100;
+ display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.sheet{background:var(--panel);border-radius:16px 16px 0 0;padding:22px 18px 30px;width:100%;
+ max-width:560px;max-height:88vh;overflow-y:auto}
+.sheet h3{font-family:Georgia,serif;font-size:21px;margin:0 0 6px;font-weight:600}
+.ms{font-size:12.5px;color:var(--mut);margin:0 0 14px;line-height:1.55}
+.form label{display:block;font-size:11px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;
+ font-weight:700;margin:11px 0 5px}
+.form input,.form select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;
+ background:var(--bg);color:var(--txt);font-size:15px;font-family:inherit}
+.more{margin-top:12px}
+.more summary{font-size:11px;letter-spacing:.14em;font-weight:700;color:var(--gold);
+ text-transform:uppercase;cursor:pointer;list-style:none}
+.more summary::-webkit-details-marker{display:none}
+.more summary:after{content:'  +'}.more[open] summary:after{content:'  \2212'}
+.trend{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.trend:last-child{border-bottom:none}
+.trend span{color:var(--mut)}.trend b{font-weight:600}
+.up{color:var(--ok)}.dn{color:var(--bad)}.flat{color:var(--mut)}
+.pill{display:inline-block;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:99px;
+ border:1px solid var(--line);color:var(--mut);text-transform:uppercase;font-weight:700}
+</style></head><body>
+<div class="top"><div class="topin">
+<div class="brand"><img src="data:image/png;base64,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" alt="ELVT"><small>STEPHANIE</small></div>
+<div class="rdy n" id="rdyPill">NO DATA</div></div></div>
+<div class="wrap">
+ <div id="installCard"></div><div id="phaseCard"></div><div id="dayStrip"></div>
+ <div id="sessionCard"></div><div id="trainCard"></div><div id="recoveryCard"></div>
+ <div id="fuelCard"></div><div id="weekCard"></div><div id="benchCard"></div>
+ <div id="aftCard"></div><div id="eduCard"></div>
+</div>
+<div class="mask" id="mask" onclick="if(event.target===this)closeModal()"><div class="sheet" id="sheet"></div></div>
+<script>
+'use strict';
+const KEY='elvt_stephanie_v1';
+const START=new Date(2026,8,14);
+const WEEKS=16;
+const KG=63.5;
+
+/* =========================================================================
+   THE SESSION LIBRARY
+   Every session carries a duration and an effort target. Every strength day
+   carries named exercises with sets, reps and RIR. Nothing is a bare title.
+   Exercise selection respects what is on file: no lunges (knees), no fast
+   high-rep deadlifting (back), nothing that loads the psoas hard, and
+   chest-supported rowing rather than free bent-over rowing (neck).
+   Her old numbers are the ceiling for month four, never the week 1 target.
+   ========================================================================= */
+const EX={
+ tbdl   :{n:'Trap bar deadlift',      c:'Slow off the floor. Never fast, never for high reps. This is the AFT deadlift being built, not tested.'},
+ rdl    :{n:'Dumbbell RDL',           c:'Hinge at the hip, soft knees, stop where the hamstrings run out. Back stays flat.'},
+ hipthr :{n:'Hip thrust',             c:'Ribs down, squeeze at the top, no arching to get more range.'},
+ goblet :{n:'Goblet squat',           c:'Only as deep as stays comfortable. Depth is not the point.'},
+ legpr  :{n:'Leg press',              c:'Heels flat, no locking out. Knee-friendly way to load the quads.'},
+ stepup :{n:'Low box step-up',        c:'Low box on purpose. This is the lunge substitute your knees will tolerate.'},
+ hamcur :{n:'Lying hamstring curl',   c:'Slow on the way back. That half is the one that protects the hamstring.'},
+ calf   :{n:'Calf raise',             c:'Full range, pause at the top. Healed toe fractures mean the calf and foot get loaded on purpose.'},
+ pushup :{n:'Push-up',                c:'On the floor or on a bench, whichever keeps the form. This is the AFT push-up.'},
+ hrp    :{n:'Hand-release push-up',   c:'Chest down, hands lift clear, back up. Sub-maximal sets all week beat one set to failure.'},
+ dbbench:{n:'Dumbbell bench press',   c:'Shoulders back and down. Elbows stay under the wrists.'},
+ ohp    :{n:'Half-kneeling press',    c:'Half-kneeling so the low back cannot arch into it. Ribs stay down.'},
+ csrow  :{n:'Chest-supported row',    c:'Supported on purpose. Your neck does not need to hold a bent-over position.'},
+ pulldn :{n:'Lat pulldown',           c:'Shoulders down first, then pull. No leaning back to move more weight.'},
+ face   :{n:'Face pull',              c:'Light. This is for the neck and shoulders, not a strength lift.'},
+ plank  :{n:'Front plank',            c:'Straight line, ribs down, breathe. Progressed by time, and it is an AFT event.'},
+ sideplk:{n:'Side plank',             c:'Hips stacked and lifted. Both sides, equal time.'},
+ deadbug:{n:'Dead bug',               c:'Low back stays flat on the floor. Slow beats many.'},
+ pallof :{n:'Pallof press',           c:'Resist the rotation. Nothing moves except the arms.'},
+ carry  :{n:'Farmer carry',           c:'Tall, ribs down, no leaning. Direct carryover to the sprint-drag-carry.'},
+ sdc    :{n:'Sprint-drag-carry rehearsal',c:'Phase 3 onward only. Walk the transitions first. The transitions cost more time than the legs do.'}
+};
+
+/* sets by phase. reps and RIR are constant: RPE 6 to 7, three to four in reserve. */
+function setsFor(w){return w<=4?2:(w<=12?3:2);}
+
+const STR={
+ A:{n:'Strength A',sub:'Hinge and push',mins:45,
+    ex:[['tbdl','5'],['dbbench','8-10'],['goblet','8-10'],['ohp','8-10'],['plank','time'],['deadbug','8-10 each']]},
+ B:{n:'Strength B',sub:'Pull and posterior chain',mins:45,
+    ex:[['hipthr','8-10'],['csrow','10-12'],['pulldn','10-12'],['hamcur','10-12'],['sideplk','time'],['pallof','10 each']]},
+ C:{n:'Strength C',sub:'Full body and carries',mins:40,
+    ex:[['rdl','6-8'],['carry','40m'],['stepup','8 each'],['hrp','6-8'],['calf','12-15'],['plank','time']]},
+ M:{n:'Strength maintenance',sub:'Hold what you built',mins:30,
+    ex:[['tbdl','5'],['pushup','8-10'],['csrow','10-12'],['plank','time']]}
+};
+
+/* plank hold progression, seconds. an AFT event, so it is programmed not guessed. */
+function plankSec(w){return Math.min(150,45+(w-1)*7);}
+
+/* run/walk ladder, re-entry only. ratio and total, never a vague "run/walk". */
+const RW={1:{r:1,w:2,x:6,tot:20},2:{r:1,w:2,x:7,tot:22},3:{r:2,w:2,x:6,tot:26},4:{r:2,w:2,x:5,tot:22}};
+/* continuous easy running, base phase. */
+const CONT={5:20,6:24,7:28,8:22};
+/* quality sessions, build and performance. deload weeks get none. */
+const QUAL={9:'4 x 3 min at RPE 6 to 7, 2 min easy between',
+            10:'5 x 3 min at RPE 6 to 7, 2 min easy between',
+            11:'3 x 6 min at RPE 6 to 7, 3 min easy between',
+            12:null,
+            13:'4 x 4 min at RPE 7, 3 min easy between',
+            14:'2 x 8 min at RPE 7, 4 min easy between',
+            15:'3 x 5 min at RPE 7, 3 min easy between',
+            16:'Two-mile time trial. The benchmark, not a training session.'};
+/* durations, explicit per week so deloads actually come down. */
+const LONG={1:35,2:40,3:45,4:35, 5:50,6:55,7:60,8:45, 9:65,10:70,11:75,12:55, 13:70,14:75,15:60,16:45};
+const EASY={1:30,2:30,3:35,4:30, 5:35,6:35,7:40,8:30, 9:40,10:40,11:45,12:35, 13:40,14:40,15:35,16:30};
+
+const PHASES=[
+ {n:'RE-ENTRY',    w:[1,4],  d:'Aerobic restoration. Establish the baseline before we load anything.'},
+ {n:'BASE',        w:[5,8],  d:'Volume up. Continuous running returns. Strides introduced.'},
+ {n:'BUILD',       w:[9,12], d:'Threshold work, long-run durability, AFT layer on top.'},
+ {n:'PERFORMANCE', w:[13,16],d:'Two-mile ability, final benchmark, then you run it yourself.'}
+];
+function phaseOf(w){return PHASES.find(p=>w>=p.w[0]&&w<=p.w[1])||PHASES[0];}
+
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+/* ---------- THE SCHEDULE. Single source of truth. ----------
+   Every entry returns a full session: duration, effort target, and for
+   strength days the exercise list. PLAN below is DERIVED from this, so the
+   counts on the plan card can never drift from the days actually scheduled. */
+function strSession(k,w){
+ const T=STR[k], sets=setsFor(w);
+ return {k:'str',t:T.n,sub:T.sub,mins:T.mins,
+  effort:'RPE 6 to 7 \u00b7 three to four reps in reserve \u00b7 nothing to failure',
+  ex:T.ex.map(([id,reps])=>({id,n:EX[id].n,c:EX[id].c,
+    meta:reps==='time'?`${sets} sets \u00d7 ${plankSec(w)} sec`:`${sets} sets \u00d7 ${reps}`}))};
+}
+function sessionFor(w,d){
+ const easyEffort='RPE 3 to 4 \u00b7 full sentences out loud \u00b7 if you cannot talk, slow down';
+ if(w<=4){                                   /* RE-ENTRY */
+  const rw=RW[w];
+  switch(d){
+   case 0:return {k:'aero',t:'Easy bike',mins:EASY[w],effort:easyEffort,
+     detail:`${EASY[w]} minutes on the bike, steady. Low impact on purpose while the running restarts.`};
+   case 1:return strSession('A',w);
+   case 2:return {k:'aero',t:'Run/walk',mins:rw.tot,effort:easyEffort,
+     detail:`5 min walk to start, then ${rw.x} rounds of ${rw.r} min easy run and ${rw.w} min walk, then walk home. ${rw.tot} min of work.`,
+     rw:`${rw.r}:${rw.w} \u00d7 ${rw.x}`};
+   case 3:return {k:'opt',t:'Optional easy swim, or nothing',mins:25,effort:'RPE 2 to 3 \u00b7 genuinely easy',
+     detail:'Twenty to twenty five minutes in the pool, or take the day off completely. Both are correct answers. This day exists so the week has somewhere to give.'};
+   case 4:return strSession('B',w);
+   case 5:return {k:'long',t:'Long easy aerobic',mins:LONG[w],effort:easyEffort,
+     detail:`${LONG[w]} minutes. Bike, walk, or a run/walk at the same ratio as Wednesday. Your choice of machine, not your choice of effort.`};
+   default:return {k:'rest',t:'Full rest'};
+  }
+ }
+ if(w<=8){                                   /* BASE */
+  switch(d){
+   case 0:return strSession('A',w);
+   case 1:return {k:'aero',t:'Easy run',mins:CONT[w],effort:easyEffort,
+     detail:`${CONT[w]} minutes continuous. First continuous running of the program. Duration is the only thing moving right now.`};
+   case 2:return strSession('B',w);
+   case 3:return {k:'aero',t:'Easy run + strides',mins:CONT[w],effort:easyEffort+' \u00b7 strides are relaxed, not sprints',
+     detail:`${CONT[w]} min easy, then 4 \u00d7 20 sec strides with a full walk back between each. Strides are fast and loose, not hard.`};
+   case 4:return strSession('C',w);
+   case 5:return {k:'long',t:'Long easy run',mins:LONG[w],effort:easyEffort,
+     detail:`${LONG[w]} minutes. Run/walk it if that keeps the effort honest. Finishing easy beats finishing fast.`};
+   default:return {k:'rest',t:'Full rest'};
+  }
+ }
+ if(w<=12){                                  /* BUILD */
+  switch(d){
+   case 0:return strSession('A',w);
+   case 1:return {k:'aero',t:'Easy run',mins:EASY[w],effort:easyEffort,detail:`${EASY[w]} minutes easy. This one never becomes a hard day.`};
+   case 2:return strSession('B',w);
+   case 3:return QUAL[w]?{k:'aero',t:'Quality session',mins:EASY[w],hard:1,
+     effort:'Work intervals RPE 6 to 7 \u00b7 comfortably hard \u00b7 a few words, not a sentence',
+     detail:`10 min easy to warm up, then ${QUAL[w]}, then 10 min easy home.`}
+     :{k:'aero',t:'Easy run',mins:EASY[w],effort:easyEffort,detail:`Deload week. No quality at all. ${EASY[w]} minutes strictly easy.`};
+   case 4:return strSession(w>=9?'C':'C',w);
+   case 5:return {k:'long',t:'Long easy run',mins:LONG[w],effort:easyEffort,detail:`${LONG[w]} minutes. The session that builds the two-mile, even though it looks nothing like it.`};
+   default:return {k:'rest',t:'Full rest'};
+  }
+ }
+ switch(d){                                  /* PERFORMANCE */
+  case 0:return strSession('A',w);
+  case 1:return {k:'aero',t:'Easy run',mins:EASY[w],effort:easyEffort,detail:`${EASY[w]} minutes easy.`};
+  case 2:return {k:'rest',t:'Full rest'};
+  case 3:return {k:'aero',t:w===16?'Two-mile benchmark':'Quality session',mins:EASY[w],hard:1,
+    effort:w===16?'Test effort. Even pacing beats a fast first lap.':'Work intervals RPE 7 \u00b7 comfortably hard, controlled',
+    detail:`10 min easy to warm up, then ${QUAL[w]}, then 10 min easy home.`};
+  case 4:return strSession('M',w);
+  case 5:return {k:'long',t:'Long easy run',mins:LONG[w],effort:easyEffort,detail:`${LONG[w]} minutes easy.`};
+  default:return {k:'rest',t:'Full rest'};
+ }
+}
+
+/* PLAN is derived from the schedule above, never hand written. */
+const PLAN={};
+(function(){
+ const NOTE={1:'Run/walk only. Effort, not pace.',5:'Continuous easy running returns. Strides on run 2.',
+             9:'One quality session. Everything else stays easy.',13:'Sharpening. Volume comes down, quality holds.'};
+ for(let w=1;w<=16;w++){
+  let str=0,aero=0,rest=0,opt=0;
+  for(let d=0;d<7;d++){const k=sessionFor(w,d).k;
+   if(k==='str')str++; else if(k==='aero'||k==='long')aero++; else if(k==='opt')opt++; else rest++;}
+  PLAN[w]={str,aero,opt,rest,long:LONG[w],
+    note:NOTE[w<=4?1:(w<=8?5:(w<=12?9:13))],deload:(w===4||w===8||w===12)};
+ }
+})();
+
+
+/* ---------- state ---------- */
+const D={v:1,d:{},wk:{},install:0,aft:{}};
+function load(){
+ const s=JSON.parse(JSON.stringify(D));
+ try{const x=JSON.parse(localStorage.getItem(KEY)||'{}');
+  if(x&&typeof x==='object'&&!Array.isArray(x))Object.assign(s,x);}catch(e){}
+ ['d','wk','aft'].forEach(k=>{if(!s[k]||typeof s[k]!=='object'||Array.isArray(s[k]))s[k]={};});
+ return s;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+let S=load();
+const key=(w,d)=>w+'-'+d;
+function ds(w,d){const k=key(w,d);
+ let t=S.d[k];
+ if(!t||typeof t!=='object'||Array.isArray(t)){t=S.d[k]={done:0,tr:{},rec:{},fu:{},ex:{}};return t;}
+ ['tr','rec','fu','ex'].forEach(x=>{const v=t[x];
+  if(!v||typeof v!=='object'||Array.isArray(v))t[x]={};});
+ return t;}
+function dateOf(w,d){const x=new Date(START);x.setDate(x.getDate()+(w-1)*7+d);return x;}
+/* DAY DIFFERENCE, DST SAFE.
+   Two local midnights are 23 or 25 hours apart across a daylight saving
+   change, so dividing elapsed milliseconds by 86400000 and flooring it
+   loses a whole day when the clocks go forward. Comparing the calendar
+   dates as UTC removes the clock from the arithmetic entirely. */
+function dayDiff(a,b){
+  const A=Date.UTC(a.getFullYear(),a.getMonth(),a.getDate());
+  const B=Date.UTC(b.getFullYear(),b.getMonth(),b.getDate());
+  return Math.round((A-B)/86400000);}
+function todayIdx(){const n=new Date();n.setHours(0,0,0,0);
+ const s=new Date(START);s.setHours(0,0,0,0);
+ const diff=dayDiff(n,s);
+ if(diff<0)return{w:1,d:0};
+ return{w:Math.min(WEEKS,Math.floor(diff/7)+1),d:Math.min(6,diff%7)};}
+let VW,VD,PINNED=false;
+(function(){const t=todayIdx();VW=t.w;VD=t.d;})();
+function syncToday(){if(PINNED)return false;const t=todayIdx();
+ if(t.w!==VW||t.d!==VD){VW=t.w;VD=t.d;return true;}return false;}
+function goDay(w,d){const t=todayIdx();
+ /* ROUND as well as clamp. Without the rounding, goDay(1.5) survives the
+    clamp, PLAN[1.5] is undefined and the session card throws. */
+ w=Math.round(Number(w)); if(!isFinite(w))w=1;
+ d=Math.round(Number(d)); if(!isFinite(d))d=0;
+ w=Math.max(1,Math.min(WEEKS,w));
+ d=Math.max(0,Math.min(6,d));
+ VW=w;VD=d;PINNED=!(w===t.w&&d===t.d);render();}
+function goToday(){const t=todayIdx();VW=t.w;VD=t.d;PINNED=false;render();}
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const n=parseFloat(v);return isNaN(n)?null:n;};
+function toast(t){const e=document.createElement('div');e.textContent=t;
+ e.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#FAF7F2;padding:11px 20px;border-radius:99px;font-size:13px;z-index:200;font-weight:600';
+ document.body.appendChild(e);setTimeout(()=>e.remove(),1800);}
+function openModal(h){document.getElementById('sheet').innerHTML=h;document.getElementById('mask').classList.add('on');}
+function closeModal(){document.getElementById('mask').classList.remove('on');}
+
+/* ---------- readiness composite. never a single metric. ---------- */
+function baseline(field,upto){
+ const vals=[];
+ for(let w=1;w<=upto;w++)for(let d=0;d<7;d++){
+  const r=S.d[key(w,d)]; if(r&&r.rec&&r.rec[field]!=null)vals.push(Number(r.rec[field]));}
+ if(vals.length<5)return null;
+ const use=vals.slice(-28);
+ return use.reduce((a,b)=>a+b,0)/use.length;}
+function readiness(w,d){
+ const r=ds(w,d).rec, flags=[];
+ const hrvB=baseline('hrv',w), rhrB=baseline('rhr',w);
+ if(r.sleep!=null&&r.sleep<4)flags.push(['red','under 4 hours sleep']);
+ else if(r.sleep!=null&&r.sleep<6)flags.push(['yellow','short sleep']);
+ if(hrvB&&r.hrv!=null&&r.hrv<hrvB*0.85)flags.push(['yellow','HRV below your baseline']);
+ if(rhrB&&r.rhr!=null&&r.rhr>rhrB+5)flags.push(['yellow','resting HR elevated']);
+ if(r.energy!=null&&Number(r.energy)<=3)flags.push(['yellow','energy low']);
+ if(r.sore!=null&&Number(r.sore)>=8)flags.push(['yellow','high soreness']);
+ if(r.stress!=null&&Number(r.stress)>=9)flags.push(['yellow','stress very high']);
+ if(ds(w,d).fu.migraine==='Yes')flags.push(['red','migraine reported']);
+ if(ds(w,d).fu.symptoms==='Yes')flags.push(['red','unusual symptoms']);
+ const reds=flags.filter(f=>f[0]==='red').length;
+ const yellows=flags.filter(f=>f[0]==='yellow').length;
+ const any=Object.keys(r).length>0;
+ if(!any)return{lvl:'n',label:'NO DATA',flags:[]};
+ if(reds>0||yellows>=3)return{lvl:'r',label:'RECOVER',flags};
+ if(yellows>=1)return{lvl:'y',label:'REDUCE',flags};
+ return{lvl:'g',label:'TRAIN',flags};}
+
+
+/* ================= CARDS ================= */
+function installCard(){const el=document.getElementById('installCard');
+ if(S.install){el.innerHTML='';return;}
+ el.innerHTML=`<div class="card"><div class="eyebrow">Before anything else</div>
+ <h2>Two things to set up</h2>
+ <div class="flag"><div class="ft">1. Your Oura</div>
+ <p>Charge it, sync it, and wear it every night from tonight. <span class="gold">Everything in this program is decided on your data</span>, and for the first week I have none.</p>
+ <p>Seven clean nights gives me your real baseline. Without it I am guessing, and guessing is what put you here.</p></div>
+ <div class="flag"><div class="ft">2. Add this to your home screen</div>
+ <p>Your logs live on this device. Share, then Add to Home Screen, then open it from the icon from now on.</p></div>
+ <button class="btn" onclick="S.install=1;save();render()">Both done</button>
+ <button class="btn alt" style="margin-top:8px" onclick="S.install=1;save();render()">Skip for now</button></div>`;}
+
+function phaseCard(){const p=phaseOf(VW),el=document.getElementById('phaseCard');
+ el.innerHTML=`<div class="card">
+ <div class="eyebrow">Phase ${PHASES.indexOf(p)+1} of 4 &middot; ${p.n} &middot; week ${VW} of 16</div>
+ <h2>Rebuilding the engine</h2>
+ <p class="sub">${p.d}</p>
+ <div class="bar" style="margin-top:13px"><i style="width:${VW/16*100}%"></i></div>
+ <details class="more"><summary>How progress gets measured</summary>
+ <div class="info"><p>Not by pace alone. <span class="gold">Same heart rate at a faster pace. Same pace at a lower heart rate. Same session at a lower RPE. Longer at the same effort.</span></p>
+ <p>Any one of those is the engine coming back. Pace on its own tells you almost nothing about whether you are actually fitter.</p></div></details></div>`;}
+
+function dayStrip(){const el=document.getElementById('dayStrip');const t=todayIdx();
+ el.innerHTML=`<div class="card" style="padding:13px 12px">
+ <div style="display:flex;gap:5px">
+ ${[0,1,2,3,4,5,6].map(d=>{const dt=dateOf(VW,d),sel=d===VD,isT=(VW===t.w&&d===t.d);
+  const r=ds(VW,d),logged=Object.keys(r.rec).length+Object.keys(r.tr).length;   /* go through ds() so a corrupt record cannot kill the strip */
+  return `<button onclick="goDay(${VW},${d})" style="flex:1;padding:8px 2px;border-radius:8px;cursor:pointer;font-family:inherit;
+   border:1px solid ${sel?'var(--gold)':'var(--line)'};background:${sel?'var(--gold)':'transparent'};color:${sel?'#fff':'var(--txt)'}">
+   <div style="font-size:9px;opacity:.7">${DAYS[d][0]}</div>
+   <div style="font-size:14px;font-weight:700;margin-top:2px">${dt.getDate()}</div>
+   <div style="font-size:8px;margin-top:3px;opacity:.75">${logged?'\u25CF':(isT?'today':'&nbsp;')}</div></button>`;}).join('')}
+ </div>
+ <div style="display:flex;gap:6px;margin-top:9px;align-items:center">
+  <button class="act" onclick="goDay(${VW-1},VD)" ${VW<=1?'disabled style="opacity:.35"':''}>&larr; Wk ${Math.max(1,VW-1)}</button>
+  ${PINNED?`<button class="act" onclick="goToday()" style="border-color:var(--gold);color:var(--gold)">Today</button>`:''}
+  <button class="act" onclick="goDay(${VW+1},VD)" ${VW>=WEEKS?'disabled style="opacity:.35"':''} style="margin-left:auto">Wk ${Math.min(WEEKS,VW+1)} &rarr;</button>
+ </div></div>`;}
+
+function sessionCard(){const el=document.getElementById('sessionCard');
+ const s=sessionFor(VW,VD),st=ds(VW,VD),R=readiness(VW,VD),pl=PLAN[VW]||PLAN[1];
+ const dt=dateOf(VW,VD);
+ el.innerHTML=`<div class="card">
+ <div style="display:flex;justify-content:space-between;align-items:flex-start">
+ <div><div class="eyebrow">${DAYS[VD]} ${dt.getDate()}/${dt.getMonth()+1}${pl.deload?' &middot; deload week':''}</div>
+ <h2>${esc(s.t)}</h2></div>
+ <span class="rdy ${R.lvl}">${R.label}</span></div>
+ <p class="sub" style="margin-top:5px">${esc(pl.note)}</p>
+ ${R.lvl==='r'?`<div class="flag" style="border-left-color:var(--bad)"><div class="ft" style="color:var(--bad)">Today is a recovery day</div>
+ <p>${R.flags.map(f=>esc(f[1])).join('. ')}.</p>
+ <p><span class="gold">Easy walk, easy bike, mobility, or nothing.</span> Message me. This is not you being soft, it is the reason the last return failed.</p></div>`:''}
+ ${R.lvl==='y'?`<div class="flag"><div class="ft">Reduce today, do not cancel</div>
+ <p>${R.flags.map(f=>esc(f[1])).join('. ')}.</p>
+ <p>Keep the session, cut the volume by about a third and hold the intensity down. <span class="gold">Absorb the work instead of adding to it.</span></p></div>`:''}
+ ${s.k==='rest'?'':`<div class="grid2" style="margin-top:12px">
+  <div class="met" style="cursor:default"><b>${s.mins}</b><i>minutes</i></div>
+  <div class="met" style="cursor:default"><b>${s.k==='str'?setsFor(VW)+' sets':(s.rw?s.rw:(s.hard?'Quality':'Easy'))}</b><i>${s.k==='str'?'per exercise':'effort'}</i></div></div>
+  <div class="info" style="margin-top:10px"><div class="ft">Effort target</div><p>${esc(s.effort)}</p></div>
+  ${s.detail?`<p class="sub" style="margin-top:10px">${esc(s.detail)}</p>`:''}`}
+ ${s.ex?`<div style="margin-top:12px">${s.ex.map((e,i)=>{
+   const lg=(st.ex&&st.ex[e.id])||{};
+   return `<div class="ex"><div class="exh"><div style="flex:1">
+    <div class="exn">${i+1}. ${esc(e.n)}</div>
+    <div class="exs">${esc(e.meta)}</div>
+    <div class="cue"><b>Cue:</b> ${esc(e.c)}</div></div>
+    <button class="tick ${lg.done?'on':''}" onclick="togEx('${e.id}')"></button></div>
+    <button class="act" style="margin-top:7px" onclick="logLift('${e.id}')">${lg.wt?esc(lg.wt):'Log what you used'}</button>
+    </div>`;}).join('')}
+  <div class="info"><p>Every one of these sits at <span class="gold">RPE 6 to 7, three to four reps in reserve.</span> Nothing goes to failure in this program. Your old numbers, the 220 deadlift and the 180 squat, are the ceiling for month four. They are not the target for this week and chasing them now is exactly what broke the last two returns.</p></div>`:''}
+ <div class="row" style="margin-top:12px"><button class="tick ${st.done?'on':''}" onclick="togDone()"></button>
+  <div class="rb"><div class="rn">Session completed</div>
+  <div class="rm">${s.k==='rest'?'Rest counts. Tick it.':'Tick when it is done, then log the numbers below.'}</div></div></div>
+ </div>`;}
+function togEx(id){const st=ds(VW,VD);if(!st.ex[id])st.ex[id]={};
+ st.ex[id].done=!st.ex[id].done;save();render();}
+/* the name is looked up here rather than passed through the onclick string.
+   esc() does not escape single quotes, so a name like "Farmer's carry" would
+   have terminated the JS string literal and killed the button silently. */
+function logLift(id){const st=ds(VW,VD),cur=(st.ex[id]||{}).wt||'';
+ const nm=(EX[id]&&EX[id].n)||'Exercise';
+ openModal(`<h3>${esc(nm)}</h3><p class="ms">Whatever you actually used. Weight, band, bodyweight, seconds. Free text, no format.</p>
+ <div class="form"><input id="lIn" type="text" value="${esc(cur)}" placeholder="e.g. 95 lb x 5, or bodyweight">
+ <button class="btn" style="margin-top:12px" onclick="saveLift('${id}')">Save</button>
+ <button class="btn alt" style="margin-top:8px" onclick="clearLift('${id}')">Clear</button></div>`);
+ setTimeout(()=>{const i=document.getElementById('lIn');if(i)i.focus();},60);}
+function saveLift(id){const v=document.getElementById('lIn').value.trim();
+ const st=ds(VW,VD);if(!st.ex[id])st.ex[id]={};
+ if(v)st.ex[id].wt=v.slice(0,40);else delete st.ex[id].wt;
+ save();closeModal();render();}
+function clearLift(id){const st=ds(VW,VD);if(st.ex[id])delete st.ex[id].wt;save();closeModal();render();}
+function togDone(){const st=ds(VW,VD);st.done=st.done?0:1;save();render();}
+
+function trainCard(){const el=document.getElementById('trainCard');
+ const s=sessionFor(VW,VD),t=ds(VW,VD).tr;
+ if(s.k==='rest'){el.innerHTML='';return;}
+ const m=(k,lab,unit)=>`<button class="met" onclick="editNum('tr','${k}','${lab}','${unit||''}')">
+  <b class="${t[k]==null?'empty':''}">${t[k]!=null?esc(t[k]):'\u00b7'}</b><i>${lab}</i></button>`;
+ const run=(s.k==='aero'||s.k==='long');
+ el.innerHTML=`<div class="card"><div class="eyebrow">Training data</div>
+ <h2>What the session actually was</h2>
+ <p class="sub">Every field here feeds the weekly trend. Blanks are fine, guesses are not.</p>
+ <div class="grid3" style="margin-top:13px">
+  ${m('dur','Duration','min')}${m('rpe','Session RPE')}${m('hr','Avg HR')}
+ </div>
+ ${run?`<div class="grid3" style="margin-top:8px">
+  ${m('dist','Distance','mi')}${m('pace','Avg pace','/mi')}${m('peak','Peak HR')}
+ </div>
+ <div class="grid2" style="margin-top:8px">${m('elev','Elevation','ft')}${m('rwr','Run/walk','ratio')}</div>`:''}
+ ${s.k==='str'?`<div class="grid3" style="margin-top:8px">
+  ${m('load','Top load','lb')}${m('reps','Reps')}${m('rir','RIR')}
+ </div>
+ <div class="info"><p>Working at <span class="gold">RPE 6 to 7, three to four reps in reserve.</span> Your old numbers are the ceiling for month four, not the target for week one.</p></div>`:''}
+ ${run&&t.dur&&t.rpe?`<div class="info"><p>Session load: <span class="gold">${Math.round(t.dur*t.rpe)}</span> arbitrary units. This is what I watch week to week, not any single run.</p></div>`:''}
+ </div>`;}
+
+function recoveryCard(){const el=document.getElementById('recoveryCard');
+ const r=ds(VW,VD).rec;
+ const m=(k,lab)=>`<button class="met" onclick="editNum('rec','${k}','${lab}')">
+  <b class="${r[k]==null?'empty':''}">${r[k]!=null?esc(r[k]):'\u00b7'}</b><i>${lab}</i>
+  ${(k==='hrv'||k==='rhr')&&baseline(k,VW)?`<div class="dl">base ${baseline(k,VW).toFixed(0)}</div>`:''}</button>`;
+ const sc=(k,lab)=>`<div class="qlab">${lab}</div><div class="scale">
+  ${[1,2,3,4,5,6,7,8,9,10].filter(n=>n%2===1||n===10).map(n=>
+   `<button class="sc ${String(r[k])===String(n)?'on':''}" onclick="setRec('${k}',${n})">${n}</button>`).join('')}</div>`;
+ el.innerHTML=`<div class="card"><div class="eyebrow">Oura &middot; every morning</div>
+ <h2>Recovery</h2>
+ <div class="grid3" style="margin-top:13px">${m('ready','Readiness')}${m('score','Sleep score')}${m('sleep','Sleep hrs')}</div>
+ <div class="grid3" style="margin-top:8px">${m('hrv','HRV')}${m('rhr','Resting HR')}${m('temp','Temp dev')}</div>
+ ${sc('energy','Energy')}${sc('sore','Soreness')}${sc('motiv','Motivation')}${sc('stress','Stress')}
+ <div class="info" style="margin-top:13px"><p>One bad night changes nothing. <span class="gold">I am reading the trend across the week</span>, and your baseline builds as you log.</p></div>
+ </div>`;}
+function setRec(k,v){ds(VW,VD).rec[k]=v;save();render();}
+
+function fuelCard(){const el=document.getElementById('fuelCard');
+ const f=ds(VW,VD).fu;
+ const yn=(k,lab)=>`<div class="qlab">${lab}</div><div class="scale">
+  ${['No','Yes'].map(v=>`<button class="sc ${f[k]===v?'on':''}" onclick="setFu('${k}','${v}')">${v}</button>`).join('')}</div>`;
+ const m=(k,lab,u)=>`<button class="met" onclick="editNum('fu','${k}','${lab}','${u||''}')">
+  <b class="${f[k]==null?'empty':''}">${f[k]!=null?esc(f[k]):'\u00b7'}</b><i>${lab}</i></button>`;
+ el.innerHTML=`<div class="card"><div class="eyebrow">Logged, not prescribed</div>
+ <h2>Food and hydration</h2>
+ <div class="grid2" style="margin-top:13px">${m('water','Water','L')}${m('lastcaff','Last stim','time')}</div>
+ ${yn('pre','Ate before training')}
+ ${yn('post','Ate within an hour after')}
+ ${yn('migraine','Migraine today')}
+ ${yn('symptoms','Anything unusual')}
+ ${f.migraine==='Yes'?`<div class="flag" style="border-left-color:var(--bad)"><div class="ft" style="color:var(--bad)">Migraine logged</div>
+ <p>Check back: were you short on fluid or food before it? <span class="gold">That is the pattern you told me about</span>, and it is the one we can actually control.</p>
+ <p>If the pattern changes or they get more frequent, that is a conversation with your doctor rather than with me.</p></div>`:''}
+ <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+  <div class="ft">What you ate today</div>
+  <p class="sub" style="margin-top:4px">Just write it down. No calories, no macros, no weighing, nothing to hit. Rough is fine, "toast, coffee, chicken wrap, half a bag of pretzels" is a perfect entry.</p>
+  <button class="btn alt" style="margin-top:10px;text-align:left;white-space:normal;line-height:1.45" onclick="editFood()">${f.food?esc(f.food):'Tap to write today down'}</button>
+ </div>
+ <div class="info"><p>This box is not scored and there is no target attached to it. <span class="gold">It is here so that when a number in your recovery data moves, we can look back and see what the week around it actually looked like.</span></p>
+ <p>Your nutrition sits with your nutritionist. Nothing in this app is going to tell you what to eat.</p></div>
+ </div>`;}
+function editFood(){const cur=ds(VW,VD).fu.food||'';
+ openModal(`<h3>What you ate today</h3><p class="ms">However you want to write it. Nothing here is counted or scored.</p>
+ <div class="form"><textarea id="fdIn" rows="7" style="width:100%;font-family:inherit;font-size:15px;padding:11px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);resize:vertical" placeholder="Breakfast...&#10;Lunch...&#10;Dinner...&#10;Anything else...">${esc(cur)}</textarea>
+ <button class="btn" style="margin-top:12px" onclick="saveFood()">Save</button>
+ <button class="btn alt" style="margin-top:8px" onclick="clearFood()">Clear</button></div>`);
+ setTimeout(()=>{const i=document.getElementById('fdIn');if(i)i.focus();},60);}
+function saveFood(){const v=document.getElementById('fdIn').value.trim();
+ const f=ds(VW,VD).fu; if(v)f.food=v.slice(0,2000); else delete f.food;
+ save();closeModal();render();}
+function clearFood(){delete ds(VW,VD).fu.food;save();closeModal();render();}
+function setFu(k,v){ds(VW,VD).fu[k]=v;save();render();}
+
+function editNum(grp,k,lab,unit){const cur=ds(VW,VD)[grp][k];
+ openModal(`<h3>${esc(lab)}</h3><p class="ms">${unit?esc(unit):'Leave blank if you do not have it. A blank is better than a guess.'}</p>
+ <div class="form"><input id="nIn" type="text" inputmode="decimal" value="${cur!=null?esc(cur):''}" placeholder="${esc(unit||'')}">
+ <button class="btn" style="margin-top:12px" onclick="saveNum('${grp}','${k}')">Save</button>
+ <button class="btn alt" style="margin-top:8px" onclick="clearNum('${grp}','${k}')">Clear</button></div>`);
+ setTimeout(()=>{const i=document.getElementById('nIn');if(i)i.focus();},60);}
+function saveNum(grp,k){const v=document.getElementById('nIn').value.trim();
+ if(v==='')delete ds(VW,VD)[grp][k]; else ds(VW,VD)[grp][k]=v;
+ save();closeModal();render();}
+function clearNum(grp,k){delete ds(VW,VD)[grp][k];save();closeModal();render();}
+
+
+/* ---------- weekly trend, the point of the whole app ---------- */
+function weekAvg(w,grp,field){
+ const v=[];for(let d=0;d<7;d++){const r=S.d[key(w,d)];
+  if(r&&r[grp]&&r[grp][field]!=null&&r[grp][field]!=='')v.push(Number(r[grp][field]));}
+ const ok=v.filter(x=>!isNaN(x));
+ return ok.length?ok.reduce((a,b)=>a+b,0)/ok.length:null;}
+function weekSum(w,grp,field){
+ let t=0,n=0;for(let d=0;d<7;d++){const r=S.d[key(w,d)];
+  if(r&&r[grp]&&r[grp][field]!=null){const x=Number(r[grp][field]);if(!isNaN(x)){t+=x;n++;}}}
+ return n?t:null;}
+function weekLoad(w){let t=0;for(let d=0;d<7;d++){const r=S.d[key(w,d)];
+ if(r&&r.tr&&r.tr.dur&&r.tr.rpe){const x=Number(r.tr.dur)*Number(r.tr.rpe);if(!isNaN(x))t+=x;}}
+ return t||null;}
+function sessionsDone(w){let n=0;for(let d=0;d<7;d++){const r=S.d[key(w,d)];if(r&&r.done)n++;}return n;}
+
+function weekCard(){const el=document.getElementById('weekCard');
+ const prev=VW>1?VW-1:null;
+ const rows=[
+  ['Sessions done',   sessionsDone(VW), prev!=null?sessionsDone(prev):null, 'up',0],
+  ['Training load',   weekLoad(VW),     prev!=null?weekLoad(prev):null,     'note',0],
+  ['Aerobic minutes', weekSum(VW,'tr','dur'), prev!=null?weekSum(prev,'tr','dur'):null,'up',0],
+  ['Distance, mi',    weekSum(VW,'tr','dist'),prev!=null?weekSum(prev,'tr','dist'):null,'up',1],
+  ['Avg session RPE', weekAvg(VW,'tr','rpe'), prev!=null?weekAvg(prev,'tr','rpe'):null,'note',1],
+  ['Avg HRV',         weekAvg(VW,'rec','hrv'),prev!=null?weekAvg(prev,'rec','hrv'):null,'up',0],
+  ['Avg resting HR',  weekAvg(VW,'rec','rhr'),prev!=null?weekAvg(prev,'rec','rhr'):null,'down',0],
+  ['Avg sleep, hrs',  weekAvg(VW,'rec','sleep'),prev!=null?weekAvg(prev,'rec','sleep'):null,'up',1],
+  ['Avg readiness',   weekAvg(VW,'rec','ready'),prev!=null?weekAvg(prev,'rec','ready'):null,'up',0],
+  ['Avg energy',      weekAvg(VW,'rec','energy'),prev!=null?weekAvg(prev,'rec','energy'):null,'up',1],
+  ['Avg protein, g',  weekAvg(VW,'fu','protein'),prev!=null?weekAvg(prev,'fu','protein'):null,'up',0],
+  ['Avg caffeine, mg',weekAvg(VW,'fu','caff'), prev!=null?weekAvg(prev,'fu','caff'):null,'note',0]
+ ];
+ const fmt=(v,dp)=>v==null?'\u00b7':Number(v).toFixed(dp);
+ const arrow=(now,was,dir)=>{
+  if(now==null||was==null)return '';
+  const d=now-was; if(Math.abs(d)<0.001)return '<span class="flat">\u00b7</span>';
+  const good=(dir==='up'&&d>0)||(dir==='down'&&d<0);
+  if(dir==='note')return `<span class="flat">${d>0?'\u25B2':'\u25BC'}</span>`;
+  return `<span class="${good?'up':'dn'}">${d>0?'\u25B2':'\u25BC'}</span>`;};
+ el.innerHTML=`<div class="card"><div class="eyebrow">Week ${VW} against week ${VW>1?VW-1:'\u00b7'}</div>
+ <h2>The trend</h2>
+ <p class="sub">This is what decides the next block. Not how any single day felt.</p>
+ <div style="margin-top:13px">
+ ${rows.map(r=>`<div class="trend"><span>${r[0]}</span>
+  <b>${fmt(r[1],r[4])} ${arrow(r[1],r[2],r[3])}</b></div>`).join('')}
+ </div>
+ <details class="more"><summary>What I am looking for</summary>
+ <div class="info"><p><span class="gold">HRV up, resting HR down, sleep up, energy up, load up.</span> All five moving the right way means the engine is rebuilding and we add.</p>
+ <p>Load up while HRV falls and energy drops is the exact pattern that ended the last two attempts. If I see it, we hold or we cut.</p>
+ <p>Caffeine is tracked, not judged. I want to see it sitting next to your sleep, that is all.</p></div></details></div>`;}
+
+function benchCard(){const el=document.getElementById('benchCard');
+ const isB=[4,8,12,16].includes(VW);
+ if(!isB){el.innerHTML='';return;}
+ const b=S.wk[VW]||{};
+ const f=(k,lab,ph)=>`<div class="form"><label>${lab}</label>
+  <input type="text" value="${b[k]?esc(b[k]):''}" placeholder="${ph}" onchange="setBench('${k}',this.value)"></div>`;
+ el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,#FFFFFF)">
+ <div class="eyebrow">Week ${VW} &middot; benchmark</div>
+ <h2>Where you actually are</h2>
+ <div class="info"><p>Same conditions every time. Same route, similar weather, similar time of day, and <span class="gold">not the day after a hard session.</span></p>
+ <p>Spread across two or three days. Everything in one day gives you a fatigue score, not a fitness score.</p></div>
+ ${f('aero','Aerobic test, duration and avg HR','e.g. 30 min @ 152')}
+ ${f('pace','Pace at that HR','e.g. 10:40/mi')}
+ ${f('rpe','RPE at that effort','e.g. 4')}
+ ${f('dl','Deadlift, 3 reps','e.g. 155 lb')}
+ ${f('hrp','Hand-release push-ups in 2 min','e.g. 18')}
+ ${f('plank','Plank hold','e.g. 2:10')}
+ ${VW>=12?f('sdc','Sprint-drag-carry','e.g. 2:45'):''}
+ ${VW>=12?f('run2','Two-mile run','e.g. 19:20'):''}
+ <div class="flag"><p><span class="gold">Nothing maximal before week 8.</span> A max effort on an engine that is still rebuilding tells us what it cost, not what it can do.</p></div></div>`;}
+function setBench(k,v){if(!S.wk[VW])S.wk[VW]={};S.wk[VW][k]=v;save();}
+
+function aftCard(){const el=document.getElementById('aftCard');
+ el.innerHTML=`<div class="card"><div class="eyebrow">The test</div>
+ <h2>AFT, layered on top</h2>
+ <p class="sub">General fitness first, test-specific work second. That was your call and it is the right one.</p>
+ <div style="margin-top:13px">
+ ${[['3-rep max deadlift','Built by your strength days. Trap bar or conventional, 3 to 5 reps.'],
+    ['Hand-release push-ups','Sub-maximal sets through the week beat one set to failure.'],
+    ['Sprint-drag-carry','Rehearsed from week 9. The transitions cost more time than the legs do.'],
+    ['Plank','Core endurance in every strength session, progressed by time.'],
+    ['Two-mile run','This is the aerobic build. It is the whole program, not a separate thing.']]
+  .map(x=>`<div class="row"><div class="rb"><div class="rn">${x[0]}</div><div class="rm">${x[1]}</div></div></div>`).join('')}
+ </div>
+ <div class="info"><div class="ft">Your standard</div>
+ <p>25S is Signal, not one of the designated combat specialties, so you are scored on the <span class="gold">general standard: 300 points total, minimum 60 on every single event</span>, on tables normed by sex and age.</p>
+ <p>You are 34, which puts you in the <span class="gold">32 to 36 band</span> for the whole of this program. The plank is scored the same for men and women. The deadlift, push-ups, sprint-drag-carry and two-mile run are not.</p>
+ <p>Maxing four will not save you if you score 59 on the fifth. That is why nothing here gets neglected.</p></div>
+ <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+  <div class="ft">Your 60-point line</div>
+  <p class="sub" style="margin-top:4px">Put your four numbers in from the official scale for female, 32 to 36. I am not going to type a scoring table in here from memory and have you train to the wrong number.</p>
+  <div class="grid2" style="margin-top:10px">${tg('mdl','Deadlift','lb')}${tg('hrp','Push-ups','reps')}</div>
+  <div class="grid2" style="margin-top:8px">${tg('sdc','Sprint-drag-carry','m:ss')}${tg('run','Two-mile','m:ss')}</div>
+  <div class="grid2" style="margin-top:8px">${tg('plk','Plank','m:ss')}${tg('total','Total needed','pts')}</div>
+ </div>
+ <div class="flag"><div class="ft">One thing to check with your unit</div>
+ <p>You mentioned the Combat Field Test. That one applies to 24 designated combat specialties, Infantry, Armor, Special Forces, Combat Engineers, Field Artillery, EOD and Divers, and Signal is not on that list.</p>
+ <p><span class="gold">Confirm with your chain before we build anything for it.</span> If you genuinely have to take it, the program changes shape, because loaded carries and sandbag lifts in boots are a different animal from an aerobic rebuild.</p></div></div>`;}
+function tg(k,lab,u){const v=(S.aft||{})[k];
+ return `<button class="met" onclick="editAft('${k}','${lab}','${u}')"><b class="${v==null?'empty':''}">${v!=null?esc(v):'\u00b7'}</b><i>${lab}</i></button>`;}
+function editAft(k,lab,u){if(!S.aft)S.aft={};
+ openModal(`<h3>${esc(lab)}</h3><p class="ms">The 60-point figure for female, age 32 to 36 (${esc(u)}).</p>
+ <div class="form"><input id="aIn" type="text" value="${esc(S.aft[k]!=null?S.aft[k]:'')}" placeholder="${esc(u)}">
+ <button class="btn" style="margin-top:12px" onclick="saveAft('${k}')">Save</button>
+ <button class="btn alt" style="margin-top:8px" onclick="clearAft('${k}')">Clear</button></div>`);
+ setTimeout(()=>{const i=document.getElementById('aIn');if(i)i.focus();},60);}
+function saveAft(k){const v=document.getElementById('aIn').value.trim();
+ if(!S.aft)S.aft={}; if(v)S.aft[k]=v.slice(0,12); else delete S.aft[k];
+ save();closeModal();render();}
+function clearAft(k){if(S.aft)delete S.aft[k];save();closeModal();render();}
+
+function eduCard(){const el=document.getElementById('eduCard');
+ el.innerHTML=`<div class="card"><div class="eyebrow">Why it is built this way</div>
+ <h2>The reasoning</h2>
+ <div class="info"><div class="ft">Why we start this far below what you could do</div>
+ <p>You can almost certainly train harder than week 1 asks. That has never been the problem.</p>
+ <p>Twice now you have come back, felt fine, built quickly, and then got ill or hit a wall. <span class="gold">The failure point is not the ceiling, it is the rate of climb.</span></p></div>
+ <div class="info"><div class="ft">Why effort and not pace</div>
+ <p>Your old easy pace belongs to an engine you had four years ago. Chasing it now means running every easy run too hard, which is exactly how the aerobic base never rebuilds.</p>
+ <p>Pace is an outcome. Effort is the input. We control the input.</p></div>
+ <div class="info"><div class="ft">Why one variable at a time</div>
+ <p>Duration, then frequency, then intensity. Never two together.</p>
+ <p>If something goes wrong we know which one caused it. Change two and you learn nothing.</p></div>
+ <div class="info"><div class="ft">Why the food matters more than the training</div>
+ <p>Your appetite is genuinely suppressed and your training is going up. Those two things pull in opposite directions.</p>
+ <p><span class="gold">Underfuelled training is not training, it is just damage.</span> If one thing slips this block, do not let it be this one.</p></div></div>`;}
+
+function render(){
+ syncToday();
+ const R=readiness(VW,VD);
+ const p=document.getElementById('rdyPill');
+ p.className='rdy '+R.lvl; p.textContent=R.label;
+ [installCard,phaseCard,dayStrip,sessionCard,trainCard,recoveryCard,fuelCard,
+  weekCard,benchCard,aftCard,eduCard].forEach(fn=>{
+   try{fn();}catch(e){console.error('card failed:',fn.name,e);}});
+}
+render();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncToday())render();});
+window.addEventListener('focus',()=>{if(syncToday())render();});
+setInterval(()=>{if(syncToday())render();},60000);
+</script></body></html>

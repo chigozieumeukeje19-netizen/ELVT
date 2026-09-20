@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="var(--bg)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ELVT COACH — Rodrigo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF7F2;--panel:#FFFFFF;--panel2:#F4F0E9;--line:#E4DFD6;--gold:#8A6F34;--gold-dim:#A58A4E;--gold-soft:rgba(138,111,52,.09);--txt:#111111;--mut:#6E6A64;--mut2:#9A958D;--ok:#2F7D4F;--warn:#A8641F;--bad:#A33F36;--r:12px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:Inter,-apple-system,system-ui,sans-serif;
+font-size:15px;line-height:1.5;padding-bottom:80px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:.01em}
+button{font-family:inherit;color:inherit;border:none;background:none;cursor:pointer;font-size:inherit}
+input{font-family:inherit}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px}
+.topbar{position:sticky;top:0;z-index:60;background:rgba(250,247,242,.94);backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.tb-in{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;max-width:640px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:9px}.brand img{height:15px;width:auto;display:block}.brand small{font-size:9px;letter-spacing:.2em;color:var(--mut);font-weight:600;text-transform:uppercase}
+.brand small{display:block;font-family:Inter,sans-serif;font-size:9px;letter-spacing:.3em;color:var(--mut2);font-weight:500;margin-top:-3px}
+.streak{display:flex;align-items:center;gap:6px;background:var(--gold-soft);border:1px solid rgba(201,163,79,.28);
+padding:6px 11px;border-radius:100px;font-size:13px;font-weight:600;color:var(--gold)}
+.streak span.lbl{font-size:9px;letter-spacing:.16em;color:var(--mut);font-weight:500}
+.race{margin:14px 0 0;background:linear-gradient(140deg,#FFFBF2,var(--panel));border:1px solid rgba(138,111,52,.3);
+border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.race .l{font-size:10px;letter-spacing:.2em;color:var(--gold);font-weight:600;text-transform:uppercase}
+.race .t{font-family:'Cormorant Garamond',serif;font-size:21px;margin-top:2px}
+.race .s{font-size:12px;color:var(--mut);margin-top:1px}
+.race .n{font-family:'Cormorant Garamond',serif;font-size:38px;line-height:1;color:var(--gold);text-align:center}
+.race .n small{display:block;font-family:Inter,sans-serif;font-size:9px;letter-spacing:.16em;color:var(--mut);font-weight:500;margin-top:3px}
+.strip{display:flex;gap:6px;overflow-x:auto;padding:14px 0 4px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.wk{flex:0 0 auto;min-width:52px;padding:8px 6px;border-radius:11px;background:var(--panel);border:1px solid var(--line);text-align:center;transition:.15s}
+.wk b{display:block;font-size:14px;font-weight:600}
+.wk i{display:block;font-style:normal;font-size:8px;letter-spacing:.1em;color:var(--mut2);text-transform:uppercase;margin-top:2px}
+.wk.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.wk.on i{color:rgba(11,11,13,.65)}
+.wk.race{border-color:var(--gold)}
+.days{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:1 1 0;min-width:44px;padding:9px 2px 8px;border-radius:12px;background:var(--panel);border:1px solid var(--line);text-align:center;transition:.15s}
+.day.on{border-color:var(--gold);background:#FFFBF2}
+.day .dn{font-size:9px;letter-spacing:.09em;color:var(--mut);text-transform:uppercase}
+.day .dd{font-size:14px;font-weight:600;margin-top:1px}
+.day.today .dd{color:var(--gold)}
+.day.on .dn{color:var(--gold)}
+.ring{margin:5px auto 0;display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:14px 0}
+.card.compact{padding:14px 16px}
+.card h2{margin:0 0 3px;font-size:21px}
+.eyebrow{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.sub{font-size:12.5px;color:var(--mut);margin:0}
+.goals{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap}
+.goal{flex:1 1 0;min-width:88px;display:flex;align-items:center;gap:7px;background:var(--panel2);
+border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;font-weight:500}
+.goal span{flex:0 0 auto;width:17px;height:17px;border-radius:100px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.32);color:var(--gold);font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+details.more{margin-top:12px}
+details.more>summary{list-style:none;cursor:pointer;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+color:var(--mut);font-weight:600;padding:8px 0 2px;display:flex;align-items:center;gap:6px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:'\FF0B';color:var(--gold);font-size:13px;letter-spacing:0}
+details.more[open]>summary::after{content:'\2212'}
+.jump{display:block;width:100%;margin:8px 0 0;padding:9px;border-radius:10px;background:var(--gold-soft);
+border:1px solid rgba(138,111,52,.3);color:var(--gold);font-size:12.5px;font-weight:600}
+.flag{background:#FFFBF2;border:1px solid rgba(217,139,74,.32);border-radius:11px;padding:12px 14px;margin:10px 0}
+.flag .ft{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--warn);font-weight:600;margin-bottom:4px}
+.flag p{margin:0 0 6px;font-size:13px;color:#3A3833;line-height:1.55}
+.flag p:last-child{margin-bottom:0}
+.info{background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:9px;padding:12px 14px;margin:10px 0}
+.info .ft{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:4px}
+.info p{margin:0 0 6px;font-size:13px;color:#3A3833;line-height:1.55}
+.info p:last-child{margin-bottom:0}
+.gold{color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center}
+.stat b{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);line-height:1.1}
+.stat i{display:block;font-style:normal;font-size:9px;letter-spacing:.11em;color:var(--mut);text-transform:uppercase;margin-top:3px}
+.sess-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
+.tag{font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:4px 9px;border-radius:100px;white-space:nowrap}
+.t-run{background:rgba(93,184,122,.12);color:var(--ok);border:1px solid rgba(93,184,122,.28)}
+.t-long{background:rgba(201,163,79,.14);color:var(--gold);border:1px solid rgba(138,111,52,.3)}
+.t-rec{background:rgba(141,141,150,.12);color:var(--mut);border:1px solid var(--line)}
+.t-quality{background:rgba(192,91,82,.14);color:#e08b82;border:1px solid rgba(192,91,82,.3)}
+.t-race{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}
+.row{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:none}
+.cb{flex:0 0 auto;width:23px;height:23px;border-radius:7px;border:1.5px solid #3a3a42;background:var(--panel2);
+display:flex;align-items:center;justify-content:center;margin-top:1px;transition:.15s}
+.cb.on{background:var(--gold);border-color:var(--gold)}
+.cb svg{opacity:0;transition:.15s}
+.cb.on svg{opacity:1}
+.rb{flex:1;min-width:0}
+.rn{font-size:14.5px;font-weight:500;line-height:1.35}
+.row.done .rn{color:var(--mut);text-decoration:line-through;text-decoration-color:var(--gold-dim)}
+.rm{font-size:11.5px;color:var(--mut);margin-top:2px}
+.rcustom{font-size:11.5px;color:var(--warn);margin-top:3px;font-style:italic}
+.acts{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.act{font-size:10.5px;letter-spacing:.05em;padding:4px 9px;border-radius:100px;border:1px solid var(--line);
+background:var(--panel2);color:var(--mut);display:inline-flex;align-items:center;gap:4px}
+.act.vid{color:var(--gold);border-color:rgba(201,163,79,.28)}
+.act.wt{color:var(--txt)}
+.act .up{color:var(--ok)}.act .dn{color:var(--bad)}.act .sm{color:var(--mut2)}
+.bar{height:7px;border-radius:100px;background:var(--line);overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:100px;transition:width .35s}
+.bar.g i{background:linear-gradient(90deg,#3d7a52,var(--ok))}
+.bar.b i{background:linear-gradient(90deg,#2f5f7a,#4a9fd0)}
+.brow{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px}
+.brow b{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--gold)}
+.brow .r{color:var(--mut);font-size:11.5px}
+.tapper{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+.tp{flex:1;min-width:62px;padding:9px 4px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);text-align:center;font-size:12.5px;font-weight:500}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.met{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 6px;text-align:center}
+.met b{display:block;font-family:'Cormorant Garamond',serif;font-size:23px;line-height:1.05;color:var(--gold)}
+.met b.lo{color:var(--bad)} .met b.mid{color:var(--warn)} .met b.hi{color:var(--ok)}
+.met i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.11em;color:var(--mut);text-transform:uppercase;margin-top:3px}
+.met small{display:block;font-size:9.5px;color:var(--mut2);margin-top:2px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:34px;margin-top:10px}
+.spark div{flex:1;background:var(--gold-dim);border-radius:2px 2px 0 0;min-height:2px}
+.spark div.lo{background:var(--bad)} .spark div.hi{background:var(--ok)} .spark div.none{background:var(--line)}
+.macros{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}
+.mac{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 5px;text-align:center}
+.mac b{display:block;font-family:'Cormorant Garamond',serif;font-size:17px;line-height:1.15}
+.mac i{display:block;font-style:normal;font-size:8.5px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;margin-top:2px}
+.mac .tgt{font-size:9.5px;color:var(--mut2);margin-top:1px}
+.mac.over b{color:var(--warn)}
+.xrow{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.xdel{font-size:16px;color:var(--mut2);padding:0 5px}
+.form{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px;margin-top:11px}
+.form label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.form input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--txt);font-size:15px;margin-bottom:9px}
+.form input:focus{outline:none;border-color:var(--gold-dim)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.btn{width:100%;padding:11px;border-radius:9px;background:var(--gold);color:var(--bg);font-weight:600;font-size:14px}
+.btn.alt{background:var(--panel2);color:var(--gold);border:1px solid rgba(138,111,52,.3)}
+.pill{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--warn);
+border:1px solid rgba(217,139,74,.35);border-radius:100px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+.pill.on{color:var(--ok);border-color:rgba(93,184,122,.4)}
+.pill.off{color:var(--mut2);border-color:var(--line)}
+.pep{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.pep:first-of-type{border-top:none}
+.pepn{font-size:14px;font-weight:500}
+.pepd{font-size:11.5px;color:var(--mut);margin-top:2px}
+.pepv{font-size:12px;color:var(--gold);white-space:nowrap;font-weight:600;text-align:right}
+.swapg h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:16px 0 7px;font-weight:600}
+.swapg ul{margin:0;padding-left:17px}
+.swapg li{font-size:13px;color:#3A3833;margin-bottom:5px;line-height:1.5}
+.glist h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:16px 0 7px;font-weight:600}
+.gitem{padding:9px 0;border-top:1px solid var(--line)}
+.gtop{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.gn{font-size:13.5px;font-weight:500;flex:1}
+.gq{font-size:12px;color:var(--gold);white-space:nowrap;font-weight:500}
+.gnote{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.5}
+.recipe{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:9px}
+.recipe b{display:block;font-size:13.5px;margin-bottom:3px}
+.recipe p{margin:0 0 5px;font-size:12.5px;color:var(--mut);line-height:1.55}
+.recipe p:last-child{margin-bottom:0}
+.pw{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--line);font-size:13.5px}
+.pw:first-child{border-top:none}
+.pw .pv{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold)}
+.mask{position:fixed;inset:0;background:rgba(17,17,17,.42);backdrop-filter:blur(3px);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.modal{width:100%;max-width:640px;background:var(--panel);border:1px solid var(--line);border-radius:20px 20px 0 0;
+padding:20px 18px calc(24px + env(safe-area-inset-bottom));max-height:86vh;overflow-y:auto}
+.modal h3{margin:0 0 3px;font-size:20px}
+.modal .ms{font-size:12.5px;color:var(--mut);margin:0 0 14px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;
+padding:12px 13px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);margin-bottom:7px;font-size:14px}
+.opt.cur{border-color:var(--gold);color:var(--gold)}
+.opt small{color:var(--mut);font-size:11px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,90px);background:var(--gold);color:var(--bg);
+font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:100px;z-index:200;transition:.32s;opacity:0;white-space:nowrap}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.a2{position:fixed;inset:0;background:rgba(11,11,13,.97);z-index:300;display:none;flex-direction:column;
+align-items:center;justify-content:center;text-align:center;padding:34px}
+.a2.on{display:flex}
+.a2 h2{font-size:29px;margin:0 0 8px;color:var(--gold)}
+.a2 p{font-size:14px;color:var(--mut);max-width:340px;margin:0 0 8px;line-height:1.6}
+.a2steps{max-width:340px;width:100%;margin-top:16px;text-align:left}
+.a2steps .s{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.a2steps .s:first-child{border-top:none}
+.a2steps .s b{flex:0 0 auto;width:20px;height:20px;border-radius:100px;background:var(--gold-soft);
+border:1px solid rgba(201,163,79,.32);color:var(--gold);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.a2steps .s span{font-size:13.5px;color:#3A3833;line-height:1.5}
+.helplink{display:block;width:100%;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);padding:12px 0 0;font-weight:600}
+.foot{text-align:center;font-size:10px;letter-spacing:.2em;color:var(--mut2);text-transform:uppercase;padding:20px 0 10px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="a2" id="a2">
+  <h2>Save this first</h2>
+  <p><b style="color:#3A3833">Do this before you log anything.</b> Your data is stored on this device in this app. If you start logging in the browser and add it to your home screen later, the home screen version will start empty.</p>
+  <div class="a2steps" id="a2steps"></div>
+  <p style="font-size:12px;color:#5f5f68;margin-top:14px">Fifteen seconds. Then open it from your home screen every time.</p>
+  <button class="btn" style="max-width:250px;margin-top:16px" onclick="closeA2()">Done, I've added it</button>
+  <button class="btn alt" style="max-width:250px;margin-top:9px" onclick="closeA2()">Skip for now</button>
+</div>
+
+<div class="topbar"><div class="tb-in">
+  <div class="brand"><img src="data:image/png;base64,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" alt="ELVT"><small>RODRIGO</small></div>
+  <div class="streak"><span class="lbl">STREAK</span><span id="streakN">0</span></div>
+</div></div>
+
+<div class="wrap">
+  <div class="race">
+    <div><div class="l">Chicago Marathon</div>
+      <div class="t">26.2 &middot; Sunday 11 October</div>
+      <div class="s" id="raceSub">Third marathon</div></div>
+    <div class="n"><span id="cdN">&ndash;</span><small id="cdL">DAYS OUT</small></div>
+  </div>
+
+  <div class="strip" id="weekStrip"></div>
+  <div class="days" id="dayStrip"></div>
+  <div id="jumpBar"></div>
+
+  <div class="card compact">
+    <div class="eyebrow">Athlete</div>
+    <h2>Rodrigo</h2>
+    <p class="sub">Chicago build &middot; 12 weeks &middot; started Mon 3 August 2026</p>
+    <div class="goals">
+      <div class="goal"><span>1</span>Get to the line fresh</div>
+      <div class="goal"><span>2</span>Fuel the work</div>
+      <div class="goal"><span>3</span>Recovery trending up</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="pfMiles">47</b><i>Miles this week</i></div>
+      <div class="stat"><b id="pfLong">17</b><i>Long run</i></div>
+      <div class="stat"><b id="pfCal">&ndash;</b><i>Today kcal</i></div>
+    </div>
+    <details class="more">
+      <summary>More detail</summary>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat"><b>43</b><i>Age</i></div>
+        <div class="stat"><b>173</b><i>lbs</i></div>
+        <div class="stat"><b>170g</b><i>Protein daily</i></div>
+        <div class="stat"><b>57</b><i>Peak week mi</i></div>
+        <div class="stat"><b>22</b><i>Peak long run</i></div>
+        <div class="stat"><b>3</b><i>Taper weeks</i></div>
+      </div>
+      <div class="info" style="margin-top:10px">
+        <div class="ft">The whole plan in one line</div>
+        <p>Your running does not need fixing. Your recovery and your fuelling do. Everything in here is built to move those two numbers, because they are what decide whether the fitness you already have shows up on 11 October.</p>
+      </div>
+    </details>
+  </div>
+
+  <div id="sessionCard"></div>
+  <div id="tripCard"></div>
+  <div id="metricsCard"></div>
+  <div id="hotelCard"></div>
+  <div id="nutritionCard"></div>
+  <div id="pepCard"></div>
+  <div id="groceryCard"></div>
+  <div id="dailyCard"></div>
+  <div id="photosCard"></div>
+  <div id="pastCard"></div>
+  <div id="hrvCard"></div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Wednesday is now a full rest day</h2>
+    <div class="flag">
+      <div class="ft">The change</div>
+      <p>You had strength on Wednesday as well as Thursday and Sunday. Wednesday is now genuinely off. No running, no lifting. Strength drops to two sessions a week, which is what you asked for in the first place.</p>
+    </div>
+    <div class="info">
+      <div class="ft">Why this specifically</div>
+      <p>You were training seven days a week at 43, with an active calf strain, recovery scores dropping into the 20s and 30s, and real sleep debt. There was nowhere in your week for any of that to resolve.</p>
+      <p>Nothing else moved. Same mileage, same long run, same quality day. The only thing that changed is that one day a week your body gets to finish the job.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Fuelling the long run</h2>
+    <div class="info">
+      <div class="ft">This is the highest-value change in the whole plan</div>
+      <p>Your long runs are over two and a half hours. Above roughly 90 minutes, the research is consistent: you need carbohydrate <em>during</em> the run, not just before and after.</p>
+      <p><span class="gold">Target 60 to 90 grams of carbs per hour</span> once you are past the first 45 minutes. That is roughly one gel every 25 to 30 minutes, or the equivalent in sports drink, chews or real food. Take the first one earlier than you think you need it.</p>
+      <p>Practise this on every single long run between now and Chicago. Race day is not the day to find out your gut does not tolerate something.</p>
+    </div>
+    <div class="info">
+      <div class="ft">Straight after</div>
+      <p>Within 60 minutes: around 1 gram of carbohydrate per kilo of bodyweight, so roughly 80g for you, plus 25 to 30g of protein. If appetite is not there, drink it. Chocolate milk, a smoothie, a shake with fruit and honey. Liquid always beats nothing.</p>
+    </div>
+    <div class="info">
+      <div class="ft">Why this matters more for you than most</div>
+      <p>You are on an appetite suppressant. That is fine, it is doing a job. But it means fuelling will never happen by feel, so it has to happen by plan. The number on this app is not a suggestion, it is the session.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Reference</div>
+    <h2>Reading your own data</h2>
+    <div class="info">
+      <div class="ft">Recovery score</div>
+      <p>One low score means nothing. Three in a row, or a week averaging under 45, means the load is outrunning the recovery and we adjust. Log it every morning and the trend does the talking.</p>
+    </div>
+    <div class="info">
+      <div class="ft">The easy run test</div>
+      <p>Several of your easy runs have been drifting into zone 4. That is not fitness, that is a fuelling and recovery signal. Easy runs should be genuinely conversational. If your heart rate climbs at the same pace week over week, you are under recovered, not unfit.</p>
+    </div>
+    <div class="info">
+      <div class="ft">What good looks like by October</div>
+      <p>Same pace, lower heart rate. Recovery scores clustering above 50 instead of swinging. Sleep debt shrinking. Those three, in that order, are what tell us Chicago is going to go well. The mileage is already there.</p>
+    </div>
+  </div>
+
+  <button class="helplink" onclick="openA2()">How to save this app</button>
+  <div class="foot">ELVT COACHING</div>
+</div>
+
+<div class="mask" id="mask" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================
+   ELVT COACH - Rodrigo
+   12 weeks. Mon 3 Aug 2026. CHICAGO MARATHON = week 10 Sunday,
+   11 Oct 2026. Weeks 11-12 are post-race, new goal.
+   Wednesday is a FULL REST DAY. Strength 2x (Thu, Sun).
+   Calories are day-specific: 2400 + 100 x miles.
+   ========================================================== */
+const START=new Date(2026,7,3);
+const RACE =new Date(2026,9,11);
+const KEY='elvt_rodrigo_v2';
+const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+// photo uploads handled manually by coach; no Drive link in the app
+const BW_KG=78.5;
+
+const EX={
+  goblet :{n:'Goblet Squat',      v:'Xjo_fY9Hl9w',wt:1},
+  pushup :{n:'Push-Up',           v:'WDIpL0pjun0'},
+  dbrow  :{n:'DB Row',            v:'h06ydA-aY8M',wt:1},
+  bridge :{n:'Glute Bridge',      v:'wPM8icPu6H8'},
+  plank  :{n:'Plank',             v:'mwlp75MS6Rg'},
+  fpull  :{n:'Face Pull',         v:'0Po47vvj9g4',wt:1},
+  kbdl   :{n:'Kettlebell Deadlift',v:'bxRFvIOUoL8',wt:1}
+};
+const MASTER=Object.keys(EX);
+const RUN_VID='S7DFiEvqkJQ', QUAL_VID='1xT4K5FLk44';
+const STR={
+  upper:[['dbrow','3 sets \u00d7 10-12'],['pushup','3 sets \u00d7 10-15'],
+         ['fpull','3 sets \u00d7 15, shoulder health, light'],['plank','3 sets \u00d7 30-45 sec']],
+  lower:[['kbdl','3 sets \u00d7 10-12'],['goblet','3 sets \u00d7 10-12'],
+         ['bridge','3 sets \u00d7 15'],['plank','3 sets \u00d7 30-45 sec']],
+  full :[['goblet','3 sets \u00d7 10-12'],['dbrow','3 sets \u00d7 10-12'],
+         ['bridge','3 sets \u00d7 15'],['pushup','3 sets \u00d7 10-15'],['plank','3 sets \u00d7 30-45 sec']]
+};
+
+/* ---------------------------------------------------------------
+   Running plan taken directly from his Runna marathon plan.
+   Runna wk19 = our wk3, through Runna wk26 = our wk10 (race week).
+   Each day: {r:miles, t:run type, s:strength block, rest, mob}
+--------------------------------------------------------------- */
+const PLAN={
+ 1:[{r:7,t:'easy'},{r:6.5,t:'qual'},{rest:1},{r:5,t:'easy',s:'upper'},{r:5,t:'easy'},{r:17,t:'long'},{r:6.5,t:'easy',s:'lower'}],
+ 2:[{r:6,t:'easy'},{r:5,t:'easy'},{rest:1},{r:4,t:'easy',s:'upper'},{r:4,t:'easy'},{r:12,t:'long'},{r:9,t:'easy',s:'lower'}],
+ 3:[{mob:1},{mob:1},{mob:1},{r:6,t:'easy',s:'upper'},{r:3.5,t:'easy'},{r:19,t:'long',rp:1},{s:'lower'}],
+ 4:[{r:5,t:'easy',s:'upper'},{r:4.5,t:'prog'},{r:7,t:'easy'},{s:'lower'},{r:5.5,t:'easy'},{r:9,t:'long'},{s:'full'}],
+ 5:[{r:7,t:'easy'},{r:6,t:'tempo',lbl:'Tempo 4 Miles'},{r:6.5,t:'easy',s:'full'},{r:6,t:'easy',s:'upper'},{r:5.5,t:'easy'},{r:20,t:'long',rp:1},{s:'lower'}],
+ 6:[{r:7,t:'easy',s:'upper'},{r:6,t:'reps',lbl:'800m Repeats'},{r:6.5,t:'easy',s:'lower'},{r:6,t:'easy'},{r:5.5,t:'easy'},{r:22,t:'long'},{s:'full'}],
+ 7:[{s:'lower'},{r:6.5,t:'tempo',lbl:'Tempo 2-1'},{r:7,t:'easy',s:'full'},{r:6,t:'easy',s:'upper'},{r:5.5,t:'easy'},{r:20,t:'long',rp:1},{r:7.5,t:'easy'}],
+ 8:[{r:7.5,t:'easy'},{r:5.5,t:'tempo',lbl:'Tempo 3 Miles'},{r:7,t:'easy',s:'full'},{r:6,t:'easy',s:'upper'},{r:5.5,t:'easy'},{r:15,t:'long'},{s:'lower'}],
+ 9:[{r:5,t:'easy'},{r:4.5,t:'reps',lbl:'Broken Miles',s:'upper'},{r:7,t:'easy'},{s:'lower'},{r:7,t:'easy'},{r:9,t:'long'},{s:'full'}],
+ 10:[{s:'full'},{r:5,t:'reps',lbl:'Race Pace Mile Reps'},{r:5.5,t:'easy'},{rest:1},{r:3.25,t:'easy'},{rest:1},{race:1}],
+ 11:[{r:3,t:'easy'},{rest:1},{r:4,t:'easy'},{rest:1},{r:3,t:'easy'},{r:6,t:'easy'},{rest:1}],
+ 12:[{r:5,t:'easy'},{r:4,t:'easy'},{rest:1},{r:5,t:'easy',s:'upper'},{r:4,t:'easy'},{r:8,t:'long'},{s:'lower'}]
+};
+
+const WNOTE={
+ 1:'Baseline week.',
+ 2:'Down week. Bank the recovery.',
+ 3:'Three day full reset Monday to Wednesday while you are away, then straight into a 19 mile race practice run Saturday.',
+ 4:'Volume comes back down after Saturday\u2019s 19. Nine mile long run, easier week.',
+ 5:'Build week. Second race practice long run Saturday at 20 miles.',
+ 6:'PEAK. 22 miles Saturday, the longest run of the block. After this it only gets lighter.',
+ 7:'Third and final race practice at 20 miles. Quality holds, volume starts easing.',
+ 8:'Taper begins. Long run drops to 15. Frequency and intensity stay.',
+ 9:'Taper week two. Nine mile long run. You will feel restless and slightly heavy, that is normal.',
+ 10:'RACE WEEK. Nothing you do now makes you fitter, it only makes you fresher.',
+ 11:'Post Chicago. All easy, all optional.',
+ 12:'Rebuild. We will set the next goal together.'
+};
+const BLOCK={1:'Base',2:'Down',3:'Reset',4:'Build',5:'Build',6:'PEAK',7:'Sharpen',8:'Taper',9:'Taper',10:'RACE',11:'Recover',12:'Rebuild'};
+
+const RUNTYPE={
+  easy :{lbl:'Easy Run',      tag:'Run',    cls:'t-run',   meta:'Conversational. If you cannot talk in sentences, slow down'},
+  long :{lbl:'Long Run',      tag:'Long',   cls:'t-long',  meta:'Easy effort, race fuelling'},
+  qual :{lbl:'Over & Unders', tag:'Quality',cls:'t-quality',meta:'Alternating just above and just below marathon goal pace'},
+  prog :{lbl:'Progression Run',tag:'Quality',cls:'t-quality',meta:'Start easy, finish at marathon pace'},
+  tempo:{lbl:'Tempo',         tag:'Quality',cls:'t-quality',meta:'Sustained, comfortably hard'},
+  reps :{lbl:'Repeats',       tag:'Quality',cls:'t-quality',meta:'Hard intervals with full recoveries'}
+};
+
+function dayDef(w,d){const wk=PLAN[Math.max(1,Math.min(12,w))]; return wk?wk[d]:{rest:1};}
+function milesFor(w,slot){const x=dayDef(w,slot); return (x&&x.r)?x.r:0;}
+function weekMiles(w){let t=0;for(let d=0;d<7;d++){const x=dayDef(w,d); if(x&&x.r)t+=x.r; if(x&&x.race)t+=26.2;} return Math.round(t*10)/10;}
+function longRunOf(w){let m=0;for(let d=0;d<7;d++){const x=dayDef(w,d); if(x&&x.race)return 26.2; if(x&&x.r&&x.t==='long')m=Math.max(m,x.r);}return m;}
+
+const RACE_W=10, RACE_D=6;
+const MOB_VID='nR8Lwyb0WW8';
+
+/* BPC-157 cycle windows set by coach */
+const BPC=[[new Date(2026,7,3), new Date(2026,7,26),'ON'],
+           [new Date(2026,7,27),new Date(2026,8,12),'OFF'],
+           [new Date(2026,8,13),new Date(2026,9,11),'ON']];
+function bpcAt(d){for(const[a,b,s]of BPC){if(d>=a&&d<=b)return s;}return 'OFF';}
+
+const HABITS=[
+ {id:'stack', n:'Recovery Stack',  meta:'Magnesium + glycine, tart cherry, collagen + vitamin C, omega-3s'},
+ {id:'sleep', n:'Protect Sleep',   meta:'In bed with enough runway for 8 hours, not 8 hours of opportunity'},
+ {id:'calf',  n:'Calf Check-In',   meta:'Log it below. Honest number, not an optimistic one'}
+];
+
+let S=load();
+function load(){const D={v:1,week:null,day:null,order:{},d:{},n:{},rec:{},slp:{},clf:{},hrv:{},wt:{}};try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.v===1)return Object.assign(D,x);}catch(e){}return D;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const key=(w,d)=>w+'-'+d;
+function dstate(w,d){const k=key(w,d);if(!S.d[k])S.d[k]={c:{},cu:{},sw:{},w:{}};if(!S.d[k].w)S.d[k].w={};return S.d[k];}
+function nstate(w,d){const k=key(w,d);if(!S.n[k])S.n[k]={m:{},t:null,x:[]};return S.n[k];}
+function order(w){if(!S.order[w])S.order[w]=[0,1,2,3,4,5,6];return S.order[w];}
+function dateOf(w,d){const x=new Date(START);x.setDate(x.getDate()+(w-1)*7+d);return x;}
+function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function todayIdx(){const t=new Date();t.setHours(0,0,0,0);
+  const diff=Math.floor((t-START)/86400000);if(diff<0)return{w:1,d:0};
+  const w=Math.min(12,Math.floor(diff/7)+1);return{w,d:diff%7};}
+if(S.week===null){const t=todayIdx();S.week=t.w;S.day=t.d;save();}
+
+/* slot -> miles index. slot 2 (Wed) = rest */
+
+function calFor(w,slot){
+  if(w===RACE_W&&slot===RACE_D) return 4200;
+  return Math.round(2400+100*milesFor(w,slot));
+}
+function macrosFor(w,slot){
+  const k=calFor(w,slot), p=170, f=85;
+  return [k,p,Math.max(0,Math.round((k-p*4-f*9)/4)),f];
+}
+
+function session(w,d){
+  const slot=order(w)[d],st=dstate(w,d),swapped=slot!==d;
+  const def=dayDef(w,slot)||{rest:1};
+  const blk=BLOCK[w]||'', wnote=WNOTE[w]||'';
+
+  if(def.race) return {title:'CHICAGO MARATHON',tag:'Race',cls:'t-race',
+    note:'Third one. Start slower than feels right, fuel from 45 minutes, and race the last 10k.',block:blk,swapped,
+    items:[{id:'r0',n:'26.2 miles',meta:'Go and collect it'},
+           {id:'r1',n:'Fuel from 45 min',meta:'60-90g carbs per hour, every 25-30 min, no exceptions'}]};
+
+  if(def.mob) return {title:'Reset Day',tag:'Reset',cls:'t-rec',
+    note:'No running and no lifting. This is a deliberate three day stop while you are away, not a missed session.',block:blk,swapped,
+    items:[{id:'m0',n:'Morning mobility, 10 min',meta:'Calves, hips, hamstrings, thoracic. Slow and long',video:MOB_VID,swap:1},
+           {id:'m1',n:'Walk 10,000 to 15,000 steps',meta:'This IS the session today. Spread it across the day'},
+           {id:'m2',n:'Evening stretch, 10 min',meta:'Same again before bed. Calves especially',video:MOB_VID,swap:1},
+           {id:'m3',n:'Eat the full target',meta:'Do not under-eat because you did not train'}]};
+
+  if(def.rest) return {title:'Full Rest',tag:'Rest',cls:'t-rec',
+    note:'No running, no lifting. This is the day the training turns into fitness.',block:blk,swapped,
+    items:[{id:'z0',n:'Full rest',meta:'Walking is fine. Nothing with a heart rate target'},
+           {id:'z1',n:'Eat the full target anyway',meta:'Rest days are when repair happens'}]};
+
+  const items=[]; const mi=def.r||0; const rt=RUNTYPE[def.t]||RUNTYPE.easy;
+
+  if(mi>0){
+    const nm = def.lbl ? (mi+' Mile '+def.lbl) : (mi+' Mile '+rt.lbl);
+    items.push({id:'r0',n:nm,meta:rt.meta,video:(def.t==='easy'||def.t==='long')?RUN_VID:QUAL_VID});
+    if(def.t==='long'){
+      items.push({id:'r1',n:'Fuel during the run',meta:'60-90g carbs per hour from 45 min. One gel every 25-30 min'});
+      items.push({id:'r2',n:'Refuel within 60 min',meta:'~80g carbs + 25-30g protein. Drink it if appetite is not there'});
+    }
+  }
+  if(def.s){
+    const set=STR[def.s]||STR.full;
+    set.forEach((row,i)=>{
+      const id='s'+i,ek=st.sw[id]||row[0],e=EX[ek];
+      items.push({id,ex:ek,n:e.n,meta:row[1],video:e.v,wt:e.wt,swap:1});
+    });
+  }
+
+  const SNAME={upper:'Upper Body',lower:'Legs & Core',full:'Full Body'};
+  let title,tag,cls;
+  if(mi>0&&def.s){ title=(def.lbl||rt.lbl)+' \u00b7 '+mi+' mi + '+SNAME[def.s]; tag='Run + Lift'; cls=rt.cls; }
+  else if(mi>0){ title=(def.lbl?def.lbl:rt.lbl)+' \u00b7 '+mi+' mi'; tag=rt.tag; cls=rt.cls; }
+  else { title=SNAME[def.s]||'Strength'; tag='Strength'; cls='t-run'; }
+
+  let note=wnote;
+  if(def.s==='lower') note='Calf-safe. No calf raises while the strain is live. '+note;
+  if(def.t==='long') note='The most important session of your week. '+(def.rp?'Race practice: run it in your race kit, with your race fuelling, at your race breakfast timing. ':'')+note;
+  return {title,tag,cls,note,block:blk,swapped,items};
+}
+function pct(w,d){const s=session(w,d),st=dstate(w,d);
+  const all=[...s.items,...HABITS];const done=all.filter(i=>st.c[i.id]).length;
+  return{done,total:all.length,p:all.length?done/all.length:0};}
+function streak(){
+  const today=new Date();today.setHours(0,0,0,0);
+  let n=0,cur=new Date(today);
+  for(let g=0;g<120;g++){
+    const diff=Math.floor((cur-START)/86400000);if(diff<0)break;
+    const w=Math.floor(diff/7)+1,d=diff%7;
+    if(w>12){cur.setDate(cur.getDate()-1);continue;}
+    const{p}=pct(w,d);
+    if(p>=1)n++;else if(!sameDay(cur,today))break;
+    cur.setDate(cur.getDate()-1);}
+  return n;}
+
+
+/* AUTO-ROLLOVER, added 14 Sep 2026.
+   S.week/S.day are persisted, so without this the app stays pinned to whatever
+   day it was first opened on and the client logs into the wrong day.
+   We only move them if they were sitting on what WAS today; if they have
+   deliberately navigated elsewhere we leave them alone. */
+let __booted=false;
+function syncToday(){
+  const t=todayIdx(), k=t.w+'-'+t.d;
+  /* On a fresh open ALWAYS land on today. S.week/S.day are persisted, so without
+     this a client who glanced at Monday on Thursday reopens on Monday forever. */
+  if(!__booted){ __booted=true; S.__today=k;
+    if(S.week!==t.w||S.day!==t.d){ S.week=t.w; S.day=t.d; save(); return true; }
+    save(); return false; }
+  /* Mid-session: only move them if they are sitting on what WAS today, so we
+     never yank someone who has deliberately navigated to another day. */
+  if(S.__today===k) return false;
+  const onOldToday = (S.week+'-'+S.day===S.__today);
+  S.__today=k;
+  if(onOldToday){ S.week=t.w; S.day=t.d; save(); return true; }
+  save(); return false;
+}
+
+function render(){syncToday();const __y=window.pageYOffset||document.documentElement.scrollTop||0;
+  document.getElementById('streakN').textContent=streak();
+  countdown();weekStrip();dayStrip();jumpBar();profileNums();
+  [tripCard,sessionCard,metricsCard,hotelCard,nutritionCard,pepCard,groceryCard,dailyCard,photosCard,pastCard,hrvCard].forEach(fn=>{try{fn();}catch(e){console.error('card failed:',fn.name,e);}});
+  window.scrollTo(0,__y);}
+function countdown(){
+  const from=dateOf(S.week,S.day);from.setHours(0,0,0,0);
+  const days=Math.round((RACE-from)/86400000);
+  const n=document.getElementById('cdN'),l=document.getElementById('cdL');
+  if(days>1){n.textContent=days;l.textContent='DAYS OUT';}
+  else if(days===1){n.textContent=1;l.textContent='DAY OUT';}
+  else if(days===0){n.textContent='\u00b7';l.textContent='RACE DAY';}
+  else {n.textContent=Math.abs(days);l.textContent='DAYS SINCE';}
+  document.getElementById('raceSub').textContent = days<0?'Third marathon \u00b7 done':'Third marathon';
+}
+function profileNums(){
+  document.getElementById('pfMiles').textContent=weekMiles(S.week);
+  document.getElementById('pfLong').textContent=longRunOf(S.week);
+  document.getElementById('pfCal').textContent=calFor(S.week,order(S.week)[S.day]).toLocaleString();
+}
+function weekStrip(){
+  const el=document.getElementById('weekStrip');
+  let h='';
+  for(let n=1;n<=12;n++){
+    h+=`<button class="wk ${n===S.week?'on':''} ${n===RACE_W?'race':''}" onclick="goWeek(${n})">
+      <b>${n}</b><i>${(BLOCK[n]||'').slice(0,5)}</i></button>`;}
+  el.innerHTML=h;
+  const on=el.querySelector('.wk.on');if(on)el.scrollLeft=Math.max(0,on.offsetLeft-(el.clientWidth-on.offsetWidth)/2);}
+function dayStrip(){
+  const el=document.getElementById('dayStrip');const t=new Date();t.setHours(0,0,0,0);
+  el.innerHTML=[0,1,2,3,4,5,6].map(d=>{
+    const{p}=pct(S.week,d),dt=dateOf(S.week,d),R=13,C=2*Math.PI*R;
+    return `<button class="day ${d===S.day?'on':''} ${sameDay(dt,t)?'today':''}" onclick="goDay(${d})">
+      <div class="dn">${DOW[d]}</div><div class="dd">${dt.getDate()}</div>
+      <svg class="ring" width="30" height="30" viewBox="0 0 30 30">
+      <circle cx="15" cy="15" r="${R}" fill="none" stroke="var(--line)" stroke-width="2.5"/>
+      <circle cx="15" cy="15" r="${R}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"
+      stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p)}" transform="rotate(-90 15 15)"/></svg></button>`;}).join('');}
+function jumpBar(){const t=todayIdx(),off=!(t.w===S.week&&t.d===S.day);
+  document.getElementById('jumpBar').innerHTML=off
+    ?`<button class="jump" onclick="jumpToday()">\u2190 Back to today \u00b7 ${DOW[t.d]}, week ${t.w}</button>`:'';}
+function jumpToday(){const t=todayIdx();S.week=t.w;S.day=t.d;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+
+function prevWeight(ex){
+  for(let w=S.week-1;w>=1;w--)for(let d=0;d<7;d++){
+    const s=session(w,d),hit=s.items.find(i=>i.ex===ex&&i.wt);
+    if(hit){const v=dstate(w,d).w[hit.id];if(v!=null)return v;}}
+  return null;}
+function logWeight(id){const st=dstate(S.week,S.day);
+  numModal('Log weight','Working weight in pounds.','Weight (lbs)',st.w[id],'saveWeight(\''+id+'\')','e.g. 45','2.5');}
+function saveWeight(id){const v=parseFloat(document.getElementById('nIn').value),st=dstate(S.week,S.day);
+  if(!isNaN(v))st.w[id]=v;else delete st.w[id];save();closeModal();render();}
+function sessionCard(){
+  const s=session(S.week,S.day),st=dstate(S.week,S.day),dt=dateOf(S.week,S.day);
+  const rows=s.items.map(i=>{
+    const done=!!st.c[i.id];let acts='';
+    if(i.video)acts+=`<a class="act vid" href="https://www.youtube.com/watch?v=${i.video}" target="_blank" rel="noopener">\u25b6 Watch</a>`;
+    acts+=`<button class="act" onclick="editItem('${i.id}')">\u270e Customise</button>`;
+    if(i.swap)acts+=`<button class="act" onclick="swapEx('${i.id}')">\u21c4 Swap</button>`;
+    if(i.wt){const cur=(dstate(S.week,S.day).w||{})[i.id],prev=prevWeight(i.ex);let lbl='Log weight';
+      if(cur!=null){lbl=cur+' lbs';
+        if(prev!=null){if(cur>prev)lbl+=` <span class="up">\u25b2</span><span class="sm">(was ${prev})</span>`;
+          else if(cur<prev)lbl+=` <span class="dn">\u25bc</span><span class="sm">(was ${prev})</span>`;
+          else lbl+=` <span class="sm">\u2013 (was ${prev})</span>`;}}
+      acts+=`<button class="act wt" onclick="logWeight('${i.id}')">${lbl}</button>`;}
+    return `<div class="row ${done?'done':''}">
+      <button class="cb ${done?'on':''}" onclick="toggle('${i.id}')" aria-label="Complete ${i.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${i.n}</div>${i.meta?`<div class="rm">${i.meta}</div>`:''}
+      ${st.cu[i.id]?`<div class="rcustom">Actually did: ${esc(st.cu[i.id])}</div>`:''}
+      <div class="acts">${acts}</div></div></div>`;}).join('');
+  document.getElementById('sessionCard').innerHTML=`<div class="card">
+    <div class="sess-h"><div><div class="eyebrow">Week ${S.week} \u00b7 ${s.block}${s.swapped?' \u00b7 swapped':''}</div>
+      <h2>${s.title}</h2><p class="sub">${DOW[S.day]} ${dt.getDate()}/${dt.getMonth()+1} \u00b7 ${weekMiles(S.week)} mi this week</p></div>
+      <span class="tag ${s.cls}">${s.tag}</span></div>
+    <div class="info" style="margin-top:12px"><p>${s.note}</p></div>${rows}
+    <button class="btn alt" style="margin-top:14px" onclick="daySwap()">\u21c4 Swap this day with another</button>
+    <p class="sub" style="margin-top:8px;font-size:11.5px">Moves the whole day, run and fuel target together. Built for travel.</p></div>`;}
+
+/* ---------- metrics: the point of this app ---------- */
+function recBand(v){return v>=67?'hi':(v>=34?'mid':'lo');}
+
+/* ---------- headline card slot. was the San Diego trip, now the fuelling intervention ---------- */
+const TRIP_START=new Date(2026,7,10), TRIP_END=new Date(2026,7,13);
+function tripCard(){
+  const el=document.getElementById('tripCard'); if(!el)return;
+  el.innerHTML=`<div class="card" style="border-color:rgba(138,111,52,.45);background:linear-gradient(140deg,#FFFBF2,var(--panel))">
+    <div class="eyebrow">Week 4 &middot; the only thing that matters now</div>
+    <h2>You are losing weight in a build</h2>
+    <div class="flag" style="margin-top:11px">
+      <div class="ft">171 to 167 in two weeks</div>
+      <p>That is 2 lbs a week. You are not cutting. You are building for a marathon, and you have lost four pounds while doing it.</p>
+      <p>You hit your calorie target 5 days out of 7. Missing two days does not account for four pounds, so the gap on the days you do miss is bigger than the logging shows.</p>
+    </div>
+    <div class="info">
+      <div class="ft">Why this is now more important than your HRV</div>
+      <p>Your HRV is 17. It has barely moved in three weeks and it will not move while you are in an energy deficit, because that is what a body does when it is underfed. It downregulates.</p>
+      <p><span class="gold">You cannot fix the HRV without fixing the food.</span> Everything else you have done right, the reset, the mobility, the sleep, is being spent covering a shortfall.</p>
+    </div>
+    <div class="flag">
+      <div class="ft">Week 5 is the reason this is urgent</div>
+      <p>This week is 31 miles. Next week is 51. That is a 65 percent jump and it is the biggest single step of your block.</p>
+      <p>Arriving at a 51 mile week four pounds down and underfed is how people get hurt in September and blow up in October. Fix it this week, not next.</p>
+    </div>
+    <div class="info">
+      <div class="ft">Three things, and they are not hard</div>
+      <p><span class="gold">1. Buy the sachets today.</span> You said that two weeks ago and again this week. They cost nothing and they solve the days you miss.</p>
+      <p><span class="gold">2. Eat on the days you do not run.</span> Thursday and Sunday are 2,400. Those are the days that get skipped because you do not feel like you earned it. You did. Rest days are when the repair happens.</p>
+      <p><span class="gold">3. Weigh in every Monday.</span> If 167 becomes 165 we have a real problem, and I want to catch it in seven days rather than three weeks.</p>
+    </div>
+  </div>`;}
+
+/* ---------- 20 min hotel room strength, he said yes to this ---------- */
+function hotelCard(){
+  const el=document.getElementById('hotelCard'); if(!el)return;
+  el.innerHTML='';return;
+  el.innerHTML=`<div class="card">
+    <div class="eyebrow">Backup &middot; no equipment, no gym</div><h2>20 minute hotel room session</h2>
+    <p class="sub">Only if the real session is not happening. Three rounds, minimal rest between exercises.</p>
+    <div class="info" style="margin-top:11px">
+      <p><span class="gold">Push-ups</span> 12 to 15 &middot; <span class="gold">Split squat</span> 10 each leg &middot; <span class="gold">Glute bridge</span> 15
+      &middot; <span class="gold">Plank</span> 45 sec &middot; <span class="gold">Bird dog</span> 8 each side &middot; <span class="gold">Calf raises</span> 20, off a step if there is one</p>
+      <p>Three rounds. That is the whole thing. It is not the same as the gym and it does not need to be, it just stops the week going to zero.</p></div>
+  </div>`;}
+
+/* ---------- HRV, the actual levers ---------- */
+function hrvCard(){
+  const el=document.getElementById('hrvCard'); if(!el)return;
+  el.innerHTML=`<div class="card">
+    <div class="eyebrow">Reference &middot; the number we are chasing</div><h2>Getting your HRV up</h2>
+    <div class="info"><div class="ft">1. Eat enough. This is not close to the others.</div>
+      <p>Being underfed suppresses HRV harder than almost anything. You hit your target 4 of 7 days and lost 2 lbs in a build week. You are running 45 miles a week properly fuelled on three of them.</p>
+      <p>Fix this one and the rest matters far less.</p></div>
+    <div class="info"><div class="ft">2. Sleep. You averaged 6h31.</div>
+      <p>Your own data already proves it. Wednesday was your rest day, and it gave you your best sleep of the week and your highest recovery score at 74. Aim 7h30 as a floor.</p></div>
+    <div class="info"><div class="ft">3. Caffeine cut-off</div>
+      <p>You do not drink, which removes the single biggest overnight HRV suppressor there is. That is a real advantage and it means your numbers actually reflect training and fuelling rather than last night's beer.</p>
+      <p>So caffeine becomes the next lever. It has a half-life of five to six hours, meaning a 3pm coffee still has a quarter of it in you at bedtime. <span class="gold">Nothing after 2pm.</span></p></div>
+    <div class="info"><div class="ft">4. Stop eating late</div>
+      <p>Food close to bed keeps you sympathetic overnight. If you are backloading calories to catch up, you are fixing one problem and creating another. Get them in earlier.</p></div>
+    <div class="info"><div class="ft">5. Same bed and wake time</div>
+      <p>Circadian regularity moves HRV independently of how long you sleep. Even on travel days, anchor the wake time.</p></div>
+    <div class="info"><div class="ft">6. Slow breathing, 10 minutes</div>
+      <p>Five to six breaths a minute. Four seconds in, six out. One of the few things with direct evidence for raising HRV rather than just measuring it. Do it in bed.</p></div>
+    <div class="flag"><div class="ft">Expectation setting</div>
+      <p>This week is a down week, so HRV should actually come UP. That is the point of it. From week 3 as mileage climbs toward 57 it will flatten or dip again, and that is the build working rather than failing. It climbs for real through the taper in weeks 8 to 10, which is exactly when you want it high. Judge it in fortnights, not days.</p></div>
+  </div>`;}
+
+function metricsCard(){
+  const k=key(S.week,S.day);
+  const rec=S.rec[k],slp=S.slp[k],clf=S.clf[k],hrv=S.hrv[k];
+  // 14 day HRV sparkline. this is the number we are chasing.
+  let bars='',vals=[],rvals=[];
+  for(let i=13;i>=0;i--){
+    const dt=new Date(dateOf(S.week,S.day));dt.setDate(dt.getDate()-i);
+    const diff=Math.floor((dt-START)/86400000);
+    const kk=(Math.floor(diff/7)+1)+'-'+(diff%7);
+    const h=(diff>=0)?S.hrv[kk]:undefined;
+    const r=(diff>=0)?S.rec[kk]:undefined;
+    if(h!=null)vals.push(h); if(r!=null)rvals.push(r);
+    bars+=h==null?`<div class="none" style="height:12%"></div>`
+      :`<div class="${h>=30?'hi':(h>=20?'':'lo')}" style="height:${Math.max(8,Math.min(100,h*2.5))}%"></div>`;
+  }
+  const hrvAvg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+  const avg=rvals.length?Math.round(rvals.reduce((a,b)=>a+b,0)/rvals.length):null;
+  let flag='';
+  if(avg!=null&&avg<45) flag=`<div class="flag"><div class="ft">Trend flag</div><p>Your 14 day recovery average is ${avg}. Under 45 means the load is outrunning the recovery. Tell me before the next long run.</p></div>`;
+  document.getElementById('metricsCard').innerHTML=`<div class="card">
+    <div class="eyebrow">Every morning \u00b7 the numbers that decide October</div>
+    <h2>Today's readiness</h2>
+    <div class="metrics">
+      <button class="met" onclick="logRec()"><b class="${rec!=null?recBand(rec):''}">${rec!=null?rec:'\u2013'}</b><i>Recovery</i><small>tap to log</small></button>
+      <button class="met" onclick="logSleep()"><b>${slp!=null?slp:'\u2013'}</b><i>Sleep hrs</i><small>tap to log</small></button>
+      <button class="met" onclick="logCalf()"><b>${clf!=null?clf:'\u2013'}</b><i>Calf 0-10</i><small>0 = perfect</small></button>
+      <button class="met" onclick="logHrv()"><b class="${hrv!=null?(hrv>=30?'hi':(hrv>=20?'mid':'lo')):''}">${hrv!=null?hrv:'\u2013'}</b><i>HRV ms</i><small>the one we're chasing</small></button>
+    </div>
+    <div class="spark">${bars}</div>
+    <p class="sub" style="margin-top:7px;font-size:11.5px">Last 14 days of HRV. ${hrvAvg!=null?'Average '+hrvAvg+' ms.':'Log a few days and the trend appears.'}${avg!=null?' Recovery averaging '+avg+'.':''}</p>
+    ${flag}
+    <div class="info"><div class="ft">What we are actually chasing</div>
+      <p>HRV is the headline number for the next nine weeks. Expect it to sit flat or dip while mileage climbs through to week 6. That is the build working, not failing. What matters is that it climbs through the taper, which is exactly when you want it high.</p>
+      <p>One low score is noise. Three in a row is a signal.</p></div>
+  </div>`;}
+
+/* ---------- nutrition: day-specific ---------- */
+const BASE_MEALS=[
+ {n:'Breakfast / Pre-Run',  m:[450,25,70,7]},
+ {n:'Lunch',                m:[750,55,90,18]},
+ {n:'Dinner',               m:[850,60,105,22]}
+];
+function nutritionCard(){
+  const slot=order(S.week)[S.day];
+  const ns=nstate(S.week,S.day),T=ns.t||macrosFor(S.week,slot);
+  const mi=(S.week===RACE_W&&slot===RACE_D)?26.2:milesFor(S.week,slot);
+  const base=BASE_MEALS.reduce((a,m)=>[a[0]+m.m[0],a[1]+m.m[1],a[2]+m.m[2],a[3]+m.m[3]],[0,0,0,0]);
+  const fuelKcal=Math.max(0,T[0]-base[0]);
+  const fuelC=Math.max(0,Math.round((fuelKcal-0*4-0*9)/4));
+  const meals=BASE_MEALS.concat([{n:'Training fuel \u00b7 today',m:[fuelKcal,0,fuelC,0],
+    note:mi>=10?`Split this around the run. Roughly ${Math.round(60*(mi/6.2))}g of it DURING the run.`:(mi>0?'Before and straight after the run.':'Spread it across the day. Rest days still get fed.')}]);
+  let got=[0,0,0,0];
+  meals.forEach((m,i)=>{if(ns.m[i])m.m.forEach((v,j)=>got[j]+=v);});
+  ns.x.forEach(x=>{got[0]+=x.k;got[1]+=x.p;got[2]+=x.c;got[3]+=x.f;});
+  const rows=meals.map((m,i)=>{const on=!!ns.m[i];
+    return `<div class="row ${on?'done':''}">
+      <button class="cb ${on?'on':''}" onclick="toggleMeal(${i})" aria-label="Ate ${m.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${m.n}</div><div class="rm">${Math.round(m.m[0])} kcal \u00b7 ${m.m[1]}P / ${Math.round(m.m[2])}C / ${m.m[3]}F</div>
+      ${m.note?`<div class="rm" style="color:var(--gold-dim)">${m.note}</div>`:''}</div></div>`;}).join('');
+  const extras=ns.x.map((x,i)=>`<div class="xrow"><div><b>${esc(x.n)}</b>
+    <div class="rm">${x.k} kcal \u00b7 ${x.p}P / ${x.c}C / ${x.f}F</div></div>
+    <button class="xdel" onclick="delExtra(${i})">\u2715</button></div>`).join('');
+  const L=['KCAL','PROTEIN','CARBS','FAT'];
+  const macs=[0,1,2,3].map(j=>`<div class="mac ${got[j]>T[j]*1.08?'over':''}">
+    <b>${Math.round(got[j])}${j?'g':''}</b><i>${L[j]}</i><div class="tgt">of ${T[j]}${j?'g':''}</div></div>`).join('');
+  document.getElementById('nutritionCard').innerHTML=`<div class="card">
+    <div class="sess-h"><div><div class="eyebrow">Fuel \u00b7 scales with today's mileage</div>
+      <h2>${T[0].toLocaleString()} kcal today ${ns.t?'<span class="pill">custom</span>':''}</h2>
+      <p class="sub">${mi} miles \u00b7 ${T[2]}g carbs \u00b7 ${(T[2]/BW_KG).toFixed(1)}g per kg</p></div>
+      <button class="act" onclick="customTarget()">\u270e Target</button></div>
+    ${macs}<div class="bar"><i style="width:${Math.min(100,got[0]/T[0]*100)}%"></i></div>
+    <div style="margin-top:6px">${rows}</div>
+    ${extras?`<div style="margin-top:6px">${extras}</div>`:''}
+    <button class="btn alt" style="margin-top:12px" onclick="addExtra()">+ Add Something Extra</button>
+    ${ns.t?`<button class="btn alt" style="margin-top:8px" onclick="resetTarget()">Reset to plan default</button>`:''}
+    <div class="info" style="margin-top:14px"><div class="ft">How today's number is built</div>
+      <p>Three base meals stay identical every single day. Only the training fuel moves, and it moves with your mileage. Protein holds at 170g and fat at 85g regardless. Carbs do all the work.</p>
+      <p>${mi>=17?'<span class="gold">Today is the big one.</span> This is the day under-fuelling does the most damage, and the day it is hardest to notice.':'On a lighter day the number drops. That is intentional, not a deficit.'}</p></div>
+    <details class="more"><summary>Carb sources that actually go down easily</summary>${swapList()}</details>
+  </div>`;}
+function swapList(){return `<div class="swapg">
+  <h4>During the run, 60-90g per hour</h4>
+  <ul><li>Gel, 1 = roughly 22-25g carbs. One every 25-30 minutes</li>
+  <li>Sports drink, 500ml = roughly 30g</li>
+  <li>Chews, 1 pack = roughly 45g</li>
+  <li>Dates, 3 = roughly 55g. Real food option if gels sit badly</li>
+  <li>Banana, 1 = roughly 27g</li></ul>
+  <h4>Straight after, within 60 minutes</h4>
+  <ul><li>Chocolate milk, 500ml = roughly 55g carbs and 18g protein. Easiest win there is</li>
+  <li>Shake with banana, honey and whey = roughly 70g carbs and 30g protein</li>
+  <li>Rice with chicken and honey = the same job with a knife and fork</li></ul>
+  <h4>Dense carbs for the big days, low volume</h4>
+  <ul><li>White rice, 250g cooked = 71g</li><li>Bagel = 52g</li>
+  <li>Dates, 50g = 36g</li><li>Honey, 30g = 24g</li>
+  <li>Maple syrup, 30g = 26g</li><li>Dried mango, 40g = 30g</li></ul>
+  <div class="info" style="margin-top:12px"><div class="ft">If the appetite is not there</div>
+    <p>Drink it. Liquid carbs bypass the fullness that solid food creates, and on an appetite suppressant that is the difference between hitting the number and missing it by 800 calories. Nothing about this is cheating.</p></div>
+</div>`;}
+
+/* ---------- peptide protocol ---------- */
+function pepCard(){
+  const dt=dateOf(S.week,S.day);dt.setHours(0,0,0,0);
+  const st=bpcAt(dt);
+  const fmt=d=>d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+  document.getElementById('pepCard').innerHTML=`<div class="card">
+    <div class="eyebrow">Protocol</div><h2>What you're running</h2>
+    <p class="sub">All vials 20mg in 2ml, so 1 unit = 0.1mg</p>
+    <div style="margin-top:12px">
+      <div class="pep"><div><div class="pepn">Retatrutide</div>
+        <div class="pepd">15 units, twice weekly. Holding here for now</div></div>
+        <div class="pepv">1.5mg &times;2<br><span style="color:var(--mut2);font-weight:400">3mg / week</span></div></div>
+      <div class="pep"><div><div class="pepn">Tesamorelin</div>
+        <div class="pepd">10 units daily. Under review with your coach</div></div>
+        <div class="pepv">1mg daily<br><span style="color:var(--mut2);font-weight:400">7mg / week</span></div></div>
+      <div class="pep"><div><div class="pepn">BPC-157 <span class="pill ${st==='ON'?'on':'off'}">${st}</span></div>
+        <div class="pepd">10 units, twice weekly, for the calf</div></div>
+        <div class="pepv">1mg &times;2<br><span style="color:var(--mut2);font-weight:400">2mg / week</span></div></div>
+    </div>
+    <div class="info" style="margin-top:12px"><div class="ft">BPC cycle around the race</div>
+      <p><span class="gold">ON</span> until ${fmt(BPC[0][1])}. <span class="gold">OFF</span> ${fmt(BPC[1][0])} to ${fmt(BPC[1][1])}. <span class="gold">Back ON</span> ${fmt(BPC[2][0])} through to race day.</p>
+      <p>The restart lands four weeks out, so the calf gets the support through the taper and the race itself rather than being on it continuously and getting less from it.</p></div>
+    <div class="info"><div class="ft">Recovery stack, daily</div>
+      <p>Magnesium glycinate with glycine at night. Tart cherry extract. Collagen with vitamin C, timed about an hour before running for the calf. Omega-3s.</p></div>
+  </div>`;}
+
+const GROCERY=[
+ {h:'Protein',items:[
+  ['Chicken breast','1.5 kg',''],
+  ['Beef mince or steak','1 kg',''],
+  ['Salmon','3 fillets',''],
+  ['Eggs','2 dozen',''],
+  ['Greek yogurt','1.5 kg',''],
+  ['Whey protein','1 tub','For the post-run shake, which is the one that matters most.']]},
+ {h:'Carbs, the part you keep under-eating',items:[
+  ['White rice','2.5 kg dry','Your biggest single carb source. Buy more than feels sensible.'],
+  ['Potatoes and sweet potatoes','2 kg',''],
+  ['Bagels','2 packs','Fast, dense, and they go down when appetite is low.'],
+  ['Oats','1 kg',''],
+  ['Bananas','12',''],
+  ['Medjool dates','500g','Also your real-food option mid-run if gels sit badly.'],
+  ['Honey and maple syrup','1 each','']]},
+ {h:'During and after the long run',items:[
+  ['Energy gels','10 per week','Roughly 22-25g of carbs each. One every 25-30 minutes from the 45 minute mark.'],
+  ['Sports drink powder','1 tub','About 30g per 500ml.'],
+  ['Chews','2 packs','Around 45g a pack, for when gels get boring.'],
+  ['Chocolate milk','6 bottles','500ml is roughly 55g of carbs and 18g of protein. The easiest post-run win there is.'],
+  ['Electrolyte tablets','1 tube','']]},
+ {h:'Fats',items:[
+  ['Olive oil','1 bottle',''],['Avocado','4',''],
+  ['Nuts','300g','Weighed, not poured.'],['Nut butter','1 jar','']]},
+ {h:'Veg and the recovery stack',items:[
+  ['Mixed veg and salad','plenty',''],
+  ['Tart cherry extract','ongoing',''],
+  ['Magnesium glycinate with glycine','ongoing',''],
+  ['L-theanine','1 bottle','200mg at night with the magnesium. You asked for this.'],
+  ['Collagen and vitamin C','ongoing','Timed about an hour before running, for the calf.'],
+  ['Omega-3s','ongoing','']]}
+];
+const PREP=[
+ ['Sunday, 45 minutes','Cook the full 2.5kg of rice. Portion the chicken. Boil a dozen eggs. On a 4,000 calorie day the difference between hitting it and missing it is whether the food already exists.'],
+ ['The night before every long run','Lay out your gels and count them. If you are taking four, they should be on the counter before you go to bed.'],
+ ['Straight after every long run','Chocolate milk in the fridge, ready. No decisions to make when your appetite is gone.']
+];
+function groceryCard(){
+  const body=GROCERY.map(g=>`<h4>${g.h}</h4>${g.items.map(([n,q,note])=>
+    `<div class="gitem"><div class="gtop"><span class="gn">${n}</span><span class="gq">${q}</span></div>${note?`<div class="gnote">${note}</div>`:''}</div>`).join('')}`).join('');
+  const prep=PREP.map(([w,t])=>`<div class="recipe"><b>${w}</b><p>${t}</p></div>`).join('');
+  document.getElementById('groceryCard').innerHTML=`<div class="card">
+    <div class="eyebrow">One week \u00b7 one shop</div><h2>Grocery list</h2>
+    <p class="sub">Scaled to a week that ranges from 2,400 to 4,600 calories.</p>
+    <div class="info" style="margin-top:11px"><p>The gels and the chocolate milk are not extras. They are the two items that decide whether your long run is fuelled, and they are the two most often not in the house.</p></div>
+    <details class="more"><summary>Full list</summary><div class="glist">${body}</div></details>
+    <details class="more"><summary>Prep schedule</summary><div style="margin-top:8px">${prep}</div></details></div>`;}
+
+function dailyCard(){
+  const st0=dstate(S.week,S.day);
+  const hab=HABITS.map(i=>{const done=!!st0.c[i.id];
+    return `<div class="row ${done?'done':''}">
+      <button class="cb ${done?'on':''}" onclick="toggle('${i.id}')" aria-label="${i.n}">
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4L4.6 9 10 3.2" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="rb"><div class="rn">${i.n}</div><div class="rm">${i.meta}</div></div></div>`;}).join('');
+  document.getElementById('dailyCard').innerHTML=`<div class="card">
+    <div class="eyebrow">Every day \u00b7 regardless of session</div><h2>Daily non-negotiables</h2>
+    <div style="margin-top:8px">${hab}</div></div>`;}
+function photosCard(){
+  const el=document.getElementById('photosCard');
+  if(S.day!==0){el.innerHTML='';return;}
+  const cur=S.wt[S.week];
+  el.innerHTML=`<div class="card">
+    <div class="eyebrow">Monday \u00b7 Week ${S.week}</div><h2>Weigh-in &amp; photos</h2>
+    <p class="sub">First thing, fasted. Weight is a fuelling signal here, not a goal. Then send the photos straight to me.</p>
+    <button class="btn alt" style="margin-top:12px" onclick="logMorningWeight()">${cur!=null?'Weight: '+cur+' lbs, tap to change':'Log this morning\u2019s weight (lbs)'}</button>
+    <div class="info" style="margin-top:12px"><p>If this number drops more than a pound or two a week during a build, that is under-fuelling showing up on the scale, not progress. Tell me if it does.</p></div></div>`;}
+function pastCard(){
+  let rows='';
+  for(let w=1;w<S.week;w++){
+    let tot=0,dn=0;for(let d=0;d<7;d++){const p=pct(w,d);tot+=p.total;dn+=p.done;}
+    const pc=tot?Math.round(dn/tot*100):0;
+    rows+=`<div class="pw"><div><b>Week ${w}</b><div class="rm">${BLOCK[w]} \u00b7 ${weekMiles(w)} mi \u00b7 ${pc}% complete</div></div>
+      <div class="pv">${S.wt[w]!=null?S.wt[w]+' lb':pc+'%'}</div></div>`;}
+  document.getElementById('pastCard').innerHTML=rows
+    ?`<div class="card"><div class="eyebrow">History</div><h2>Past Weeks</h2>
+      <p class="sub">Nothing is ever lost. Every week stays here.</p><div style="margin-top:10px">${rows}</div></div>`:'';}
+
+function goWeek(n){S.week=n;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+function goDay(d){S.day=d;save();render();}
+function toggle(id){const st=dstate(S.week,S.day);
+  if(st.c[id])delete st.c[id];else st.c[id]=1;save();
+  const p=pct(S.week,S.day);render();
+  if(p.p>=1){toast('Day complete.');confetti();}}
+function toggleMeal(i){const n=nstate(S.week,S.day);if(n.m[i])delete n.m[i];else n.m[i]=1;save();render();}
+function esc(s){return String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+function openModal(h){document.getElementById('modal').innerHTML=h;document.getElementById('mask').classList.add('on');}
+function closeModal(){document.getElementById('mask').classList.remove('on');}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2100);}
+function numModal(title,sub,label,val,fn,ph,step){
+  openModal(`<h3>${title}</h3><p class="ms">${sub}</p>
+    <div class="form"><label>${label}</label>
+    <input id="nIn" type="number" inputmode="decimal" step="${step||1}" value="${val!=null?val:''}" placeholder="${ph||''}">
+    <button class="btn" onclick="${fn}">Save</button></div>`);
+  setTimeout(()=>document.getElementById('nIn').focus(),60);}
+function logRec(){numModal('Recovery score','From Whoop or Oura, this morning.','Score 0-100',S.rec[key(S.week,S.day)],'saveRec()','e.g. 62');}
+function saveRec(){const v=parseInt(document.getElementById('nIn').value,10);
+  if(!isNaN(v))S.rec[key(S.week,S.day)]=Math.max(0,Math.min(100,v));save();closeModal();render();}
+function logSleep(){numModal('Sleep','Hours actually slept, not time in bed.','Hours',S.slp[key(S.week,S.day)],'saveSleep()','e.g. 7.2','0.1');}
+function saveSleep(){const v=parseFloat(document.getElementById('nIn').value);
+  if(!isNaN(v))S.slp[key(S.week,S.day)]=v;save();closeModal();render();}
+function logHrv(){numModal('HRV','Overnight average, in milliseconds, from Whoop or Oura.','HRV (ms)',S.hrv[key(S.week,S.day)],'saveHrv()','e.g. 24');}
+function saveHrv(){const v=parseFloat(document.getElementById('nIn').value);
+  if(!isNaN(v))S.hrv[key(S.week,S.day)]=v;save();closeModal();render();}
+function logCalf(){numModal('Calf check-in','0 is perfect, 10 is stop running. Be honest.','Calf 0-10',S.clf[key(S.week,S.day)],'saveCalf()','e.g. 2');}
+function saveCalf(){const v=parseInt(document.getElementById('nIn').value,10);
+  if(!isNaN(v)){S.clf[key(S.week,S.day)]=Math.max(0,Math.min(10,v));if(v>=5)toast('Message your coach about that.');}
+  save();closeModal();render();}
+function logMorningWeight(){numModal('Morning weight','Week '+S.week+'. Fasted, before food or water.','Weight (lbs)',S.wt[S.week],'saveMW()','e.g. 173','0.1');}
+function saveMW(){const v=parseFloat(document.getElementById('nIn').value);
+  if(!isNaN(v))S.wt[S.week]=v;save();closeModal();render();toast('Logged.');}
+function editItem(id){const st=dstate(S.week,S.day),s=session(S.week,S.day);
+  const it=[...s.items,...HABITS].find(i=>i.id===id);
+  openModal(`<h3>Customise</h3><p class="ms">${it.n}. What actually happened.</p>
+    <div class="form"><label>What you did</label>
+    <input id="cuIn" value="${esc(st.cu[id]||'')}" placeholder="e.g. 5.2 not 6, calf tightened at mile 4">
+    <button class="btn" onclick="saveCustom('${id}')">Save</button>
+    <button class="btn alt" style="margin-top:8px" onclick="clearCustom('${id}')">Clear</button></div>`);
+  setTimeout(()=>document.getElementById('cuIn').focus(),60);}
+function saveCustom(id){const v=document.getElementById('cuIn').value.trim(),st=dstate(S.week,S.day);
+  if(v)st.cu[id]=v;else delete st.cu[id];save();closeModal();render();}
+function clearCustom(id){delete dstate(S.week,S.day).cu[id];save();closeModal();render();}
+function swapEx(id){const s=session(S.week,S.day),it=s.items.find(i=>i.id===id);
+  const opts=MASTER.map(k=>`<button class="opt ${k===it.ex?'cur':''}" onclick="doSwap('${id}','${k}')"><span>${EX[k].n}</span></button>`).join('');
+  openModal(`<h3>Swap exercise</h3><p class="ms">Replacing ${it.n} for today.</p>${opts}
+    <button class="btn alt" style="margin-top:8px" onclick="doSwap('${id}','')">Reset to original</button>`);}
+function doSwap(id,k){const st=dstate(S.week,S.day);if(k)st.sw[id]=k;else delete st.sw[id];save();closeModal();render();}
+function customTarget(){const n=nstate(S.week,S.day),T=n.t||macrosFor(S.week,order(S.week)[S.day]);
+  openModal(`<h3>Custom target for today</h3><p class="ms">Format: kcal,protein,carbs,fat</p>
+    <div class="form"><label>Today's target</label>
+    <input id="tIn" value="${T.join(',')}" inputmode="numeric">
+    <button class="btn" onclick="saveTarget()">Set for today</button></div>`);
+  setTimeout(()=>document.getElementById('tIn').focus(),60);}
+function saveTarget(){const p=document.getElementById('tIn').value.split(',').map(x=>parseInt(x.trim(),10));
+  if(p.length===4&&p.every(x=>!isNaN(x))){nstate(S.week,S.day).t=p;save();closeModal();render();}
+  else toast('Four numbers, comma separated.');}
+function resetTarget(){nstate(S.week,S.day).t=null;save();render();}
+function addExtra(){
+  openModal(`<h3>Add Something Extra</h3><p class="ms">Weigh it, then type what that amount actually was.</p>
+    <div class="form"><label>What was it</label><input id="xn" placeholder="e.g. 2 gels on the run">
+      <label>Grams (optional)</label><input id="xg" type="number" inputmode="numeric" placeholder="">
+      <label>For that amount</label>
+      <div class="g4"><input id="xk" type="number" inputmode="numeric" placeholder="kcal">
+        <input id="xp" type="number" inputmode="numeric" placeholder="P">
+        <input id="xc" type="number" inputmode="numeric" placeholder="C">
+        <input id="xf" type="number" inputmode="numeric" placeholder="F"></div>
+      <button class="btn" onclick="saveExtra()">Add</button></div>`);
+  setTimeout(()=>document.getElementById('xn').focus(),60);}
+function saveExtra(){
+  const g=document.getElementById('xg').value.trim();
+  const nm=(document.getElementById('xn').value.trim()||'Extra')+(g?` (${g}g)`:'');
+  const num=id=>{const v=parseFloat(document.getElementById(id).value);return isNaN(v)?0:v;};
+  const e={n:nm,k:num('xk'),p:num('xp'),c:num('xc'),f:num('xf')};
+  if(!e.k&&!e.p&&!e.c&&!e.f){toast('Add at least one number.');return;}
+  nstate(S.week,S.day).x.push(e);save();closeModal();render();}
+function delExtra(i){nstate(S.week,S.day).x.splice(i,1);save();render();}
+function daySwap(){
+  const opts=[0,1,2,3,4,5,6].filter(d=>d!==S.day).map(d=>{
+    const s=session(S.week,d),dt=dateOf(S.week,d);
+    return `<button class="opt" onclick="doDaySwap(${d})"><span>${DOW[d]} ${dt.getDate()}/${dt.getMonth()+1}</span><small>${s.title}</small></button>`;}).join('');
+  openModal(`<h3>Swap with another day</h3><p class="ms">The whole day moves, run and fuel target together.</p>${opts}`);}
+function doDaySwap(d){const o=order(S.week),t=o[S.day];o[S.day]=o[d];o[d]=t;save();closeModal();render();toast('Days swapped.');}
+function confetti(){
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=document.createElement('canvas');
+  c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:150';
+  c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);
+  const x=c.getContext('2d'),cols=['#8A6F34','#C9A34F','#111111'];
+  const P=Array.from({length:70},()=>({x:Math.random()*c.width,y:-20-Math.random()*140,
+    r:3+Math.random()*4,vy:2.4+Math.random()*3.2,vx:-1.4+Math.random()*2.8,
+    a:Math.random()*6.28,va:-.14+Math.random()*.28,c:cols[(Math.random()*3)|0]}));
+  let f=0;(function loop(){x.clearRect(0,0,c.width,c.height);
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va;x.save();x.translate(p.x,p.y);x.rotate(p.a);
+      x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);x.restore();});
+    if(++f<150)requestAnimationFrame(loop);else c.remove();})();}
+function a2Steps(){
+  const ua=navigator.userAgent||'';
+  const iOS=/iPad|iPhone|iPod/.test(ua)||(/Mac/.test(ua)&&navigator.maxTouchPoints>1);
+  const android=/Android/.test(ua);let steps;
+  if(iOS)steps=['Tap the Share button at the bottom of Safari, the square with the arrow pointing up.',
+    'Scroll down and tap <b style="color:var(--gold)">Add to Home Screen</b>.','Tap Add in the top right.',
+    'Open ELVT COACH from your home screen from now on, not from Safari.'];
+  else if(android)steps=['Tap the three dots in the top right of Chrome.',
+    'Tap <b style="color:var(--gold)">Add to Home screen</b> (or Install app).','Tap Add or Install to confirm.',
+    'Open ELVT COACH from your home screen from now on, not from Chrome.'];
+  else steps=['Open this link on your phone, that is where you will actually use it.',
+    'iPhone: Share, then Add to Home Screen. Android: three dots, then Add to Home screen.',
+    'Open it from the home screen icon from then on.'];
+  document.getElementById('a2steps').innerHTML=steps.map((t,i)=>`<div class="s"><b>${i+1}</b><span>${t}</span></div>`).join('');}
+function openA2(){a2Steps();document.getElementById('a2').classList.add('on');window.scrollTo({top:0});}
+function closeA2(){document.getElementById('a2').classList.remove('on');try{localStorage.setItem(KEY+'_a2','1')}catch(e){}}
+if(!localStorage.getItem(KEY+'_a2')&&!(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)){openA2();}
+render();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncToday())render();});
+window.addEventListener('focus',()=>{if(syncToday())render();});
+setInterval(()=>{if(syncToday())render();},60000);
+</script>
+</body>
+</html>
