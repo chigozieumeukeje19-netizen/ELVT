@@ -34,7 +34,8 @@
     "test:integration": "bash scripts/integration.sh",
     "ai:pack": "tsx scripts/ai-prompt-pack.ts",
     "review:shots": "npm run build && playwright test -c playwright.review.config.ts",
-    "deploy:dry-run": "bash scripts/deploy-dry-run.sh"
+    "deploy:dry-run": "bash scripts/deploy-dry-run.sh",
+    "db:security": "bash scripts/db-security-check.sh"
   },
   "repository": {
     "type": "git",

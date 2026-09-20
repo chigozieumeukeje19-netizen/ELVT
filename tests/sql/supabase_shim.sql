@@ -62,16 +62,14 @@ returns text[] language sql immutable as $$
   select (string_to_array(name, '/'))[1:array_length(string_to_array(name, '/'), 1) - 1];
 $$;
 
-grant usage on schema storage to anon, authenticated, service_role;
-grant select, insert, update on storage.objects to authenticated, service_role;
-grant select on storage.buckets to authenticated, service_role;
-
--- Supabase ships pgcrypto in the extensions schema before any project
--- migration runs. Creating it here rather than relying on the foundation
--- migration keeps the ordering the same as production, where that migration's
--- `create extension if not exists` is a no-op.
-create extension if not exists pgcrypto with schema extensions;
-
+-- The four Data API roles, before anything is granted to them.
+--
+-- These used to be created further down, after the storage grants above
+-- already named them. That worked on every machine that had run a Supabase
+-- stack before, because roles are cluster wide and survive a dropped database,
+-- and it failed on a genuinely clean one with `role "anon" does not exist`.
+-- A clean machine is what SETUP.md promises to take to a green suite, so the
+-- order has to be right rather than usually right.
 do $$
 begin
   if not exists (select 1 from pg_roles where rolname = 'anon') then
@@ -88,6 +86,17 @@ begin
   end if;
 end;
 $$;
+
+grant usage on schema storage to anon, authenticated, service_role;
+grant select, insert, update on storage.objects to authenticated, service_role;
+grant select on storage.buckets to authenticated, service_role;
+
+-- Supabase ships pgcrypto in the extensions schema before any project
+-- migration runs. Creating it here rather than relying on the foundation
+-- migration keeps the ordering the same as production, where that migration's
+-- `create extension if not exists` is a no-op.
+create extension if not exists pgcrypto with schema extensions;
+
 
 grant anon, authenticated, service_role to authenticator;
 grant usage on schema public to anon, authenticated, service_role;

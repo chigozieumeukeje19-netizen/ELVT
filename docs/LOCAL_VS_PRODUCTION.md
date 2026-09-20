@@ -36,6 +36,7 @@ moment it stops being true.
 | `auth.users.confirmed_at` | Absent | `GENERATED ALWAYS AS (least(email_confirmed_at, phone_confirmed_at)) STORED` |
 | `pgcrypto` | Created by the foundation migration | Installed by the shim before migrations, as Supabase does, so the migration's `if not exists` is the no-op it is in production |
 | `auth.jwt()` | Absent | Present, so a policy reaching for the claims object is exercised locally |
+| Function EXECUTE grants | Invisible: nothing local serves `/rest/v1/rpc/`, so an exposed function looked identical to a private one | `scripts/db-security-check.sh` asks the linter's two questions of any database it is pointed at |
 
 **Seeded accounts are created twice, on purpose.** `supabase/seed.sql` writes
 auth.users rows with no password so the plain Postgres verifier has profiles
@@ -244,3 +245,48 @@ the nightly trigger evaluation, the week roll, reminder dispatch and the
 retention scan. None of that is built or testable yet.
 
 **The realtime publication is absent.** Nothing subscribes to it yet.
+
+## The cloud linter, and why it is now part of the preflight
+
+Supabase runs a security linter against a cloud project that the local stack
+has no equivalent of. Pointed at ELVT OS PROD after the first twelve migrations
+landed, it found two real things and one that did not matter:
+
+* **Six `SECURITY DEFINER` functions in `public` were callable over the Data
+  API** by `anon` and `authenticated`, at `/rest/v1/rpc/<name>`. Nothing local
+  serves that API, so an exposed function and a private one looked identical
+  here.
+* **Two functions had a role-mutable `search_path`**, which is the escalation
+  route that makes the first finding worth caring about.
+
+Both are fixed in `20260920100000_harden_function_grants.sql`, and fixing them
+turned up three things worth keeping written down, because each one would have
+made a plausible-looking fix wrong:
+
+1. **`revoke execute ... from anon, authenticated` does nothing.** Postgres
+   grants EXECUTE to `PUBLIC` by default and that is what the Data API rides
+   on. The roles have no grant of their own to take away.
+2. **Revoking from `PUBLIC` breaks RLS.** Policy expressions are evaluated as
+   the querying user, so a policy calling `is_staff()` needs EXECUTE on it. A
+   coach reading the roster got `permission denied for function
+   current_client_id`. The identity helpers genuinely have to stay callable.
+3. **A trigger function needs no EXECUTE at fire time.** Postgres checks that
+   when the trigger is created. With EXECUTE revoked from everyone, a write
+   still wrote its `audit_log` and `events` rows.
+
+Which is why the fix moves the internals to a `private` schema rather than
+arguing about grants: PostgREST serves `public` and nothing else, so a function
+there is unreachable over HTTP while a policy can still call it.
+
+**Run the linter after any migration that adds a function.** In a session with
+the Supabase MCP tools that is `get_advisors` with `type: security`; from the
+dashboard it is Advisors → Security. `npm run deploy:dry-run` now asks the same
+two questions of whatever database `ELVT_DB_URL` names, so a regression fails
+locally instead of waiting for the next time someone thinks to look at the
+cloud.
+
+This was the third time production showed something local could not, after the
+generated column and the null token column. The first two were answered with a
+specific assertion about the specific thing. This one is answered with the
+linter's own questions, because the pattern is that the gap is never the thing
+you already thought of.

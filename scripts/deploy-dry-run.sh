@@ -118,6 +118,21 @@ else
   echo "        full output: /tmp/elvt-dry-run-served.log"
 fi
 
+# --- The database it will be deployed against ------------------------------
+# Supabase's cloud linter found two things no local check was looking for, and
+# both are now questions this asks of whatever database it is pointed at. A
+# database it cannot reach is a failure rather than a skip: a deploy that has
+# not looked at its database has not been checked.
+echo
+echo "  asking the database the linter's questions..."
+if bash scripts/db-security-check.sh > /tmp/elvt-dry-run-db.log 2>&1; then
+  grep -E "^  ok" /tmp/elvt-dry-run-db.log | sed -E 's/^  ok    //' \
+    | while IFS= read -r line; do printf '  ok    %s\n' "$line"; done
+else
+  fail "The database failed a security check"
+  grep -vE "^\s*$" /tmp/elvt-dry-run-db.log | sed 's/^/        /' | head -16
+fi
+
 # --- What a human still has to supply --------------------------------------
 echo
 echo "DEPLOY BLOCKERS"
