@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handler, jsonBody } from "@/lib/api/context";
+import { apiError, handler, jsonBody, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +45,7 @@ export const POST = handler(async ({ clientId, db }, request) => {
     })
     .select("id, date, meal_id, custom, source");
 
-  if (error || !data || data.length === 0) return apiError(400, "That could not be logged.");
-  return NextResponse.json({ meal_log: data[0] });
+  const failure = writeFailure(error, data, "the meal log");
+  if (failure) return failure;
+  return NextResponse.json({ meal_log: data![0] });
 });

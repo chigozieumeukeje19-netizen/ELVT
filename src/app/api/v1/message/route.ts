@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handler, jsonBody } from "@/lib/api/context";
+import { apiError, handler, jsonBody, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -25,8 +25,9 @@ export const POST = handler(async ({ clientId, userId, db }, request) => {
       .insert({ client_id: clientId, subject: "Messages" })
       .select("id")
       .single();
-    if (error || !created) return apiError(400, "That could not be sent.");
-    threadId = created.id;
+    const failure = writeFailure(error, created ? [created] : [], "the thread");
+    if (failure) return failure;
+    threadId = created!.id;
   }
 
   const { data, error } = await db
@@ -42,6 +43,7 @@ export const POST = handler(async ({ clientId, userId, db }, request) => {
     })
     .select("id, body, sent_at");
 
-  if (error || !data || data.length === 0) return apiError(400, "That could not be sent.");
-  return NextResponse.json({ message: data[0] });
+  const failure = writeFailure(error, data, "the message");
+  if (failure) return failure;
+  return NextResponse.json({ message: data![0] });
 });

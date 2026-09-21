@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handlerWithParams, jsonBody, notFound } from "@/lib/api/context";
+import { apiError, handlerWithParams, jsonBody, notFound, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +53,7 @@ export const POST = handlerWithParams<{ id: string }>(async ({ clientId, db }, r
     .eq("id", body.session_exercise_id)
     .maybeSingle();
 
-  const { data } = await db
+  const { data, error } = await db
     .from("session_exercises")
     .update({
       exercise_id: body.alt_exercise_id,
@@ -62,7 +62,8 @@ export const POST = handlerWithParams<{ id: string }>(async ({ clientId, db }, r
     .eq("id", body.session_exercise_id)
     .select("id, exercise_id, substituted_from_exercise_id");
 
-  if (!data || data.length === 0) return notFound();
+  const failure = writeFailure(error, data, "the exercise swap");
+  if (failure) return failure;
   void params;
-  return NextResponse.json({ session_exercise: data[0] });
+  return NextResponse.json({ session_exercise: data![0] });
 });

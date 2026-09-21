@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handlerWithParams, jsonBody, notFound } from "@/lib/api/context";
+import { apiError, handlerWithParams, jsonBody, notFound, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +43,7 @@ export const POST = handlerWithParams<{ id: string }>(async ({ clientId, userId,
     })
     .select("id, body, sent_at");
 
-  if (error || !data || data.length === 0) return apiError(400, "That could not be sent.");
-  return NextResponse.json({ message: data[0] });
+  const failure = writeFailure(error, data, "the reply");
+  if (failure) return failure;
+  return NextResponse.json({ message: data![0] });
 });

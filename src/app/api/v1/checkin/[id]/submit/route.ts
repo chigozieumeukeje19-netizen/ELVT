@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handlerWithParams, jsonBody, notFound } from "@/lib/api/context";
+import { apiError, handlerWithParams, jsonBody, notFound, writeFailure } from "@/lib/api/context";
 import { localDate } from "@/lib/engine/clock";
 import { resolveQuestions } from "@/lib/checkin/bank";
 
@@ -54,7 +54,8 @@ export const POST = handlerWithParams<{ id: string }>(async ({ clientId, db }, r
     )
     .select("id, for_date, submitted_at");
 
-  if (error || !data || data.length === 0) return apiError(400, "That could not be submitted.");
+  const failure = writeFailure(error, data, "the check-in");
+  if (failure) return failure;
 
   // Metric answers become rows. The question declares which column it writes,
   // and only the columns on daily_logs are writable this way.
@@ -78,5 +79,5 @@ export const POST = handlerWithParams<{ id: string }>(async ({ clientId, db }, r
       .upsert({ client_id: clientId, date: forDate, ...metricWrites }, { onConflict: "client_id,date" });
   }
 
-  return NextResponse.json({ submission: data[0], metrics_written: Object.keys(metricWrites) });
+  return NextResponse.json({ submission: data![0], metrics_written: Object.keys(metricWrites) });
 });

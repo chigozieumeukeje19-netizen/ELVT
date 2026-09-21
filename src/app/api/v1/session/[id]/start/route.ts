@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { handlerWithParams, notFound } from "@/lib/api/context";
+import { handlerWithParams, notFound, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -13,12 +13,13 @@ export const dynamic = "force-dynamic";
  * to find out whether someone else's session id is real.
  */
 export const POST = handlerWithParams<{ id: string }>(async ({ db }, _request, params) => {
-  const { data } = await db
+  const { data, error } = await db
     .from("sessions")
     .update({ status: "planned", started_at: new Date().toISOString() })
     .eq("id", params.id)
     .select("id, started_at");
 
-  if (!data || data.length === 0) return notFound();
-  return NextResponse.json({ session: data[0] });
+  const failure = writeFailure(error, data, "the session");
+  if (failure) return failure;
+  return NextResponse.json({ session: data![0] });
 });

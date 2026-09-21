@@ -1,5 +1,94 @@
 # Open questions
 
+## BLOCKED ON A DECISION: the coach and the client are the same Postgres role
+
+**Item:** 38.1
+**Status:** half the audit cannot ship until this is answered
+
+The coach portal builds its Supabase client from the anon key plus the coach's
+GoTrue session (`src/lib/supabase/server.ts`, used by 26 files). A GoTrue
+session is the Postgres role `authenticated`. The client API mints its own
+token and also claims `authenticated`. What tells a coach from a client is an
+RLS policy calling `is_staff()`, which is a row-level test.
+
+Column privileges are per role, so they cannot tell two users of the same role
+apart. Revoking UPDATE on `checkin_submissions.review_note` from
+`authenticated` takes it from the coach too, and the coach's check-in review is
+the thing that writes it. Run rather than reasoned: the coach's update came
+back `permission denied for table checkin_submissions`.
+
+So the shipped migration does the part that is pure gain -- anon writes
+nothing anywhere, and the columns neither a coach nor a client writes are gone
+from `authenticated`. `review_note`, `reviewed_at`, `thread_id`,
+`sessions.coach_notes`, `messages.scheduled_for`, `messages.touchpoint` and
+every coach-only column on `clients` are still writable by any client holding a
+valid token, because there is no way to take them from the client without
+taking them from the coach.
+
+Three ways out, with a recommendation:
+
+1. **A custom access token hook, so staff get their own role.** Supabase runs a
+   Postgres function over the JWT claims at issue time. It sets `role` to
+   `staff` when `profiles.role` is coach or admin. Then `authenticated` means
+   client, the audit's column lists apply cleanly, and the coach policies
+   retarget from `to authenticated` to `to staff`. **Recommended.** It is the
+   only one that closes the hole for a client signed into the portal as well
+   as one coming through the API, and it makes every future column grant
+   meaningful rather than a negotiation.
+   Cost: a new role, a hook function, retargeting the policies on 53 tables,
+   and the shim has to carry the role. Estimate half a day, most of it
+   mechanical and testable locally.
+
+2. **Mint the client API token with its own role.** We already sign that token
+   ourselves, so `role: "client_app"` costs almost nothing. It closes the API
+   path and leaves the portal path open, because a client signing in at
+   `/client/today` still gets `authenticated` from GoTrue. Half a fix, and the
+   half it leaves open is the one a person could find by hand.
+
+3. **Move coach writes to the service role.** Rejected. It takes RLS out of the
+   coach path entirely and puts every `client_id` filter back into application
+   code, which is exactly where item 25 found five missing filters.
+
+Nothing is live, so nothing is at risk today. This should be settled before the
+first real client.
+
+---
+
+## The client API has almost no test that a call succeeds
+
+**Item:** the question raised after item 38.3
+**Status:** a gap worth a round of its own
+
+`POST /api/v1/habit-log` shipped having never worked once. It upserted a body
+with no `client_id` into a `NOT NULL` column, and the failure went into the
+same branch as a missing row, so it answered 404 and said nothing.
+
+The honest count of what covered it:
+
+| Suite | What it proves | Count |
+| --- | --- | --- |
+| `tests/sql/api_rls_checks.sql` | a client cannot reach another client's row | 30 assertions, **29 of them refusals** |
+| the one exception | `POST /photos writes into the client` | 1, and at the SQL layer, not through the route |
+| `tests/integration/*` | the persistence functions behind the jobs read the right rows | 50, none of them a route |
+| `tests/unit/api.test.ts` | routes cannot bypass RLS, structurally | source reading, no execution |
+| `tests/e2e/client-app.spec.ts` | the PWA's behaviour | **mocks `/api/v1/**` with a stubbed 200** |
+
+So before this round: **zero of the 32 endpoints had a test that called the
+handler and then looked at the table.** A rejection test cannot see an endpoint
+that rejects everything, which is precisely what happened.
+
+`tests/integration/client-api.test.ts` now covers four of them, because four
+had defects. The other 28 are still unproven in that sense.
+
+Estimate: a day. The harness exists now -- real PostgREST, a real signed token,
+the route module imported and called -- so each endpoint is roughly ten lines:
+arrange the fixture, call, read the row back. The fixtures are the slow part,
+since the program chain is programs to weeks to days to sessions to sections to
+exercises. Worth doing as one pass rather than drip fed, and worth doing before
+a real client rather than after.
+
+---
+
 Things the build is waiting on, and decisions that need Darren rather than a
 default. Written as work happens, per standing rule 13: a blocked item goes here
 and the run continues rather than stalling.

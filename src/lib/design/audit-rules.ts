@@ -48,6 +48,14 @@ export const SKIPPED_PATHS = [
   // client theme, it is gitignored, and it is rebuilt by
   // npm run export:fixture. The generator that produces it is still scanned.
   "tests/e2e/fixtures/",
+  // The v1 client apps, as delivered. They ARE cream and serif, which is the
+  // whole of hard fail 0 -- and that is the point: they are the thing the
+  // portal must not look like, kept as read-only historical input for the
+  // exercise import. Auditing them would be auditing the past for failing to
+  // be the present. The portal source that reads them is still scanned.
+  "v1-archive/",
+  // Screenshots of the portal, not portal source.
+  "review/",
 ];
 
 export const RULES: Rule[] = [

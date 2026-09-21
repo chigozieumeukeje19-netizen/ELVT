@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handler, jsonBody } from "@/lib/api/context";
+import { apiError, handler, jsonBody, writeFailure } from "@/lib/api/context";
 import { localDate } from "@/lib/engine/clock";
 
 export const dynamic = "force-dynamic";
@@ -58,8 +58,8 @@ export const POST = handler(async ({ clientId, db }, request) => {
     .upsert({ client_id: clientId, date, ...fields }, { onConflict: "client_id,date" })
     .select("id, date, weight, steps, water, sleep_hours, energy, mood, session_status");
 
-  if (error || !data || data.length === 0) {
-    return apiError(400, "That could not be saved.");
-  }
-  return NextResponse.json({ daily_log: data[0] });
+  const failure = writeFailure(error, data, "the daily log");
+  if (failure) return failure;
+
+  return NextResponse.json({ daily_log: data![0] });
 });

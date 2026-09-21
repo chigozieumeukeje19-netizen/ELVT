@@ -304,11 +304,26 @@ describe("dispatchReminders", () => {
   });
 
   it("reads each client's own day, on each client's own clock", async () => {
-    // 20:00 UTC is 16:00 on the 5th in New York and 01:30 on the 6th in
-    // Kolkata. A 07:00 reminder has come round for one of them and has not
-    // happened yet for the other, and they are not even on the same date.
-    const newYork = await withReminders();
-    const kolkata = await withReminders({ timezone: "Asia/Kolkata" });
+    /*
+     * 20:00 UTC is 16:00 on the 5th in New York and 01:30 on the 6th in
+     * Kolkata. A 15:00 reminder has come round for one of them and has not
+     * happened yet for the other, and they are not even on the same date.
+     *
+     * The reminder used to be at 07:00, which was nine hours behind by the
+     * time this read. That passed until reminders gained a lateness cutoff and
+     * then failed here for the right reason: "Here is today" at four in the
+     * afternoon is wrong, not late. This test is about whose clock is being
+     * read, so it uses a time that is live on one clock and has not arrived on
+     * the other, which is what it always meant to say.
+     */
+    const evening15 = [
+      { kind: "morning_plan", time: "15:00", enabled: true, days: [] },
+    ];
+    const newYork = await withReminders({ communication_prefs: { reminders: evening15 } });
+    const kolkata = await withReminders({
+      timezone: "Asia/Kolkata",
+      communication_prefs: { reminders: evening15 },
+    });
 
     const evening = new Date("2026-10-05T20:00:00Z");
     const result = await dispatchReminders(supabase, evening);

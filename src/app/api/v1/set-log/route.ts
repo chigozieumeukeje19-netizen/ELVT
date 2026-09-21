@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { handler, jsonBody, notFound } from "@/lib/api/context";
+import { handler, jsonBody, notFound, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,7 @@ const schema = z.object({
  * coach asked for; a client app sending both could overwrite the ask with
  * whatever it happened to render.
  */
-export const POST = handler(async ({ db }, request) => {
+export const POST = handler(async ({ clientId, db }, request) => {
   const body = await jsonBody(request, schema);
 
   const { data: exercise } = await db
@@ -33,21 +33,50 @@ export const POST = handler(async ({ db }, request) => {
   const sets = (exercise.sets ?? []) as { set: number }[];
   const prescribed = sets.find((set) => set.set === body.set_number) ?? null;
 
-  const { data, error } = await db
+  /*
+   * `prescribed` is written once, when the row is created, and never again.
+   *
+   * This was an upsert that sent it on every call. The value is server-derived
+   * so it was not a hole, but it meant the column needed UPDATE privilege, and
+   * `prescribed` is precisely the column a client must never be able to write:
+   * it is what the coach asked for, and the whole point of `actual` is that it
+   * is compared against something the client did not choose.
+   *
+   * So: correct the existing row's `actual` if there is one, insert with the
+   * prescription if there is not. Two statements rather than one, and the
+   * privilege the client holds is exactly the one they need.
+   */
+  const logged_at = new Date().toISOString();
+  const logged_for_date = body.logged_for_date ?? logged_at.slice(0, 10);
+
+  const { data: existing } = await db
     .from("set_logs")
-    .upsert(
-      {
+    .select("id")
+    .eq("session_exercise_id", body.session_exercise_id)
+    .eq("set_number", body.set_number)
+    .maybeSingle();
+
+  const write = existing
+    ? db
+        .from("set_logs")
+        .update({ actual: body.actual, logged_at, logged_for_date })
+        .eq("id", existing.id)
+    : db.from("set_logs").insert({
         session_exercise_id: body.session_exercise_id,
+        client_id: clientId,
         set_number: body.set_number,
         prescribed,
         actual: body.actual,
-        logged_at: new Date().toISOString(),
-        logged_for_date: body.logged_for_date ?? new Date().toISOString().slice(0, 10),
-      },
-      { onConflict: "session_exercise_id,set_number" },
-    )
-    .select("id, set_number, prescribed, actual, is_pr, pr_type");
+        logged_at,
+        logged_for_date,
+      });
 
-  if (error || !data || data.length === 0) return notFound();
-  return NextResponse.json({ set_log: data[0] });
+  const { data, error } = await write.select(
+    "id, set_number, prescribed, actual, is_pr, pr_type",
+  );
+
+  const failure = writeFailure(error, data, "the set log");
+  if (failure) return failure;
+
+  return NextResponse.json({ set_log: data![0] });
 });

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handlerWithParams, jsonBody } from "@/lib/api/context";
+import { apiError, handlerWithParams, jsonBody, writeFailure } from "@/lib/api/context";
 import { scoreDay, type ScoredTask } from "@/lib/engine/scoring";
 
 export const dynamic = "force-dynamic";
@@ -50,6 +50,7 @@ export const POST = handlerWithParams<{ date: string }>(async ({ clientId, db },
     )
     .select("date, score, tasks, streak_after");
 
-  if (error || !data || data.length === 0) return apiError(400, "That could not be saved.");
-  return NextResponse.json({ day: data[0] });
+  const failure = writeFailure(error, data, "the day");
+  if (failure) return failure;
+  return NextResponse.json({ day: data![0] });
 });

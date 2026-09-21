@@ -11,6 +11,22 @@ The client API runs as `authenticated` with the caller's own JWT
 PostgREST call. Getting the list wrong breaks the app, which is why every
 column below is traced to the route that writes it.
 
+## Two things settled, so nobody re-litigates them
+
+**`clients` is already SELECT-only for a client.** The starting list assumed a
+client may update display and preference fields on their own row. They cannot:
+`clients` carries one client policy and it is SELECT. `flag_config` and every
+target were never reachable. The grants still go in, because the two layers
+stack and a policy added later must not silently re-open the row.
+
+**The upsert key columns are safe, and only here.** They are marked **key**
+below rather than folded quietly into the writable list, because at first
+glance granting UPDATE on `client_id` looks like exactly the hole this closes.
+It is not: every table that needs it carries an RLS
+`with check (client_id = current_client_id())`, so a client can only ever set
+those columns to values that are already theirs. Remove that policy and the key
+grants stop being safe, which is why they are named here.
+
 ## A note on upsert keys
 
 `POST /daily-log`, `/habit-log`, `/set-log`, `/day/<date>/task` and
@@ -90,7 +106,9 @@ created.
 ## What the migration will do
 
 1. `revoke insert, update, delete, truncate on all tables in public from
-   authenticated` — then grant back, by column, exactly the lists above.
+   authenticated` — then grant back, by column, exactly the lists above. The
+   table-level grants go as well as the column grants arriving: both layers say
+   no, rather than RLS alone standing between a client and the audit log.
 2. Leave every RLS policy untouched.
 3. Leave `service_role` alone; the server jobs need it and it bypasses RLS by
    design.

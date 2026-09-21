@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handler, jsonBody } from "@/lib/api/context";
+import { handler, jsonBody, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -9,38 +9,49 @@ const schema = z.object({
   platform: z.enum(["ios", "android", "web"]),
 });
 
+/** At most this many devices per client. The sixth push retires the oldest. */
+const KEEP = 5;
+
 /**
  * POST /api/v1/device
  *
- * Stored on the client's own row, under the client id from the token. Nothing
- * sends to these yet: push needs a paid service and standing rule 12 says no
- * paid APIs, so the reminder dispatcher records what it would have sent and
- * stops there.
+ * Registration writes to the `devices` table, which exists for exactly this
+ * and which the client may write to. It used to write the token into
+ * `clients.communication_prefs` instead, and `clients` carries one client
+ * policy and it is SELECT, so registration has been refused by RLS the whole
+ * time. The route reported "That could not be saved", which was true and
+ * useless.
+ *
+ * Nothing sends to these yet. Push needs a paid service and standing rule 12
+ * says no paid APIs, so the reminder dispatcher records what it would have
+ * sent and stops. A registered device does not mean a phone will buzz.
  */
 export const POST = handler(async ({ clientId, db }, request) => {
   const body = await jsonBody(request, schema);
 
-  const { data: client } = await db
-    .from("clients")
-    .select("communication_prefs")
-    .eq("id", clientId)
-    .maybeSingle();
-
-  const prefs = (client?.communication_prefs ?? {}) as {
-    devices?: { token: string; platform: string }[];
-  };
-
-  const devices = [
-    ...(prefs.devices ?? []).filter((device) => device.token !== body.token),
-    { token: body.token, platform: body.platform },
-  ].slice(-5);
-
   const { data, error } = await db
-    .from("clients")
-    .update({ communication_prefs: { ...prefs, devices } })
-    .eq("id", clientId)
+    .from("devices")
+    .upsert(
+      { client_id: clientId, push_token: body.token, platform: body.platform },
+      { onConflict: "client_id,push_token" },
+    )
     .select("id");
 
-  if (error || !data || data.length === 0) return apiError(400, "That could not be saved.");
-  return NextResponse.json({ registered: true, devices: devices.length });
+  const failure = writeFailure(error, data, "the device");
+  if (failure) return failure;
+
+  // Oldest first, keep the newest few. A client who reinstalls repeatedly
+  // should not accumulate dead tokens forever.
+  const { data: all } = await db
+    .from("devices")
+    .select("id")
+    .eq("client_id", clientId)
+    .order("updated_at", { ascending: false });
+
+  const stale = (all ?? []).slice(KEEP).map((device) => device.id);
+  if (stale.length > 0) {
+    await db.from("devices").delete().in("id", stale);
+  }
+
+  return NextResponse.json({ registered: true, devices: Math.min((all ?? []).length, KEEP) });
 });

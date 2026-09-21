@@ -124,6 +124,49 @@ export async function jsonBody<T>(
 }
 
 /**
+ * What a write actually did, turned into the right answer.
+ *
+ * Nine routes shared one line: `if (error || !data || data.length === 0)
+ * return notFound()`. That reads as careful and is the reason
+ * POST /habit-log could ship never having worked at all. Its insert violated a
+ * NOT NULL constraint on every call, the error went into the same branch as a
+ * row that was not there, and the endpoint answered 404 without ever saying
+ * what was wrong.
+ *
+ * So an error and an empty result are no longer the same thing:
+ *
+ *   * a refusal from the database is a refusal, and says so. Once the column
+ *     grants land, a client writing a coach-only column gets 42501 here, and
+ *     403 is the honest answer to that rather than a shrug.
+ *   * anything else that errored is ours, gets logged with its code, and
+ *     answers 500. A bug in this codebase must not read as a missing row.
+ *   * no error and no rows keeps the 404, which is still correct: a write
+ *     filtered out by RLS and a write against a row that does not exist are
+ *     indistinguishable from here, and telling them apart would confirm the
+ *     existence of a row the caller cannot see.
+ */
+export function writeFailure(
+  error: { code?: string; message?: string } | null,
+  rows: unknown[] | null | undefined,
+  subject: string,
+): NextResponse | null {
+  if (error) {
+    // 42501 is insufficient_privilege, which is both a missing column grant
+    // and a row that failed a policy's WITH CHECK.
+    if (error.code === "42501") {
+      return apiError(403, `That is not yours to change on ${subject}.`);
+    }
+    if (error.code === "23505") {
+      return apiError(409, `${subject} already has that entry.`);
+    }
+    console.error(`[api] write to ${subject} failed`, error.code, error.message);
+    return apiError(500, `Could not save ${subject}.`);
+  }
+  if (!rows || rows.length === 0) return notFound();
+  return null;
+}
+
+/**
  * The answer when a write touched nothing.
  *
  * A write filtered out by RLS and a write against a row that does not exist are

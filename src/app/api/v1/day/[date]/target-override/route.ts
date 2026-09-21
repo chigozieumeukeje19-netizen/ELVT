@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { apiError, handlerWithParams, jsonBody, notFound } from "@/lib/api/context";
+import { apiError, handlerWithParams, jsonBody, notFound, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ export const POST = handlerWithParams<{ date: string }>(async ({ db }, request, 
 
   const body = await jsonBody(request, schema);
 
-  const { data } = await db
+  const { data, error } = await db
     .from("program_days")
     .update({
       calories_override: body.kcal ?? null,
@@ -30,6 +30,7 @@ export const POST = handlerWithParams<{ date: string }>(async ({ db }, request, 
     .eq("date", params.date)
     .select("date, calories_override, protein_override");
 
-  if (!data || data.length === 0) return notFound();
-  return NextResponse.json({ day: data[0] });
+  const failure = writeFailure(error, data, "the day's targets");
+  if (failure) return failure;
+  return NextResponse.json({ day: data![0] });
 });

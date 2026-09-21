@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { handler, jsonBody, notFound } from "@/lib/api/context";
+import { handler, jsonBody, notFound, writeFailure } from "@/lib/api/context";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +29,7 @@ export const POST = handler(async ({ db }, request) => {
     .insert({ run_id, ...fields })
     .select("id, distance, duration, avg_pace, avg_hr, rpe, felt, stayed_in_zone");
 
-  if (error || !data || data.length === 0) return notFound();
-  return NextResponse.json({ run_log: data[0] });
+  const failure = writeFailure(error, data, "the run log");
+  if (failure) return failure;
+  return NextResponse.json({ run_log: data![0] });
 });
